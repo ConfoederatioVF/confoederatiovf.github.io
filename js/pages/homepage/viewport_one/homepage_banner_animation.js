@@ -360,6 +360,8 @@ var typing_speed = 750;
           title_element.setAttribute("class", title_element.getAttribute("class") + " finished-animation");
         }, 16000);
       }
+      
+      main_video_bg.loop = true;
     };
 
     //Main loop logic
