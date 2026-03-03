@@ -4,7 +4,7 @@
     animation_threshhold: 100,
     backgrounds: {
       main_video: {
-        name: "Australis"
+        name: "Confoederatio26"
       },
       cleveland_fog: {
         name: "Sunset"
