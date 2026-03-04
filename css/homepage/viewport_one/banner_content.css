@@ -1,17 +1,4 @@
 /* -- Homepage top banner positional settings -- */
-.homepage-banner {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
-
-  height: 100dvh;
-  width: 100dvw;
-
-  overflow: hidden;
-  user-select: none;
-}
 .homepage-banner-centre-container {
   width: 100vw;
 }

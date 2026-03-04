@@ -1,10 +1,7 @@
 /* -- Declare global constants -- */
 html, head, body {
-  height: 100%;
   margin: 0px;
-  
   overflow-x: hidden;
-  overflow-y: auto;
 }
 .hidden, .hidden-settings-btn {
   visibility: hidden;

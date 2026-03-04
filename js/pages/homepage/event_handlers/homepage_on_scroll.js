@@ -49,5 +49,5 @@ function initGlobalScrollEventHandler (e) {
 }
 
 window.onscroll = function (e) {
-  initGlobalScrollEventHandler(e);
+  //initGlobalScrollEventHandler(e);
 };

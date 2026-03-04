@@ -1,351 +1,239 @@
-//homepage_gallery_ui.js
-//Initialise functions
+// homepage_gallery_ui.js
 {
-  function initGalleryDesktopEventHandlers () {
-    //Declare local instance variables
+  function initGalleryDesktopEventHandlers() {
     var gallery_obj = main.gallery;
-
-    //Set event listeners
+    
+    // 1. Perspective tracking (3D Mouse Effect)
     gallery_obj.parallax_body.addEventListener("mousemove", (e) => {
-      //Define instance variables
-      var half_width = gallery_obj.parallax_body.clientWidth/2,
-        half_height = gallery_obj.parallax_body.clientHeight/2,
+      var half_width = gallery_obj.parallax_body.clientWidth / 2,
+        half_height = gallery_obj.parallax_body.clientHeight / 2,
         mouse_x = half_width + gallery_obj.parallax_body.offsetLeft - e.pageX,
         mouse_y = half_height + gallery_obj.parallax_body.offsetTop - e.pageY;
-
-      //Restrict mouse movement by 32x if a content panel is maximised
-      if (gallery_obj.content_panel_update_paused) {
-        mouse_x = mouse_x/32;
-        mouse_y = mouse_y/32;
-      }
-
-      var maximum_x_degrees = 1.25;
-      var maximum_y_degrees = 1.25;
-
-      //Calculate current degrees
-      window.perspective_deg_x = ((mouse_y/half_height)*maximum_x_degrees*-1)+(maximum_x_degrees/2) + "deg";
-      window.perspective_deg_y = ((mouse_x/half_width)*maximum_y_degrees*-1)+2 + "deg";
-
-      //Apply 3D CSS to local element
-      window.perspective_string = `rotateX(${perspective_deg_x}) rotateY(${perspective_deg_y})`;
-      gallery_obj.scene.setAttribute(
-        "style",
-        `transform: perspective(20em) ${perspective_string};`
-      );
-    });
-
-    //Translate vertical scroll to horizontal scroll
-    gallery_obj.parallax_body.addEventListener("wheel", (e) => {
-      //Declare local instance variables
-      var scroll_enabled = true;
-      var is_over_panel_container = false;
-      var is_over_content_panel = false;
       
-      //Check if we're over a panel container or content panel
-      for (var i = 0; i < gallery_obj.panel_id_patterns.length; i++) {
-        is_over_panel_container = (e.target.id.includes(gallery_obj.panel_id_patterns[i])) ? true : is_over_panel_container;
+      if (gallery_obj.content_panel_update_paused) {
+        mouse_x /= 32;
+        mouse_y /= 32;
       }
-      is_over_content_panel = e.target.closest('.parallax-item-content-panel') !== null;
-
-      //If over a panel container or content panel, handle content panel scrolling
-      if (is_over_panel_container || is_over_content_panel) {
-        var hovered_element;
-        var all_hover_elements = document.querySelectorAll(":hover");
-        for (var i = 0; i < all_hover_elements.length; i++) {
-          try {
-            if (all_hover_elements[i].getAttribute("class") && 
-                all_hover_elements[i].getAttribute("class").includes("content-wrapper")) {
-              hovered_element = all_hover_elements[i];
-              break;
-            }
-          } catch {}
-        }
-
-        if (hovered_element) {
-          var container_height = hovered_element.querySelector(".text-wrapper").offsetHeight - hovered_element.offsetHeight;
-          var current_scroll = Math.ceil(hovered_element.scrollTop);
-
-          //Prevent scrolling if at bounds
-          if ((e.deltaY < 0 && current_scroll == 0) || (e.deltaY > 0 && current_scroll >= container_height - 1)) {
-            e.preventDefault();
-            return;
-          }
-          
-          //Allow content panel scrolling
-          return;
-        }
-      }
-
-      //Prevent default scroll behaviour from occurring so far as the scroll bounds have not been reached (conditional)
-      gallery_obj.parallax_current_scroll_x = e.deltaY/gallery_obj.viewport_width/1.5;
-
-      //Leftwards scroll bound
-      scroll_enabled = (gallery_obj.parallax_current_scroll_x < 0 && gallery_obj.parallax_scroll_x > 0) ? false : scroll_enabled;
-
-      //Rightwards scroll bound
-      scroll_enabled = (gallery_obj.parallax_current_scroll_x > 0 && gallery_obj.parallax_scroll_x*-1 > gallery_obj.gallery_width) ? false : scroll_enabled;
-
-      //Only prevent scrolling back to viewport 1 if we're not at the beginning of the gallery
-      if (!isElementAtTop(gallery_obj.parallax_body) && e.deltaY < 0 && Math.abs(gallery_obj.parallax_scroll_x) >= 5) {
-        e.preventDefault();
-        return;
-      }
-
-      //Scrolling is disabled if any content panels are maximised and shown
-      if (document.querySelectorAll(".maximised.shown").length != 0 || document.querySelectorAll(".preview-image:hover").length != 0) {
-        scroll_enabled = false;
-        e.preventDefault();
-      }
-
-      if (scroll_enabled && window.scrollY <= window.innerHeight*2.1) {
-        //Make sure 100% of the screen is occupied
-        if (parallax_scroll_progress > 5)
-          scrollGalleryIntoView();
-
-        //Flip it around to maintain intuitive direction
-        gallery_obj.parallax_current_scroll_x = gallery_obj.parallax_current_scroll_x*-1;
-
-        //Fetch current scroll and update translateX
-        gallery_obj.parallax_scroll_x += gallery_obj.parallax_current_scroll_x;
-
-        if (!gallery_obj.parallax_container.getAttribute("class").includes("fast-scroll"))
-          gallery_obj.parallax_container.setAttribute("class",
-            gallery_obj.parallax_container.getAttribute("class").replace(" slow-scroll", "") + " fast-scroll"
-          );
-        gallery_obj.parallax_container.style.transform = `translateX(${gallery_obj.parallax_scroll_x}vh)`;
-
-        e.preventDefault();
-      }
-
-      window.parallax_scroll_progress = Math.abs(gallery_obj.parallax_scroll_x*(100/gallery_obj.gallery_width));
-      gallery_obj.parallax_scroll_indicator.style.width = `${gallery_obj.parallax_scroll_x*(100/gallery_obj.gallery_width)*-1}vw`;
+      
+      var max_deg = 1.25;
+      window.perspective_deg_x =
+        (mouse_y / half_height) * max_deg * -1 + max_deg / 2 + "deg";
+      window.perspective_deg_y =
+        (mouse_x / half_width) * max_deg * -1 + 2 + "deg";
+      
+      window.perspective_string = `rotateX(${perspective_deg_x}) rotateY(${perspective_deg_y})`;
+      gallery_obj.scene.style.transform = `perspective(20em) ${perspective_string}`;
     });
+    
+    // 2. Global Scroll Mapper (Horizontal Move + Manual Vertical Anchoring)
+    window.addEventListener("scroll", () => {
+      var track = document.getElementById("gallery-section");
+      var sticky_container = document.querySelector(
+        ".project-parallax-container"
+      );
+      
+      if (!track || !sticky_container) return;
+      
+      var rect = track.getBoundingClientRect();
+      var scrollable_dist = rect.height - window.innerHeight;
+      
+      // Calculate Vertical Offset to "lock" all siblings to the viewport
+      var vertical_offset = 0;
+      if (rect.top <= 0 && rect.bottom >= 0) {
+        vertical_offset = Math.abs(rect.top);
+      } else if (rect.bottom < 0) {
+        vertical_offset = scrollable_dist;
+      }
+      
+      /* -- ANCHOR ALL SIBLINGS MANUALLY -- */
+      var siblings = sticky_container.children;
+      for (var i = 0; i < siblings.length; i++) {
+        var child = siblings[i];
+        
+        if (child.id === "project-parallax-bookmark-container") {
+          // Keep centered in the manually moved viewport
+          child.style.top = vertical_offset + window.innerHeight / 2 + "px";
+        } else if (child.id === "project-parallax-scroll-indicator") {
+          // Keep pinned to the bottom of the manually moved viewport
+          child.style.top = vertical_offset + window.innerHeight - 5 + "px";
+        } else {
+          // Keep backgrounds and scene pinned to the top
+          child.style.top = vertical_offset + "px";
+        }
+      }
+      
+      /* -- HORIZONTAL MAPPING -- */
+      if (rect.top <= 0 && rect.bottom >= window.innerHeight) {
+        var progress = Math.abs(rect.top) / scrollable_dist;
+        gallery_obj.parallax_scroll_x =
+          progress * gallery_obj.gallery_width * -1;
+        
+        // Apply horizontal translation
+        gallery_obj.parallax_container.style.transform = `translateX(${gallery_obj.parallax_scroll_x}vh)`;
+        
+        // Update progress UI
+        window.parallax_scroll_progress = progress * 100;
+        if (gallery_obj.parallax_scroll_indicator) {
+          gallery_obj.parallax_scroll_indicator.style.width = `${window.parallax_scroll_progress}vw`;
+        }
+      }
+    });
+    
+    // 3. Handle Content Panel wheel specifically
+    gallery_obj.parallax_body.addEventListener(
+      "wheel",
+      (e) => {
+        var panel = e.target.closest(".content-wrapper");
+        if (panel) {
+          var is_at_top = panel.scrollTop <= 0 && e.deltaY < 0;
+          var is_at_bottom =
+            panel.scrollTop + panel.offsetHeight >= panel.scrollHeight &&
+            e.deltaY > 0;
+          
+          if (!is_at_top && !is_at_bottom) {
+            e.stopPropagation();
+          }
+        }
+      },
+      { passive: false }
+    );
   }
-
+  
   function initGalleryMobileEventHandlers() {
     var gallery_obj = main.gallery;
-    var touch_start_y = 0;
-    var touch_start_scroll_x = 0;
-
-    // Handle touch start
-    gallery_obj.parallax_body.addEventListener("touchstart", (e) => {
-        if (e.touches.length == 1) {
-          touch_start_y = e.touches[0].clientY;
-          touch_start_scroll_x = gallery_obj.parallax_scroll_x;
+    
+    // On mobile, the vertical scroll triggers the window 'scroll' event.
+    // This handler manages UI state blocking (e.g. stopping scroll when panel is open).
+    gallery_obj.parallax_body.addEventListener(
+      "touchmove",
+      (e) => {
+        if (document.querySelectorAll(".maximised.shown").length != 0) {
+          var is_over_content_panel =
+            e.target.closest(".parallax-item-content-panel") !== null;
+          // Prevent the whole page from scrolling if we're interacting with a panel background
+          if (!is_over_content_panel) {
+            e.preventDefault();
+          }
         }
-    });
-
-    // Handle touch move
-    gallery_obj.parallax_body.addEventListener("touchmove", (e) => {
-      if (e.touches.length === 1) {
-          var touch = e.touches[0];
-  
-          // Check if over panel
-          var is_over_panel_container = false;
-          var is_over_content_panel = false;
-  
-          for (var i = 0; i < gallery_obj.panel_id_patterns.length; i++) {
-              if (e.target.id && e.target.id.includes(gallery_obj.panel_id_patterns[i])) {
-                  is_over_panel_container = true;
-                  break;
-              }
-          }
-          is_over_content_panel = e.target.closest('.parallax-item-content-panel') !== null;
-  
-          if (is_over_panel_container || is_over_content_panel) {
-              return; // let content panel scroll normally
-          }
-  
-          // Calculate vertical swipe movement
-          var deltaY = ((touch.clientY - touch_start_y)*-1)/2.5;
-  
-          // Check if trying to scroll UP while already at start
-          var trying_to_scroll_down = (deltaY > 0);
-          var trying_to_scroll_up = (deltaY < 0);
-          var at_start_of_gallery = (Math.abs(gallery_obj.parallax_scroll_x) < 5);
-          var at_end_of_gallery = (Math.abs(gallery_obj.parallax_scroll_x) > gallery_obj.gallery_width - 5);
-          console.log(`End of gallery check: `, (trying_to_scroll_down && at_end_of_gallery));
-  
-          if (
-            (trying_to_scroll_up && at_start_of_gallery) ||
-            (trying_to_scroll_down && at_end_of_gallery)
-          ) {
-              // Allow the page to scroll upward normally
-              return;
-          }
-  
-          // Otherwise: scroll the gallery horizontally
-          var scroll_speed_modifier = 2;
-          gallery_obj.parallax_scroll_x = touch_start_scroll_x - (deltaY / scroll_speed_modifier);
-  
-          // Enforce bounds
-          if (gallery_obj.parallax_scroll_x > 0) gallery_obj.parallax_scroll_x = 0;
-          if (gallery_obj.parallax_scroll_x * -1 > gallery_obj.gallery_width) gallery_obj.parallax_scroll_x = -gallery_obj.gallery_width;
-  
-          gallery_obj.parallax_container.style.transform = `translateX(${gallery_obj.parallax_scroll_x}vh)`;
-          window.parallax_scroll_progress = Math.abs(gallery_obj.parallax_scroll_x*(100/gallery_obj.gallery_width));
-          gallery_obj.parallax_scroll_indicator.style.width = `${gallery_obj.parallax_scroll_x*(100/gallery_obj.gallery_width)*-1}vw`;
-  
-          scrollGalleryIntoView();
-          e.preventDefault(); // Only prevent if scrolling gallery
-      }
-    }, { passive: false });
-
-    // Handle touch end
-    gallery_obj.parallax_body.addEventListener("touchend", (e) => {
-        touch_start_y = 0;
-        touch_start_scroll_x = 0;
-    });
+      },
+      { passive: false }
+    );
   }
-
-  //initGallery() - Hide all parallax elements that are dependencies by default
-  function initGallery () {
-    //Declare local instance variables
+  
+  function initGallery() {
     var gallery_obj = main.gallery;
     var hide_elements = [];
     var parallax_elements = document.querySelectorAll(".parallax-item");
-
-    //Iterate over all gallery elements
+    
     for (var i = 0; i < parallax_elements.length; i++) {
-      var parallax_obj = gallery_obj.parallax_settings[parallax_elements[i].id];
-
-      //Other initialisation
       initParallaxElement(parallax_elements[i].id);
-
-      //hide_elements can never contain elements that are pinned
-      if (getParent(parallax_elements[i].id).length > 0 && !gallery_obj.parallax_pinned_items.includes(parallax_elements[i].id))
+      if (
+        getParent(parallax_elements[i].id).length > 0 &&
+        !gallery_obj.parallax_pinned_items.includes(parallax_elements[i].id)
+      )
         hide_elements.push(parallax_elements[i].id);
     }
-    hide_elements = unique(hide_elements);
-
-    //Iterate over all hidden elements
+    hide_elements = [...new Set(hide_elements)];
+    
     for (var i = 0; i < hide_elements.length; i++) {
       var local_el = document.getElementById(hide_elements[i]);
+      local_el.classList.add("hidden");
       var local_obj = gallery_obj.parallax_settings[local_el.id];
-
-      local_el.setAttribute("class",
-        local_el.getAttribute("class") + " hidden"
-      );
-      if (local_obj.animation)
-        local_el.setAttribute("animation",
-          `${local_obj.animation}`
-        );
+      if (local_obj && local_obj.animation)
+        local_el.setAttribute("animation", `${local_obj.animation}`);
     }
-
-    //Iterate over all bookmarked items; show bookmarks in preview area
+    
     for (var i = 0; i < gallery_obj.bookmark_items.length; i++)
       addBookmarkItem(gallery_obj.bookmark_items[i], true);
   }
   
-  function initGalleryUI () {
-    //Declare local instance variables
+  function initGalleryUI() {
     var gallery_obj = main.gallery;
-  
-    //Restrict parallax fluidity
+    
     gallery_obj.parallax.scalar(12.5, 35);
-  
-    //Bookmark UI
-    {
-      gallery_obj.bookmark_minimise_btn.onclick = function () {
-        (!gallery_obj.bookmark_minimise_btn.getAttribute("class").includes("minimised")) ? hideBookmarkUI() : showBookmarkUI();
-      }
-    }
-  
-    //Content Panel UI
-    {
-      setTimeout(function(){
-        var all_content_titles = document.querySelectorAll(".parallax-item-content-panel-title");
-        var all_content_panels = document.querySelectorAll(`#main-parallax-content-panel-wrapper .content-wrapper`);
-
-        //Iterate over all_content_panels
-        for (var i = 0; i < all_content_panels.length; i++) {
-          var local_content_title = all_content_panels[i].querySelector(`div.parallax-item-content-panel-title`);
-          var local_id = all_content_panels[i].id
-            .replace("-content-panel", "")
-            .replace("-content-wrapper", "");
-
-          local_content_title.innerHTML = `${local_content_title.textContent}
-            <img id = "${local_id}-close-btn" class = "content-panel-close-btn" src = "gfx/interface/icons/close_btn.png" draggable = "false" onclick = "closeContentPanel('${local_id}');">
-            <img id = "${local_id}-maximise-btn" class = "content-panel-maximise-btn" src = "gfx/interface/icons/maximise_icon.png" draggable = "false" onclick = "maximiseContentPanel('${local_id}');">
-            ${(document.getElementById(local_id + "-preview") ) ? `<img id = "${local_id}-preview-btn" class = "content-panel-preview-btn active" src = "gfx/interface/icons/preview_icon.png" draggable = "false" onclick = "togglePreview('${local_id}', this);">` : ""}
-          `;
+    
+    gallery_obj.bookmark_minimise_btn.onclick = function () {
+      !gallery_obj.bookmark_minimise_btn.classList.contains("minimised")
+        ? hideBookmarkUI()
+        : showBookmarkUI();
+    };
+    
+    setTimeout(function () {
+      var all_panels = document.querySelectorAll(
+        `#main-parallax-content-panel-wrapper .content-wrapper`
+      );
+      for (var i = 0; i < all_panels.length; i++) {
+        var title = all_panels[i].querySelector(
+          `div.parallax-item-content-panel-title`
+        );
+        var id = all_panels[i].id
+        .replace("-content-panel", "")
+        .replace("-content-wrapper", "");
+        
+        title.innerHTML = `${title.textContent}
+            <img id="${id}-close-btn" class="content-panel-close-btn" src="gfx/interface/icons/close_btn.png" draggable="false" onclick="closeContentPanel('${id}');">
+            <img id="${id}-maximise-btn" class="content-panel-maximise-btn" src="gfx/interface/icons/maximise_icon.png" draggable="false" onclick="maximiseContentPanel('${id}');">
+            ${
+          document.getElementById(id + "-preview")
+            ? `<img id="${id}-preview-btn" class="content-panel-preview-btn active" src="gfx/interface/icons/preview_icon.png" draggable="false" onclick="togglePreview('${id}', this);">`
+            : ""
         }
-      }, 500);
-    }
-  
-    //Parallax event listeners for scrolling/panning around
-    {
-      initGalleryDesktopEventHandlers();
-      initGalleryMobileEventHandlers();
-    }
-  
-    //Parallax gallery logic
-    var parallax_gallery_logic = setInterval(function(){
+          `;
+      }
+    }, 500);
+    
+    initGalleryDesktopEventHandlers();
+    initGalleryMobileEventHandlers();
+    
+    // Check for visibility dependencies
+    setInterval(function () {
       for (var i = 0; i < gallery_obj.parallax_selected.length; i++) {
-        if (gallery_obj.parallax_settings[gallery_obj.parallax_selected[i]]) {
-          var item_obj = gallery_obj.parallax_settings[gallery_obj.parallax_selected[i]];
-  
-          //Show dependencies if not already shown
-          if (item_obj.dependencies) {
-            for (var x = 0; x < item_obj.dependencies.length; x++) {
-              var child_element = document.getElementById(item_obj.dependencies[x]);
-
-              if (child_element)
-                if (child_element.id) {
-                  var child_obj = gallery_obj.parallax_settings[child_element.id];
-
-                  if (child_obj)
-                    if (child_element.getAttribute("class").includes(" hidden")) {
-                      child_element.setAttribute("class", child_element.getAttribute("class").replace(" hidden", ""));
-                      if (gallery_obj.parallax_settings[child_element.id].animation) {
-                        var local_obj = gallery_obj.parallax_settings[child_element.id];
-                        //Invoke show_function
-                        local_obj.show_function();
-                      }
-                    }
-                }
+        var item_id = gallery_obj.parallax_selected[i];
+        var item_obj = gallery_obj.parallax_settings[item_id];
+        if (item_obj && item_obj.dependencies) {
+          item_obj.dependencies.forEach((dep_id) => {
+            var el = document.getElementById(dep_id);
+            if (el && el.classList.contains("hidden")) {
+              el.classList.remove("hidden");
+              var dep_obj = gallery_obj.parallax_settings[dep_id];
+              if (dep_obj && dep_obj.show_function) dep_obj.show_function();
             }
-          }
+          });
         }
       }
     }, 100);
-  
-    //Update content panel container
-    var content_panel_container_logic = setInterval(function(){
-      updateContentPanelContainer();
-    }, 0);
-  
-    //Initialise the gallery
+    
+    // Sync content panel overlays
+    setInterval(updateContentPanelContainer, 16);
+    
     initGallery();
   }
-
-  function scrollGalleryIntoView () {
-    //Declare local instance variables
-    var viewport_two_anchor_el = document.getElementById("project-parallax-anchor");
-    var viewport_three_anchor_el = document.getElementById("ministrat-anchor");
-
-    document.getElementById("project-parallax-anchor").scrollIntoView({
-      behavior: "instant"
-    });
-  }
   
-  function updateContentPanelContainer () {
-    //Declare local instance variables
+  function updateContentPanelContainer() {
     var gallery_obj = main.gallery;
-    var main_parallax_scene = document.querySelector(".layer.main");
-  
-    //Regular error trapping
+    var main_scene = document.querySelector(".layer.main");
+    
     try {
-      if (!gallery_obj.content_panel_update_paused) {
-        gallery_obj.content_panel_container.setAttribute("style",
-          main_parallax_scene.getAttribute("style")
-        );
-        gallery_obj.content_panel_scroll_container.setAttribute(
-          "style",
-          `transform: perspective(40em) rotateX(${parseInt(window.perspective_deg_y.replace("deg", ""))*0.5}deg) translateX(${gallery_obj.parallax_scroll_x}vh);`
-        );
+      if (!gallery_obj.content_panel_update_paused && main_scene) {
+        // Sync 3D perspective
+        gallery_obj.content_panel_container.style.transform =
+          main_scene.style.transform;
+        
+        // Sync manual vertical anchoring for content panels
+        var track = document.getElementById("gallery-section");
+        var rect = track.getBoundingClientRect();
+        if (rect.top <= 0) {
+          gallery_obj.content_panel_container.style.top =
+            Math.abs(rect.top) + "px";
+        }
+        
+        // Sync horizontal scroll position
+        gallery_obj.content_panel_scroll_container.style.transform = `perspective(40em) rotateX(${
+          parseInt(window.perspective_deg_y.replace("deg", "")) * 0.5
+        }deg) translateX(${gallery_obj.parallax_scroll_x}vh)`;
+        
         gallery_obj.content_panel_container.style.left = `0vh`;
       }
-    } catch {}
+    } catch (err) {}
   }
 }

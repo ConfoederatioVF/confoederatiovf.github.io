@@ -1,9 +1,10 @@
+/* -- gallery_bookmarks.css -- */
 /* -- Parallax gallery bookmark styling -- */
 .parallax-bookmark-container {
 	position: absolute;
 	top: 50%;
 	width: 100%;
-	height: 50%;
+	height: 50vh;
 
   z-index: 1;
 
@@ -14,7 +15,7 @@
     rgba(0, 0, 0, 0) 100%
   );
 
-  transition: all 0.5s ease !important;
+  transition: all 0.5s ease, top 0s ease !important;
   pointer-events: none;
 }
 .parallax-bookmark-container.no-bookmarks {
