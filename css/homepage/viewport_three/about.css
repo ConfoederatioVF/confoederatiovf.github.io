@@ -31,4 +31,6 @@
   background-size: cover;
   overflow: hidden;
   z-index: 1;
+  
+  #main-map { height: 0; }
 }
