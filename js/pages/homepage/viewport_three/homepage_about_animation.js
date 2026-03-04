@@ -12,6 +12,7 @@
       var scroll_vh = window.scrollY/main.vh;
       var banner_obj = main.banner;
 
+      /*
       //16vh offset
       banner_obj.about_me_overlay_title.style.transform = `translateY(${(18/200)*scroll_vh - (24 - 24*(scroll_vh/main.about.y))}vh)`;
 
@@ -24,6 +25,7 @@
       //20vh offset
       banner_obj.about_body_container.style.opacity = (1/80)*(scroll_vh - 80);
       banner_obj.about_body_container.style.transform = `translateY(${((50)/200)*scroll_vh}vh)`;
+       */
     } catch (e) {
       console.log(e);
     }
