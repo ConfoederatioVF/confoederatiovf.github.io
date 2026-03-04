@@ -362,6 +362,8 @@ var typing_speed = 750;
       }
       
       main_video_bg.loop = true;
+      if (main_video_bg.ended)
+        main_video_bg.play();
     };
 
     //Main loop logic
