@@ -1,3 +1,4 @@
+//homepage_gallery_bookmark_ui.js
 //Initialise functions
 {
   function addBookmarkItem (arg0_element_id, arg1_no_animation) {

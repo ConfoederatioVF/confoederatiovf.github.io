@@ -1,3 +1,4 @@
+//homepage_on_scroll.js
 //Declare local element variables
 var about_me_section = document.getElementById("about-me-section");
 var homepage_banner_el = document.getElementById("homepage-banner");

@@ -1,3 +1,4 @@
+//homepage_gallery_content_panel_ui.js
 //Initialise functions
 {
   function closeContentPanel (arg0_element_id) {

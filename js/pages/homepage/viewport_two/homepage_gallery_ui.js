@@ -1,3 +1,4 @@
+//homepage_gallery_ui.js
 //Initialise functions
 {
   function initGalleryDesktopEventHandlers () {

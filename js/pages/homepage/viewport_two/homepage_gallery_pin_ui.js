@@ -1,3 +1,4 @@
+//homepage_gallery_pin_ui.js
 //Initialise functions
 {
   function pinItem (arg0_element_id) {

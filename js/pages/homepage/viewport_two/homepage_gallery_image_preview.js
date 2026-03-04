@@ -1,3 +1,4 @@
+//homepage_gallery_image_preview.js
 //Framework functions
 {
   function getCursorPosition (e, arg0_image) {

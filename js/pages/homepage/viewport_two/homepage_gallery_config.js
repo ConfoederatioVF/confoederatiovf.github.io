@@ -1,3 +1,4 @@
+//homepage_gallery_config.js
 //Initialise functions
 {
   /*
