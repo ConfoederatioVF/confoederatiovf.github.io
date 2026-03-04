@@ -135,26 +135,26 @@
 }
 
 //Begin initial typing animation
-var banner_caret_element = document.getElementById("homepage-banner-caret-element");
-var banner_caret_spacer_element = document.getElementById("homepage-banner-caret-spacer");
-var banner_selected_once = false;
-var banner_title_text = document.getElementById("homepage-banner-main-title-text");
-var cleveland_national_forest_bg = document.getElementById("homepage-banner-cleveland-national-forest-bg");
-var content_editable_evt_listeners_added = false;
-var current_banner = "main_video";
-var current_font = "bahnschrift";
-var current_font_weight = 700;
-var current_overlay = "grey";
-var homepage_banner_overlay = document.getElementById("homepage-banner-plexus-overlay-bg");
-var lava_lamp_bg = document.getElementById("homepage-banner-lava-lamp-bg");
-var main_video_bg = document.getElementById("homepage-banner-video-bg");
-var misty_forest_bg = document.getElementById("homepage-banner-video-bg-misty-forest");
-var raindrop_bg = document.getElementById("homepage-banner-rain-bg-container");
-var settings_container = document.getElementById("homepage-banner-settings-container");
-var time_since_selection = 0;
-var title_element = document.getElementById("homepage-banner-main-title");
-var triumph_and_tragedy_bg = document.getElementById("homepage-banner-triumph-and-tragedy-bg");
-var typing_speed = 750;
+let banner_caret_element = document.getElementById("homepage-banner-caret-element");
+let banner_caret_spacer_element = document.getElementById("homepage-banner-caret-spacer");
+let banner_selected_once = false;
+let banner_title_text = document.getElementById("homepage-banner-main-title-text");
+let cleveland_national_forest_bg = document.getElementById("homepage-banner-cleveland-national-forest-bg");
+let content_editable_evt_listeners_added = false;
+let current_banner = "main_video";
+let current_font = "bahnschrift";
+let current_font_weight = 700;
+let current_overlay = "grey";
+let homepage_banner_overlay = document.getElementById("homepage-banner-plexus-overlay-bg");
+let lava_lamp_bg = document.getElementById("homepage-banner-lava-lamp-bg");
+let main_video_bg = document.getElementById("homepage-banner-video-bg");
+let misty_forest_bg = document.getElementById("homepage-banner-video-bg-misty-forest");
+let raindrop_bg = document.getElementById("homepage-banner-rain-bg-container");
+let settings_container = document.getElementById("homepage-banner-settings-container");
+let time_since_selection = 0;
+let title_element = document.getElementById("homepage-banner-main-title");
+let triumph_and_tragedy_bg = document.getElementById("homepage-banner-triumph-and-tragedy-bg");
+let typing_speed = 750;
 
 //Homepage banner functions
 {
