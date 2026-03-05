@@ -87,12 +87,9 @@ window.initGlobal = function () {
   //Declare local instance variables
   let config_obj = config.homepage;
   
-  document.querySelectorAll("body")[0].remove();
-  
-  for (let i = 0; i < config_obj.head_js_files.length; i++)
-    loadScript(config_obj.head_js_files[i]);
-  for (let i = 0; i < config_obj.body_js_files.length; i++)
-    loadScript(config_obj.body_js_files[i]);
+  document.querySelectorAll("body")[0].remove(); //Fix duplicate body
+  for (let i = 0; i < config_obj.js_files.length; i++)
+    loadScript(config_obj.js_files[i]);
   
   window.initialisation_loop = setInterval(() => {
     try {

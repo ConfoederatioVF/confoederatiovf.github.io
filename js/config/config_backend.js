@@ -1,6 +1,7 @@
 window.config = {}; //[WIP] - Config
 config.homepage = {
-  head_js_files: [
+  js_files: [
+    //Head files
     "js/UF/ABRS/ABRS.js",
     "js/UF/actions/caching_actions.js",
     "js/UF/actions/timelines_actions.js",
@@ -29,28 +30,27 @@ config.homepage = {
     "js/UF/strings/basic_strings.js",
     "js/UF/strings/cleaning_strings.js",
     "js/UF/strings/split_strings.js",
-  ],
-  body_js_files: [
+    
     //Viewport 1
-    "js/pages/homepage/viewport_one/homepage_banner_animation.js",
-    "js/pages/homepage/viewport_one/triumph_and_tragedy_bg_anim.js",
-    "js/pages/homepage/viewport_one/lava_lamp_bg_anim.js",
-    "js/pages/homepage/viewport_one/rain_bg_anim.js",
-    "js/pages/homepage/viewport_one/homepage_banner.js",
-    "js/pages/homepage/viewport_one/homepage_banner_settings_ui.js",
-    "js/pages/homepage/viewport_one/homepage_banner_ui.js",
+    "js/pages/homepage/viewport_1/homepage_banner_animation.js",
+    "js/pages/homepage/viewport_1/triumph_and_tragedy_bg_anim.js",
+    "js/pages/homepage/viewport_1/lava_lamp_bg_anim.js",
+    "js/pages/homepage/viewport_1/rain_bg_anim.js",
+    "js/pages/homepage/viewport_1/homepage_banner.js",
+    "js/pages/homepage/viewport_1/homepage_banner_settings_ui.js",
+    "js/pages/homepage/viewport_1/homepage_banner_ui.js",
     
     //Viewport 2
-    "js/pages/homepage/viewport_two/homepage_gallery.js",
-    "js/pages/homepage/viewport_two/homepage_gallery_bookmark_ui.js",
-    "js/pages/homepage/viewport_two/homepage_gallery_config.js",
-    "js/pages/homepage/viewport_two/homepage_gallery_content_panel_ui.js",
-    "js/pages/homepage/viewport_two/homepage_gallery_image_preview.js",
-    "js/pages/homepage/viewport_two/homepage_gallery_pin_ui.js",
-    "js/pages/homepage/viewport_two/homepage_gallery_ui.js",
+    "js/pages/homepage/viewport_2/homepage_gallery.js",
+    "js/pages/homepage/viewport_2/homepage_gallery_bookmark_ui.js",
+    "js/pages/homepage/viewport_2/homepage_gallery_config.js",
+    "js/pages/homepage/viewport_2/homepage_gallery_content_panel_ui.js",
+    "js/pages/homepage/viewport_2/homepage_gallery_image_preview.js",
+    "js/pages/homepage/viewport_2/homepage_gallery_pin_ui.js",
+    "js/pages/homepage/viewport_2/homepage_gallery_ui.js",
     
     //Viewport 3
-    "js/pages/homepage/viewport_three/homepage_about_animation.js",
+    "js/pages/homepage/viewport_3/homepage_about_animation.js",
     //Viewport 3 - Ministrat
     "ministrat/map/map_svg.js",
     
