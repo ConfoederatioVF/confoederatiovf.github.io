@@ -65,8 +65,7 @@
       /* -- HORIZONTAL MAPPING -- */
       if (rect.top <= 0 && rect.bottom >= window.innerHeight) {
         var progress = Math.abs(rect.top) / scrollable_dist;
-        gallery_obj.parallax_scroll_x =
-          progress * gallery_obj.gallery_width * -1;
+        gallery_obj.parallax_scroll_x = progress*gallery_obj.gallery_width*-1;
         
         // Apply horizontal translation
         gallery_obj.parallax_container.style.transform = `translateX(${gallery_obj.parallax_scroll_x}vh)`;

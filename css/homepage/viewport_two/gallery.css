@@ -1,6 +1,6 @@
 /* -- Parallax positioning and backgrounds -- */
 #gallery-section { 
-    height: 400vh; 
+    height: calc(400vh*4); 
 } 
 /* -- [TEMP] -- */
 .project-parallax-container {

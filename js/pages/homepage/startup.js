@@ -50,72 +50,110 @@ window.main = {
   }
 };
 
-//Reset main.gallery.parallax
-setTimeout(function(){
-  main.gallery.parallax = new Parallax(document.getElementById("scene"));
-  console.log(main.gallery.parallax.scalarX, main.gallery.parallax.scalarY);
-}, 1000);
+//[QUARANTINE]
+window.loadScript = function (src, options = {}) {
+  return new Promise((resolve, reject) => {
+    // Check if script is already loaded to avoid duplicates
+    if (document.querySelector(`script[src="${src}"]`)) {
+      resolve();
+      return;
+    }
+    
+    const script = document.createElement("script");
+    script.src = src;
+    script.async = options.async !== false;
+    
+    // Handle additional attributes (e.g., type="module")
+    if (options.type) {
+      script.type = options.type;
+    }
+    
+    // Success event
+    script.onload = () => {
+      resolve(script);
+    };
+    
+    // Error event
+    script.onerror = () => {
+      reject(new Error(`Script load error: ${src}`));
+    };
+    
+    // Append to head (or body)
+    document.head.appendChild(script);
+  });
+}
 
-//Initialise main
-var common_selectors = config.homepage.defines.common.selectors;
-
-//Add common_selectors to main
-var all_viewport_one_selectors = Object.keys(common_selectors.viewport_one);
-var all_viewport_two_selectors = Object.keys(common_selectors.viewport_two);
-
-//Iterate over all viewport one selectors
-for (var i = 0; i < all_viewport_one_selectors.length; i++)
-  main.banner[all_viewport_one_selectors[i]] = common_selectors.viewport_one[all_viewport_one_selectors[i]];
-//Iterate over all viewport two selectors
-for (var i = 0; i < all_viewport_two_selectors.length; i++)
-  main.gallery[all_viewport_two_selectors[i]] = common_selectors.viewport_two[all_viewport_two_selectors[i]];
-
-//There are two bodies for some reason! Where did that mess come from?
-var all_bodies = document.querySelectorAll("body");
-all_bodies[0].remove();
-
-//[WIP] - Mobile temporary fix
-/*if (isMobileDevice()) {
-  window.alert(`You are on a mobile device.\n\nThis website is currently unoptimised for mobile devices. Please use a desktop computer to view this website. Experimental Patch: 016`);
-
-  document.getElementById("about-me-section").setAttribute("class",
-    document.getElementById("about-me-section").getAttribute("class") + " display-none"
-  );
-}*/
-
-//Hack fix for glitched elements
-setTimeout(function(){
-  //Viewport 1
-  //Start top-banner animation for homepage
-  homepageBannerAnimation();
-
-  settings_btn.setAttribute("class", "settings-btn hidden");
-
-  //Viewport 2
-  //Gallery
-  initGalleryTiles();
-  initGalleryUI();
+window.initGlobal = function () {
+  //Declare local instance variables
+  let config_obj = config.homepage;
   
-  homepageAboutOnScroll();
-}, 1);
+  document.querySelectorAll("body")[0].remove();
+  
+  for (let i = 0; i < config_obj.head_js_files.length; i++)
+    loadScript(config_obj.head_js_files[i]);
+  for (let i = 0; i < config_obj.body_js_files.length; i++)
+    loadScript(config_obj.body_js_files[i]);
+  
+  window.initialisation_loop = setInterval(() => {
+    try {
+      //Reset main.gallery.parallax
+      setTimeout(function(){
+        main.gallery.parallax = new Parallax(document.getElementById("scene"));
+        console.log(main.gallery.parallax.scalarX, main.gallery.parallax.scalarY);
+      }, 1000);
+      
+      //Initialise main
+      let common_selectors = config.homepage.defines.common.selectors;
+      
+      //Add common_selectors to main
+      let all_viewport_one_selectors = Object.keys(common_selectors.viewport_one);
+      let all_viewport_two_selectors = Object.keys(common_selectors.viewport_two);
+      
+      //Iterate over all viewport one selectors
+      for (let i = 0; i < all_viewport_one_selectors.length; i++)
+        main.banner[all_viewport_one_selectors[i]] = common_selectors.viewport_one[all_viewport_one_selectors[i]];
+      //Iterate over all viewport two selectors
+      for (let i = 0; i < all_viewport_two_selectors.length; i++)
+        main.gallery[all_viewport_two_selectors[i]] = common_selectors.viewport_two[all_viewport_two_selectors[i]];
+      
+      //Hack fix for glitched elements
+      setTimeout(function () {
+        //Viewport 1
+        //Start top-banner animation for homepage
+        homepageBannerAnimation();
+        
+        settings_btn.setAttribute("class", "settings-btn hidden");
+        
+        //Viewport 2
+        //Gallery
+        initGalleryTiles();
+        initGalleryUI();
+        
+        homepageAboutOnScroll();
+      }, 1);
+      
+      setTimeout(function () {
+        //General fix
+        fixMobileVh();
+        
+        //Viewport 2
+        //Initialise magnifiers for all .preview-image elements
+        let all_art_preview_imgs = document.querySelectorAll(".preview-image-container");
+        initialiseHomepageBannerUI();
+        
+        for (let i = 0; i < all_art_preview_imgs.length; i++)
+          magnify(all_art_preview_imgs[i].querySelector("img"), 3);
+        
+        //Viewport 3 scroll handling
+        setInterval(function () {
+          var title_offset_y = document.getElementById("about-me-overlay").scrollTop*-1;
+          main.banner.about_me_overlay_title.style.top = `calc(-14dvh + ${title_offset_y}px)`;
+        }, 0);
+      }, 650);
+      
+      clearInterval(window.initialisation_loop);
+    } catch (e) { console.error(e); }
+  }, 100);
+};
+initGlobal();
 
-setTimeout(function(){
-  //General fix
-  fixMobileVh();
-
-  //Viewport 2
-  //Initialise magnifiers for all .preview-image elements
-  var all_art_preview_imgs = document.querySelectorAll(".preview-image-container");
-  console.log(all_art_preview_imgs)
-
-  for (var i = 0; i < all_art_preview_imgs.length; i++) magnify(
-    all_art_preview_imgs[i].querySelector("img"),
-    3
-  );
-
-  //Viewport 3 scroll handling
-  setInterval(function () {
-    var title_offset_y = document.getElementById("about-me-overlay").scrollTop*-1;
-    main.banner.about_me_overlay_title.style.top = `calc(-14dvh + ${title_offset_y}px)`;
-  }, 0);
-}, 650);

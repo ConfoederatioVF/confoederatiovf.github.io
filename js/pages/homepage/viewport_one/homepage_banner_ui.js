@@ -69,17 +69,20 @@ var dots_container = document.getElementById("homepage-banner-dots-container");
       }
     }, 1000);
   }
-}
-
-//Initialise DOM elements/buttons
-var all_backgrounds = Object.keys(banner_settings.backgrounds);
-for (var i = 0; i < all_backgrounds.length; i++) {
-  var local_background = all_backgrounds[i];
-
-  //Substantiate element
-  dots_container.innerHTML += `
-    <div id = "change-banner-btn-${local_background}" class = "homepage-banner-change-bg-btn"
-      onclick = "homepageBannerChangeBanner('${local_background}');"
-    ></div>
-  `;
+  
+  function initialiseHomepageBannerUI () {
+    //Initialise DOM elements/buttons
+    var all_backgrounds = Object.keys(banner_settings.backgrounds);
+    
+    for (var i = 0; i < all_backgrounds.length; i++) {
+      var local_background = all_backgrounds[i];
+      
+      //Substantiate element
+      dots_container.innerHTML += `
+        <div id = "change-banner-btn-${local_background}" class = "homepage-banner-change-bg-btn"
+          onclick = "homepageBannerChangeBanner('${local_background}');"
+        ></div>
+      `;
+    }
+  }
 }

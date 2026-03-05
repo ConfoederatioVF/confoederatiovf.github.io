@@ -1,7 +1,34 @@
 window.config = {}; //[WIP] - Config
 config.homepage = {
   head_js_files: [
-    
+    "js/UF/ABRS/ABRS.js",
+    "js/UF/actions/caching_actions.js",
+    "js/UF/actions/timelines_actions.js",
+    "js/UF/ai/basic_ai.js",
+    "js/UF/animation/basic_animation.js",
+    "js/UF/arrays/basic_arrays.js",
+    "js/UF/arrays/conversion_arrays.js",
+    "js/UF/arrays/dataframes_arrays.js",
+    "js/UF/arrays/maths_arrays.js",
+    "js/UF/arrays/search_sort_arrays.js",
+    "js/UF/BrowserUI/basic_html.js",
+    "js/UF/BrowserUI/context_menus.js",
+    "js/UF/BrowserUI/groups_framework.js",
+    "js/UF/BrowserUI/hierarchy_framework.js",
+    "js/UF/colours/basic_colours.js",
+    "js/UF/curl/basic_curl.js",
+    "js/UF/date/basic_date.js",
+    "js/UF/date/history_date.js",
+    "js/UF/log/basic_log.js",
+    "js/UF/numbers/basic_numbers.js",
+    "js/UF/numbers/ranges_numbers.js",
+    "js/UF/objects/basic_objects.js",
+    "js/UF/objects/maths_objects.js",
+    "js/UF/objects/smart_search_objects.js",
+    "js/UF/pathfinding/a_star_pathfinding.js",
+    "js/UF/strings/basic_strings.js",
+    "js/UF/strings/cleaning_strings.js",
+    "js/UF/strings/split_strings.js",
   ],
   body_js_files: [
     //Viewport 1
@@ -25,6 +52,8 @@ config.homepage = {
     //Viewport 3
     "js/pages/homepage/viewport_three/homepage_about_animation.js",
     //Viewport 3 - Ministrat
+    "ministrat/map/map_svg.js",
+    
     "ministrat/common/config_backend.js",
     "ministrat/common/cities/cities.js",
     "ministrat/common/defines/ai_defines.js",
