@@ -2,14 +2,12 @@
 .homepage-banner-centre-container {
   width: 100vw;
 }
-.homepage-banner-video-bg, .homepage-banner-video-bg-misty-forest, .homepage-banner-triumph-and-tragedy-bg img, .homepage-banner-cleveland-national-forest-bg {
-  top: 0px;
-  left: 0px;
-  min-height: 100%;
-  min-width: 100%;
-}
-.homepage-banner-video-bg, .homepage-banner-video-bg-misty-forest {
-  position: fixed;
+.homepage-banner-video-bg, .homepage-banner-video-bg-misty-forest, .homepage-banner-triumph-and-tragedy-bg, .homepage-banner-cleveland-national-forest-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-height: 100dvh;
+  min-width: 100dvw;
 }
 .homepage-banner-triumph-and-tragedy-bg img {
   position: absolute;

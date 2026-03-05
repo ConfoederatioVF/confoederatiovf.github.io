@@ -1,10 +1,10 @@
 /* -- Lava lamp parallax background -- */
 .homepage-banner-lava-lamp-bg {
-  position: fixed;
+  position: absolute;
   top: 0px;
   left: 0px;
-  width: 100%;
-  height: 100%;
+  width: 100dvw;
+  height: 100dvh;
 
   background: red;
   background: -webkit-linear-gradient(left top, #152a8e, #b1376c);
@@ -16,8 +16,8 @@
  content: "";
  position: absolute;
 
- width: 100%;
- height: 100%;
+ width: 100dvw;
+ height: 100dvh;
  top: 0px;
  left: 0px;
 
@@ -28,8 +28,8 @@
 	display: inline-block;
 	position: relative;
 
-  width: 100%;
-  height: 100%;
+  width: 100dvw;
+  height: 100dvh;
 }
 
 /* -- Blob styling -- */

@@ -1,6 +1,6 @@
 /* -- Apply parallax to main video background -- */
 .homepage-banner-video-bg {
-  position: fixed;
+  position: absolute;
   z-index: -999;
 }
 
@@ -10,15 +10,14 @@
   background-size: cover;
   background-attachment: fixed;
   background-repeat: no-repeat;
-  z-index: 999 !important;
 }
 /* -- Rain background -- */
 .homepage-banner-rain-bg, .homepage-banner-raindrops-container {
   position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 100%;
-  height: 100%;
+  top: 0;
+  left: 0;
+  width: 100dvw;
+  height: 100dvh;
 }
 .homepage-banner-rain-bg {
   background-image: url("../../../gfx/interface/rainy_night_bg.png");

@@ -32,13 +32,7 @@ config.homepage = {
     "js/UF/strings/split_strings.js",
     
     //Viewport 1
-    "js/pages/homepage/viewport_1/homepage_banner_animation.js",
-    "js/pages/homepage/viewport_1/triumph_and_tragedy_bg_anim.js",
-    "js/pages/homepage/viewport_1/lava_lamp_bg_anim.js",
-    "js/pages/homepage/viewport_1/rain_bg_anim.js",
     "js/pages/homepage/viewport_1/homepage_banner.js",
-    "js/pages/homepage/viewport_1/homepage_banner_settings_ui.js",
-    "js/pages/homepage/viewport_1/homepage_banner_ui.js",
     
     //Viewport 2
     "js/pages/homepage/viewport_2/homepage_gallery.js",
