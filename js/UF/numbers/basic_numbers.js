@@ -426,7 +426,8 @@
 
     //Return statement
     return (!do_not_round) ? Math.round(random_number) : random_number;
-  }
+  };
+  Math.randomNumber = window.randomNumber;
 
   /*
     returnSafeNumber() - Returns a safe number.

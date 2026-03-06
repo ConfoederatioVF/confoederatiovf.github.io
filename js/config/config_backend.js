@@ -16,6 +16,7 @@ config.homepage = {
     "js/UF/BrowserUI/context_menus.js",
     "js/UF/BrowserUI/groups_framework.js",
     "js/UF/BrowserUI/hierarchy_framework.js",
+    "js/UF/class/class_basic.js",
     "js/UF/colours/basic_colours.js",
     "js/UF/curl/basic_curl.js",
     "js/UF/date/basic_date.js",
