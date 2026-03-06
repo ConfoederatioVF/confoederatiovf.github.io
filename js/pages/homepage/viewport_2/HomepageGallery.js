@@ -38,14 +38,6 @@ window.HomepageGallery = class extends window.WebComponent {
 		this.draw();
 		this.mountSelectors();
 		this.init();
-		
-		setTimeout(() => {
-			let all_art_preview_imgs = this.element.querySelectorAll(
-				".preview-image-container",
-			);
-			for (let i = 0; i < all_art_preview_imgs.length; i++)
-				this.magnify(all_art_preview_imgs[i].querySelector("img"), 3);
-		}, 3000);
 	}
 	
 	draw() {
@@ -149,6 +141,13 @@ window.HomepageGallery = class extends window.WebComponent {
 		this.gallery.parallax_body.addEventListener("mousemove", (e) =>
 			this.onParallaxHover(e),
 		);
+		
+		//Set up art previews
+		let all_art_preview_imgs = this.element.querySelectorAll(
+			".preview-image-container",
+		);
+		for (let i = 0; i < all_art_preview_imgs.length; i++)
+			this.magnify(all_art_preview_imgs[i].querySelector("img"), 3);
 	}
 	
 	magnify(arg0_element, arg1_zoom) {
@@ -192,18 +191,35 @@ window.HomepageGallery = class extends window.WebComponent {
 		var zoom = this.zoom_states[element_id];
 		var h = magnifier.offsetHeight;
 		var w = magnifier.offsetWidth;
-		var offset_x = position.x - w / 2;
-		var offset_y = position.y - h / 2;
+		var offset_x, offset_y;
+		
 		if (this.isMagnifierMaximised(element_id)) {
 			var container = local_el.parentElement;
 			var container_bounds = container.getBoundingClientRect();
 			offset_x = position.x - w / 2 + container_bounds.left;
 			offset_y = position.y - h / 2 + container_bounds.top;
+		} else {
+			// Account for the image's position relative to
+			// the magnifier's actual offset parent
+			var offset_parent = magnifier.offsetParent;
+			if (offset_parent) {
+				var parent_bounds = offset_parent.getBoundingClientRect();
+				offset_x =
+					position.x - w / 2 + local_bounds.left - parent_bounds.left;
+				offset_y =
+					position.y - h / 2 + local_bounds.top - parent_bounds.top;
+			} else {
+				offset_x = position.x - w / 2;
+				offset_y = position.y - h / 2;
+			}
 		}
+		
 		magnifier.style.left = `${offset_x}px`;
 		magnifier.style.top = `${offset_y}px`;
-		var bg_x = (position.x / local_bounds.width) * (local_el.width * zoom - w);
-		var bg_y = (position.y / local_bounds.height) * (local_el.height * zoom - h);
+		var bg_x =
+			(position.x / local_bounds.width) * (local_el.width * zoom - w);
+		var bg_y =
+			(position.y / local_bounds.height) * (local_el.height * zoom - h);
 		magnifier.style.backgroundPosition = `-${bg_x}px -${bg_y}px`;
 		magnifier.style.backgroundSize = `${local_el.width * zoom}px ${local_el.height * zoom}px`;
 	}
@@ -905,8 +921,8 @@ window.HomepageGallery = class extends window.WebComponent {
 		if (!panel) return;
 		panel.classList.remove("maximised");
 		this.gallery.content_panel_update_paused = false;
-		panel.classList.add(arg1_instant ? "instant-minimisation" : "being-minimised");
-		setTimeout(() => panel.classList.remove("being-minimised", "instant-minimisation"), arg1_instant ? 500 : 1000);
+		panel.classList.add((arg1_instant) ? "instant-minimisation" : "being-minimised");
+		setTimeout(() => panel.classList.remove("being-minimised", "instant-minimisation"), 500);
 		this.gallery.parallax_scroll_indicator.style.opacity = 1;
 	}
 	
