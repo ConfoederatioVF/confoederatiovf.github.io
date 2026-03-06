@@ -117,9 +117,8 @@ window.initGlobal = function () {
       setTimeout(function () {
         //Viewport 1
         //Start top-banner animation for homepage
-        homepageBannerAnimation();
+        //homepageBannerAnimation();
         
-        settings_btn.setAttribute("class", "settings-btn hidden");
         
         //Viewport 2
         //Gallery
@@ -136,7 +135,7 @@ window.initGlobal = function () {
         //Viewport 2
         //Initialise magnifiers for all .preview-image elements
         let all_art_preview_imgs = document.querySelectorAll(".preview-image-container");
-        initialiseHomepageBannerUI();
+        //initialiseHomepageBannerUI();
         
         for (let i = 0; i < all_art_preview_imgs.length; i++)
           magnify(all_art_preview_imgs[i].querySelector("img"), 3);

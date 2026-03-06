@@ -12,8 +12,8 @@ function initGlobalScrollEventHandler (e) {
 
   //Event handler functions
   fixMobileVh();
-  parallaxLabelOnScroll();
-  triumphAndTragedyOnScroll();
+  viewport_one.homepageBannerTitleAdjustPosition();
+  viewport_one.triumphAndTragedyOnScroll();
 
   //Parallax scrolling for other labels
   homepageAboutOnScroll();
