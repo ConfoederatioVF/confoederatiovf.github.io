@@ -1,9 +1,9 @@
 window.HomepageBanner = class extends window.WebComponent {
-	constructor(arg0_value, arg1_options) {
+	constructor (arg0_value, arg1_options) {
 		// Convert from parameters
 		let value = arg0_value ? arg0_value : {};
 		let options = arg1_options ? arg1_options : {};
-		super(value, options);
+			super(value, options);
 		
 		// Declare local instance variables
 		this.banner_settings = {
@@ -196,7 +196,7 @@ window.HomepageBanner = class extends window.WebComponent {
 		this.init();
 	}
 	
-	draw() {
+	draw () {
 		// Draw HTML first
 		this.element.innerHTML = `
 		<!--Default video animation-->
@@ -1529,7 +1529,7 @@ window.HomepageBanner = class extends window.WebComponent {
 					
 					let current_anim_index = parseInt(banner_el.getAttribute("anim-index")) || 0;
 					if (current_index == select_limit)
-						banner_el.setAttribute(``"anim-index", current_anim_index + 1);
+						banner_el.setAttribute("anim-index", current_anim_index + 1);
 				}
 			}, total_delay);
 		}
@@ -1626,3 +1626,14 @@ window.HomepageBanner = class extends window.WebComponent {
 		this.settings_btn.style.animation = `${settings_btn_animation} 2s forwards`;
 	}
 };
+
+function initHomepageBanner () {
+	let initialisation_loop = setInterval(() => {
+		try {
+			window.viewport_one = new window.HomepageBanner();
+			window.viewport_one.bind(document.getElementById("homepage-banner"));
+			clearInterval(initialisation_loop);
+		} catch (e) { console.warn(e); }
+	});
+}
+initHomepageBanner();

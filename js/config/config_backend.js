@@ -35,16 +35,9 @@ config.homepage = {
     
     //Viewport 1
     "js/pages/homepage/viewport_1/HomepageBanner.js",
-    "js/pages/homepage/viewport_1/homepage_banner.js",
     
     //Viewport 2
-    "js/pages/homepage/viewport_2/homepage_gallery.js",
-    "js/pages/homepage/viewport_2/homepage_gallery_bookmark_ui.js",
-    "js/pages/homepage/viewport_2/homepage_gallery_config.js",
-    "js/pages/homepage/viewport_2/homepage_gallery_content_panel_ui.js",
-    "js/pages/homepage/viewport_2/homepage_gallery_image_preview.js",
-    "js/pages/homepage/viewport_2/homepage_gallery_pin_ui.js",
-    "js/pages/homepage/viewport_2/homepage_gallery_ui.js",
+    "js/pages/homepage/viewport_2/HomepageGallery.js",
     
     //Viewport 3
     "js/pages/homepage/viewport_3/homepage_about_animation.js",

@@ -4,7 +4,7 @@ var hover_throttle = [];
 window.onmouseover = function (e) {
   if (hover_loop) clearInterval(hover_loop);
   hover_loop = setInterval(function(){
-    onParallaxHover(e);
+    viewport_two?.onParallaxHover(e);
   }, 100);
   hover_throttle.push("on_parallax_hover");
 };

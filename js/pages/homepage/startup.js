@@ -42,7 +42,6 @@ window.main = {
     closing_bookmark: false,
 
     //Parallax settings configuration
-    parallax: new Parallax(document.getElementById("scene")),
     parallax_settings: {}
   },
   about: {
@@ -122,8 +121,8 @@ window.initGlobal = function () {
         
         //Viewport 2
         //Gallery
-        initGalleryTiles();
-        initGalleryUI();
+        viewport_two?.initGalleryTiles();
+        viewport_two?.initGalleryUI();
         
         homepageAboutOnScroll();
       }, 1);
@@ -138,7 +137,7 @@ window.initGlobal = function () {
         //initialiseHomepageBannerUI();
         
         for (let i = 0; i < all_art_preview_imgs.length; i++)
-          magnify(all_art_preview_imgs[i].querySelector("img"), 3);
+          viewport_two?.magnify(all_art_preview_imgs[i].querySelector("img"), 3);
         
         //Viewport 3 scroll handling
         setInterval(function () {
