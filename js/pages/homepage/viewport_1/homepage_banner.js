@@ -851,7 +851,6 @@
       placement: "top"
     });
   }
-  
 
   //Parallax effect for label, initialised in scroll scope
   function parallaxLabelOnScroll () {
@@ -1218,9 +1217,6 @@
   window.settings_overlay_container = document.getElementById("homepage-banner-settings-change-overlay-container");
   window.settings_window = document.getElementById("homepage-banner-settings-container");
   window.settings_window_open = false;
-
-  //Temp for debugging [WIP]
-  //homepageBannerDisplayDots();
   
   //Add settings_btn to DOM, initialise DOM
   homepageBannerChangeRawFontSize(20);
@@ -1379,5 +1375,6 @@
     1.175
   ];
   
-  
+  //Temp for debugging [WIP]
+  //setTimeout(() => homepageBannerDisplayDots(), 3000);
 }

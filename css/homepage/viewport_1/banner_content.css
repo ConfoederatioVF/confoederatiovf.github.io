@@ -9,8 +9,17 @@
   min-height: 100dvh;
   min-width: 100dvw;
 }
+.homepage-banner-triumph-and-tragedy-bg {
+  position: relative;
+  height: 100dvh;
+  width: 100dvw;
+  overflow: hidden; /* This prevents the images from overflowing HTML bounds */
+}
 .homepage-banner-triumph-and-tragedy-bg img {
+  height: 100dvh;
+  object-fit: cover;
   position: absolute;
+  width: 100dvw;
 }
 .homepage-banner-video-bg {
   filter: brightness(80%);
