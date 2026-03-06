@@ -24,15 +24,15 @@
   */
   function clearText (arg0_options) {
     //Convert from parameters
-    var options = (arg0_options) ? arg0_options: {};
+    let options = (arg0_options) ? arg0_options: {};
     
     //Declare local instance variables
-    var banner_el = options.banner_el;
-    var caret_spacer_el = options.caret_spacer_el;
+    let banner_el = options.banner_el;
+    let caret_spacer_el = options.caret_spacer_el;
     
     //Clear selected variables
     if (caret_spacer_el) {
-      var caret_spacer_el_class = (caret_spacer_el.getAttribute("class")) ?
+      let caret_spacer_el_class = (caret_spacer_el.getAttribute("class")) ?
         caret_spacer_el.getAttribute("class") : "";
       
       if (caret_spacer_el_class.length > 0)
@@ -1051,255 +1051,256 @@
 
 //Script
 {
-  window.banner_settings = {
-    animation_threshhold: 100,
-    backgrounds: {
-      main_video: {
-        name: "Confoederatio26"
-      },
-      cleveland_fog: {
-        name: "Sunset"
-      },
-      lava_lamp: {
-        name: "Lava Lamp"
-      },
-      misty_forest: {
-        name: "Misty Forest"
-      },
-      rain: {
-        name: "Rain"
-      },
-      triumph_and_tragedy: {
-        name: "Triumph & Tragedy"
-      }
-    },
-    fonts: {
-      bahnschrift: {
-        name: "Bahnschrift",
-        font_weight: [300, 700]
-      },
-      barlow: {
-        name: "Barlow",
-        font_weight: [100, 900]
-      },
-      fira_sans: {
-        name: "Fira Sans",
-        font_weight: [100, 900]
-      },
-      josefin_sans: {
-        name: "Josefin Sans",
-        font_weight: [100, 700]
-      },
-      quicksand: {
-        name: "Quicksand",
-        font_weight: [300, 700]
-      },
-      raleway: {
-        name: "Raleway",
-        font_weight: [100, 900]
-      }
-    },
-    font_size: [10, 50],
-    overlay: {
-      colours: {
-        azure: {
-          name: "Azure",
-          filter: "grayscale(0) hue-rotate(180deg)"
+  function initHomepageBanner () {
+    window.banner_settings = {
+      animation_threshhold: 100,
+      backgrounds: {
+        main_video: {
+          name: "Confoederatio26"
         },
-        black: {
-          name: "Black",
-          filter: "brightness(0.2) grayscale(1)"
+        cleveland_fog: {
+          name: "Sunset"
         },
-        blue: {
-          name: "Blue",
-          filter: "grayscale(0) hue-rotate(225deg)"
+        lava_lamp: {
+          name: "Lava Lamp"
         },
-        copper: {
-          name: "Copper",
-          filter: "grayscale(0.6) hue-rotate(50deg)"
+        misty_forest: {
+          name: "Misty Forest"
         },
-        forest_green: {
-          name: "Forest Green",
-          filter: "grayscale(0.6) hue-rotate(100deg)"
+        rain: {
+          name: "Rain"
         },
-        grey: {
-          name: "Grey",
-          filter: "grayscale(1)"
-        },
-        light_blue: {
-          name: "Light Blue",
-          filter: "grayscale(0.5) hue-rotate(225deg)"
-        },
-        lime_green: {
-          name: "Lime Green",
-          filter: "grayscale(0) hue-rotate(90deg)"
-        },
-        magenta: {
-          name: "Magenta",
-          filter: "grayscale(0) hue-rotate(310deg)"
-        },
-        negative: {
-          name: "Negative",
-          filter: "grayscale(0) invert(1)"
-        },
-        orange: {
-          name: "Orange",
-          filter: "grayscale(0) hue-rotate(45deg)"
-        },
-        pink: {
-          name: "Pink",
-          filter: "grayscale(0) hue-rotate(340deg)"
-        },
-        red: {
-          name: "Red",
-          filter: "grayscale(0)"
-        },
-        salmon: {
-          name: "Salmon",
-          filter: "grayscale(0.3)"
-        },
-        soft_green: {
-          name: "Soft Green",
-          filter: "grayscale(0.7) hue-rotate(160deg)"
-        },
-        verdant_green: {
-          name: "Verdant Green",
-          filter: "grayscale(0) hue-rotate(160deg)"
-        },
-        violet: {
-          name: "Violet",
-          filter: "grayscale(0) hue-rotate(260deg)"
-        },
-        white: {
-          name: "White",
-          filter: "grayscale(1) brightness(2)"
+        triumph_and_tragedy: {
+          name: "Triumph & Tragedy"
         }
       },
-      opacity_settings: [15, 20, 30, 40],
-      default_opacity: 20,
-      default_splash_colours: ["red", "azure", "copper", "forest_green", "orange", "blue", "negative", "violet", "salmon", "lime_green", "magenta", "black", "verdant_green", "pink", "red", "azure", "copper", "forest_green", "orange", "blue", "negative", "violet", "salmon", "lime_green", "magenta", "black",  "light_blue"]
-    },
-    paused_animation: false,
-    paused_backgrounds: false,
-    text_selected: false
-  };
-  
-  //Begin initial typing animation
-  window.banner_caret_element = document.getElementById("homepage-banner-caret-element");
-  window.banner_caret_spacer_element = document.getElementById("homepage-banner-caret-spacer");
-  window.banner_selected_once = false;
-  window.banner_title_text = document.getElementById("homepage-banner-main-title-text");
-  window.cleveland_national_forest_bg = document.getElementById("homepage-banner-cleveland-national-forest-bg");
-  window.content_editable_evt_listeners_added = false;
-  window.current_banner = "main_video";
-  window.current_font = "bahnschrift";
-  window.current_font_weight = 700;
-  window.current_overlay = "grey";
-  window.homepage_banner_overlay = document.getElementById("homepage-banner-plexus-overlay-bg");
-  window.lava_lamp_bg = document.getElementById("homepage-banner-lava-lamp-bg");
-  window.main_video_bg = document.getElementById("homepage-banner-video-bg");
-  window.misty_forest_bg = document.getElementById("homepage-banner-video-bg-misty-forest");
-  window.raindrop_bg = document.getElementById("homepage-banner-rain-bg-container");
-  window.settings_container = document.getElementById("homepage-banner-settings-container");
-  window.time_since_selection = 0;
-  window.title_element = document.getElementById("homepage-banner-main-title");
-  window.triumph_and_tragedy_bg = document.getElementById("homepage-banner-triumph-and-tragedy-bg");
-  window.typing_speed = 750;
-  
-  window.settings_bg_container = document.getElementById("homepage-banner-settings-change-bg-container");
-  window.settings_btn;
-  window.settings_btn_clicked = 0;
-  window.settings_btn_container = document.getElementById("settings-btn-container");
-  window.settings_close_btn = document.getElementById("settings-close-btn");
-  window.settings_font_select = document.getElementById("settings-change-font-family");
-  window.settings_minimised = true;
-  window.settings_minimise_btn = document.getElementById("settings-adjust-size-btn");
-  window.settings_overlay_container = document.getElementById("homepage-banner-settings-change-overlay-container");
-  window.settings_window = document.getElementById("homepage-banner-settings-container");
-  window.settings_window_open = false;
-  
-  //Add settings_btn to DOM, initialise DOM
-  homepageBannerChangeRawFontSize(20);
-  homepageBannerCentreAlign();
-  initialiseBackgroundSettings();
-  initialiseFontSettings();
-  initialiseOverlaySettings();
-  initialiseSettingsButton();
-  maximiseSettings(); //Change to minimise in future [WIP]
-  tippy("#settings-close-btn", {
-    content: "Close Settings",
-    placement: "top"
-  });
-
-  //Local event listeners for when settings is hovered over
-  settings_btn.onclick = function () {
-    applySettingsButtonFunctionality();
-  };
-
-  //Settings UI button functionality
-  settings_close_btn.onclick = function () {
-    settings_window_open = false;
-    updateSettingsPanel();
-  };
-  settings_minimise_btn.onclick = function () {
-    minimise_btn_tooltip[0].destroy();
+      fonts: {
+        bahnschrift: {
+          name: "Bahnschrift",
+          font_weight: [300, 700]
+        },
+        barlow: {
+          name: "Barlow",
+          font_weight: [100, 900]
+        },
+        fira_sans: {
+          name: "Fira Sans",
+          font_weight: [100, 900]
+        },
+        josefin_sans: {
+          name: "Josefin Sans",
+          font_weight: [100, 700]
+        },
+        quicksand: {
+          name: "Quicksand",
+          font_weight: [300, 700]
+        },
+        raleway: {
+          name: "Raleway",
+          font_weight: [100, 900]
+        }
+      },
+      font_size: [10, 50],
+      overlay: {
+        colours: {
+          azure: {
+            name: "Azure",
+            filter: "grayscale(0) hue-rotate(180deg)"
+          },
+          black: {
+            name: "Black",
+            filter: "brightness(0.2) grayscale(1)"
+          },
+          blue: {
+            name: "Blue",
+            filter: "grayscale(0) hue-rotate(225deg)"
+          },
+          copper: {
+            name: "Copper",
+            filter: "grayscale(0.6) hue-rotate(50deg)"
+          },
+          forest_green: {
+            name: "Forest Green",
+            filter: "grayscale(0.6) hue-rotate(100deg)"
+          },
+          grey: {
+            name: "Grey",
+            filter: "grayscale(1)"
+          },
+          light_blue: {
+            name: "Light Blue",
+            filter: "grayscale(0.5) hue-rotate(225deg)"
+          },
+          lime_green: {
+            name: "Lime Green",
+            filter: "grayscale(0) hue-rotate(90deg)"
+          },
+          magenta: {
+            name: "Magenta",
+            filter: "grayscale(0) hue-rotate(310deg)"
+          },
+          negative: {
+            name: "Negative",
+            filter: "grayscale(0) invert(1)"
+          },
+          orange: {
+            name: "Orange",
+            filter: "grayscale(0) hue-rotate(45deg)"
+          },
+          pink: {
+            name: "Pink",
+            filter: "grayscale(0) hue-rotate(340deg)"
+          },
+          red: {
+            name: "Red",
+            filter: "grayscale(0)"
+          },
+          salmon: {
+            name: "Salmon",
+            filter: "grayscale(0.3)"
+          },
+          soft_green: {
+            name: "Soft Green",
+            filter: "grayscale(0.7) hue-rotate(160deg)"
+          },
+          verdant_green: {
+            name: "Verdant Green",
+            filter: "grayscale(0) hue-rotate(160deg)"
+          },
+          violet: {
+            name: "Violet",
+            filter: "grayscale(0) hue-rotate(260deg)"
+          },
+          white: {
+            name: "White",
+            filter: "grayscale(1) brightness(2)"
+          }
+        },
+        opacity_settings: [15, 20, 30, 40],
+        default_opacity: 20,
+        default_splash_colours: ["red", "azure", "copper", "forest_green", "orange", "blue", "negative", "violet", "salmon", "lime_green", "magenta", "black", "verdant_green", "pink", "red", "azure", "copper", "forest_green", "orange", "blue", "negative", "violet", "salmon", "lime_green", "magenta", "black",  "light_blue"]
+      },
+      paused_animation: false,
+      paused_backgrounds: false,
+      text_selected: false
+    };
     
-    if (settings_minimised) {
-      maximiseSettings();
-    } else {
-      minimiseSettings();
+    //Begin initial typing animation
+    window.banner_caret_element = document.getElementById("homepage-banner-caret-element");
+    window.banner_caret_spacer_element = document.getElementById("homepage-banner-caret-spacer");
+    window.banner_selected_once = false;
+    window.banner_title_text = document.getElementById("homepage-banner-main-title-text");
+    window.cleveland_national_forest_bg = document.getElementById("homepage-banner-cleveland-national-forest-bg");
+    window.content_editable_evt_listeners_added = false;
+    window.current_banner = "main_video";
+    window.current_font = "bahnschrift";
+    window.current_font_weight = 700;
+    window.current_overlay = "grey";
+    window.homepage_banner_overlay = document.getElementById("homepage-banner-plexus-overlay-bg");
+    window.lava_lamp_bg = document.getElementById("homepage-banner-lava-lamp-bg");
+    window.main_video_bg = document.getElementById("homepage-banner-video-bg");
+    window.misty_forest_bg = document.getElementById("homepage-banner-video-bg-misty-forest");
+    window.raindrop_bg = document.getElementById("homepage-banner-rain-bg-container");
+    window.settings_container = document.getElementById("homepage-banner-settings-container");
+    window.time_since_selection = 0;
+    window.title_element = document.getElementById("homepage-banner-main-title");
+    window.triumph_and_tragedy_bg = document.getElementById("homepage-banner-triumph-and-tragedy-bg");
+    window.typing_speed = 750;
+    
+    window.settings_bg_container = document.getElementById("homepage-banner-settings-change-bg-container");
+    window.settings_btn;
+    window.settings_btn_clicked = 0;
+    window.settings_btn_container = document.getElementById("settings-btn-container");
+    window.settings_close_btn = document.getElementById("settings-close-btn");
+    window.settings_font_select = document.getElementById("settings-change-font-family");
+    window.settings_minimised = true;
+    window.settings_minimise_btn = document.getElementById("settings-adjust-size-btn");
+    window.settings_overlay_container = document.getElementById("homepage-banner-settings-change-overlay-container");
+    window.settings_window = document.getElementById("homepage-banner-settings-container");
+    window.settings_window_open = false;
+    
+    //Add settings_btn to DOM, initialise DOM
+    homepageBannerChangeRawFontSize(20);
+    homepageBannerCentreAlign();
+    initialiseBackgroundSettings();
+    initialiseFontSettings();
+    initialiseOverlaySettings();
+    initialiseSettingsButton();
+    maximiseSettings(); //Change to minimise in future [WIP]
+    tippy("#settings-close-btn", {
+      content: "Close Settings",
+      placement: "top"
+    });
+    
+    //Local event listeners for when settings is hovered over
+    settings_btn.onclick = function () {
+      applySettingsButtonFunctionality();
+    };
+    
+    //Settings UI button functionality
+    settings_close_btn.onclick = function () {
+      settings_window_open = false;
+      updateSettingsPanel();
+    };
+    settings_minimise_btn.onclick = function () {
+      minimise_btn_tooltip[0].destroy();
+      
+      if (settings_minimised) {
+        maximiseSettings();
+      } else {
+        minimiseSettings();
+      }
     }
-  }
-
-  //Declare local variables
-  window.chevron_icon = document.getElementById("homepage-banner-chevron-down");
-  window.dots_container = document.getElementById("homepage-banner-dots-container");
-
-  //Declare animation instance variables
-  window.lava_lamp_animation_paused = true;
-  window.lava_lamp_bg_circuit = 8; //Determines how 'wide' the circuit the orb travels is
-  
-  initLavaLampCycle();
-  window.lava_lamp_circuit_logic = setInterval(function(){
-    if (!lava_lamp_animation_paused) {
-      //Change speed of lava lamp
-      lava_lamp_bg_circuit += randomElement([
-        Math.random()*-1*randomNumber(0, 4),
-        Math.random()*randomNumber(0, 5) //Slightly biased towards speeding up
-      ]);
-      //Set limits for how wide or small the circuit can be
-      lava_lamp_bg_circuit = Math.min(lava_lamp_bg_circuit, 64);
-      lava_lamp_bg_circuit = (lava_lamp_bg_circuit < 8) ? 8 : lava_lamp_bg_circuit;
-      
-      //Kill all tweens
-      TweenMax.killAll();
-      initLavaLampCycle();
-    }
-  }, 500);
-
-  //Global animation instance variables
-  window.max_number_of_raindrops = 100; //Cap off the number of particles in order to reduce lag
-  window.raindrop_animation_paused = true;
-  window.raindrop_array = [];
-  window.raindrop_container = document.getElementById("homepage-banner-raindrops-container");
-  window.raindrop_iterations = 0;
-
-  //A class would be easier for substantiating raindrops
-  window.Raindrop = class {
-    constructor (arg0_x, arg1_y, arg2_width, arg3_height, arg4_opacity, arg5_duration) {
-      //Set parameters
-      this.x = arg0_x;
-      this.y = arg1_y;
-      this.width = arg2_width;
-      this.height = arg3_height;
-      
-      //Other generated parameters
-      this.duration = (arg5_duration) ? arg5_duration : randomNumber(20000, 30000); //How many ms should the raindrop appear on screen for before disappearing?
-      this.id = `raindrop-${generateRaindropID()}`;
-      this.opacity = (arg4_opacity) ? arg4_opacity : 0.15; //How transparent should the raindrop be?
-      
-      //Initialise element in DOM and local styling
-      raindrop_container.innerHTML += `
+    
+    //Declare local variables
+    window.chevron_icon = document.getElementById("homepage-banner-chevron-down");
+    window.dots_container = document.getElementById("homepage-banner-dots-container");
+    
+    //Declare animation instance variables
+    window.lava_lamp_animation_paused = true;
+    window.lava_lamp_bg_circuit = 8; //Determines how 'wide' the circuit the orb travels is
+    
+    initLavaLampCycle();
+    window.lava_lamp_circuit_logic = setInterval(function(){
+      if (!lava_lamp_animation_paused) {
+        //Change speed of lava lamp
+        lava_lamp_bg_circuit += randomElement([
+          Math.random()*-1*randomNumber(0, 4),
+          Math.random()*randomNumber(0, 5) //Slightly biased towards speeding up
+        ]);
+        //Set limits for how wide or small the circuit can be
+        lava_lamp_bg_circuit = Math.min(lava_lamp_bg_circuit, 64);
+        lava_lamp_bg_circuit = (lava_lamp_bg_circuit < 8) ? 8 : lava_lamp_bg_circuit;
+        
+        //Kill all tweens
+        TweenMax.killAll();
+        initLavaLampCycle();
+      }
+    }, 500);
+    
+    //Global animation instance variables
+    window.max_number_of_raindrops = 100; //Cap off the number of particles in order to reduce lag
+    window.raindrop_animation_paused = true;
+    window.raindrop_array = [];
+    window.raindrop_container = document.getElementById("homepage-banner-raindrops-container");
+    window.raindrop_iterations = 0;
+    
+    //A class would be easier for substantiating raindrops
+    window.Raindrop = class {
+      constructor (arg0_x, arg1_y, arg2_width, arg3_height, arg4_opacity, arg5_duration) {
+        //Set parameters
+        this.x = arg0_x;
+        this.y = arg1_y;
+        this.width = arg2_width;
+        this.height = arg3_height;
+        
+        //Other generated parameters
+        this.duration = (arg5_duration) ? arg5_duration : randomNumber(20000, 30000); //How many ms should the raindrop appear on screen for before disappearing?
+        this.id = `raindrop-${generateRaindropID()}`;
+        this.opacity = (arg4_opacity) ? arg4_opacity : 0.15; //How transparent should the raindrop be?
+        
+        //Initialise element in DOM and local styling
+        raindrop_container.innerHTML += `
       <div id = "${this.id}" class = "raindrop" style = "
         background-color: rgb(255, 255, 255);
         opacity: ${this.opacity};
@@ -1312,69 +1313,71 @@
         border-radius: 50%;
       "></div>
     `;
-      
-      //Set timeout to remove raindrop
-      var local_id = this.id; //Set to local_id to pass argument
-      setTimeout(function(){
-        document.getElementById(local_id).remove();
-      }, this.duration);
-    }
-    
-    //Fetch methods
-    fetchID () {
-      return this.id;
-    }
-    isDestroyed () {
-      return (!document.getElementById(this.id));
-    }
-  }
-
-  //Generate raindrops
-  window.raindrop_logic = setInterval(function(){
-    //Make sure raindrop animation isn't paused
-    if (!raindrop_animation_paused) {
-      //Remove all destroyed raindrops from array
-      var raindrops_to_remove = [];
-      for (var i = 0; i < raindrop_array.length; i++) if (raindrop_array[i].isDestroyed()) raindrops_to_remove.push(raindrop_array[i]);
-      for (var i = 0; i < raindrops_to_remove.length; i++) {
-        for (var x = 0; x < raindrop_array.length; x++) if (raindrop_array[x] == raindrops_to_remove[i]) raindrop_array.splice(x, 1);
+        
+        //Set timeout to remove raindrop
+        var local_id = this.id; //Set to local_id to pass argument
+        setTimeout(function(){
+          document.getElementById(local_id).remove();
+        }, this.duration);
       }
       
-      //Add raindrop if valid
-      var all_raindrops = raindrop_container.querySelectorAll(".raindrop");
-      var random_tick = randomNumber(9, 11);
-      
-      //Declare substantiation variables
-      var raindrop_size = randomNumber(15, 48);
-      if (raindrop_iterations % random_tick == 0 && all_raindrops.length < max_number_of_raindrops) raindrop_array.push(new Raindrop(
-        randomNumber(0, 100),
-        randomNumber(0, 100),
-        raindrop_size,
-        raindrop_size,
-        randomElement([
-          0.3,
-          0.4,
-          0.5,
-          0.7
-        ]),
-        raindrop_size*750
-      ));
+      //Fetch methods
+      fetchID () {
+        return this.id;
+      }
+      isDestroyed () {
+        return (!document.getElementById(this.id));
+      }
     }
-  }, 500);
-
-  //Declare global scroll offsets
-  window.triumph_and_tragedy_bg_offsets = [
-    0,
-    1,
-    1.025,
-    1.05,
-    1.075,
-    1.1,
-    1.125,
-    1.15,
-    1.175
-  ];
-  
-  //Temp for debugging [WIP]
-  //setTimeout(() => homepageBannerDisplayDots(), 3000);
+    
+    //Generate raindrops
+    window.raindrop_logic = setInterval(function(){
+      //Make sure raindrop animation isn't paused
+      if (!raindrop_animation_paused) {
+        //Remove all destroyed raindrops from array
+        var raindrops_to_remove = [];
+        for (var i = 0; i < raindrop_array.length; i++) if (raindrop_array[i].isDestroyed()) raindrops_to_remove.push(raindrop_array[i]);
+        for (var i = 0; i < raindrops_to_remove.length; i++) {
+          for (var x = 0; x < raindrop_array.length; x++) if (raindrop_array[x] == raindrops_to_remove[i]) raindrop_array.splice(x, 1);
+        }
+        
+        //Add raindrop if valid
+        var all_raindrops = raindrop_container.querySelectorAll(".raindrop");
+        var random_tick = randomNumber(9, 11);
+        
+        //Declare substantiation variables
+        var raindrop_size = randomNumber(15, 48);
+        if (raindrop_iterations % random_tick == 0 && all_raindrops.length < max_number_of_raindrops) raindrop_array.push(new Raindrop(
+          randomNumber(0, 100),
+          randomNumber(0, 100),
+          raindrop_size,
+          raindrop_size,
+          randomElement([
+            0.3,
+            0.4,
+            0.5,
+            0.7
+          ]),
+          raindrop_size*750
+        ));
+      }
+    }, 500);
+    
+    //Declare global scroll offsets
+    window.triumph_and_tragedy_bg_offsets = [
+      0,
+      1,
+      1.025,
+      1.05,
+      1.075,
+      1.1,
+      1.125,
+      1.15,
+      1.175
+    ];
+    
+    //Temp for debugging [WIP]
+    //setTimeout(() => homepageBannerDisplayDots(), 3000);
+  }
+  initHomepageBanner();
 }
