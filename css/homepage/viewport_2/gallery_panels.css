@@ -57,8 +57,8 @@
 }
 .parallax-item-content-panel.maximised {
   position: fixed;
-  top: -100dvh !important;
-  left: 0px !important;
+  top: 0 !important;
+  left: 0 !important;
 
   height: 100dvh !important;
   width: 100vw;

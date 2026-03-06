@@ -121,9 +121,6 @@ window.initGlobal = function () {
         
         //Viewport 2
         //Gallery
-        viewport_two?.initGalleryTiles();
-        viewport_two?.initGalleryUI();
-        
         homepageAboutOnScroll();
       }, 1);
       
@@ -133,11 +130,6 @@ window.initGlobal = function () {
         
         //Viewport 2
         //Initialise magnifiers for all .preview-image elements
-        let all_art_preview_imgs = document.querySelectorAll(".preview-image-container");
-        //initialiseHomepageBannerUI();
-        
-        for (let i = 0; i < all_art_preview_imgs.length; i++)
-          viewport_two?.magnify(all_art_preview_imgs[i].querySelector("img"), 3);
         
         //Viewport 3 scroll handling
         setInterval(function () {

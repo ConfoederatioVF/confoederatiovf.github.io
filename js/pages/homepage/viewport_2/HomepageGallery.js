@@ -7,22 +7,51 @@ window.HomepageGallery = class extends window.WebComponent {
 		
 		// Initialize gallery state object
 		this.gallery = {
+			bookmark_container: null,
 			bookmark_items: [],
+			bookmark_minimise_btn: null,
+			bookmark_no_label: null,
+			bookmark_preview_container: null,
 			bookmark_selected: "",
+			closing_bookmark: false,
+			content_panel_container: null,
+			content_panel_scroll_container: null,
 			content_panel_update_paused: false,
 			exempt_id_patterns: ["preview-", "btn-"],
-			gallery_width: 500, // Default width for horizontal mapping
+			gallery_width: 500,
+			no_bookmark_label: null,
+			parallax_body: null,
+			parallax_buttons: null,
+			parallax_container: null,
 			parallax_pinned_items: [],
+			parallax_scroll_indicator: null,
 			parallax_scroll_x: 0,
 			parallax_selected: [],
 			parallax_settings: {},
+			scene: null
 		};
 		
+		this.perspective_deg_x = "0deg";
+		this.perspective_deg_y = "2deg";
+		this.perspective_string = "";
 		this.zoom_states = {};
+		this.active_previews = {};
 		
 		this.draw();
 		this.mountSelectors();
 		this.init();
+		
+		setTimeout(() => {
+			//this.initGalleryTiles();
+			//this.initGalleryUI();
+			
+			
+			let all_art_preview_imgs = this.element.querySelectorAll(".preview-image-container");
+			//initialiseHomepageBannerUI();
+			
+			for (let i = 0; i < all_art_preview_imgs.length; i++)
+				this.magnify(all_art_preview_imgs[i].querySelector("img"), 3);
+		}, 3000);
 	}
 	
 	draw() {
@@ -99,149 +128,245 @@ window.HomepageGallery = class extends window.WebComponent {
 		</div>
 		`;
 		this.element.style.height = "100%";
-		
 	}
 	
 	mountSelectors() {
-		this.scene = this.element.querySelector("#scene");
-		this.parallax_body = this.element.querySelector("#project-parallax-container");
-		this.parallax_container = this.element.querySelector("#project-parallax-scroll-container");
-		this.content_panel_container = this.element.querySelector("#main-parallax-content-panel-wrapper");
-		this.content_panel_scroll_container = this.element.querySelector("#main-parallax-content-panel-scroll-wrapper");
-		this.bookmark_container = this.element.querySelector("#project-parallax-bookmark-container");
-		this.bookmark_preview_container = this.element.querySelector("#project-parallax-preview-container");
-		this.bookmark_minimise_btn = this.element.querySelector("#project-parallax-bookmark-minimise-icon");
-		this.bookmark_no_label = this.element.querySelector("#project-parallax-no-bookmark-label");
-		this.parallax_scroll_indicator = this.element.querySelector("#project-parallax-scroll-fill-indicator");
-		this.parallax_buttons = this.element.querySelector("#project-parallax-dots-container");
+		let gallery_obj = this.gallery;
+		gallery_obj.scene = this.element.querySelector("#scene");
+		gallery_obj.parallax_body = this.element.querySelector("#project-parallax-container");
+		gallery_obj.parallax_container = this.element.querySelector("#project-parallax-scroll-container");
+		gallery_obj.content_panel_container = this.element.querySelector("#main-parallax-content-panel-wrapper");
+		gallery_obj.content_panel_scroll_container = this.element.querySelector("#main-parallax-content-panel-scroll-wrapper");
+		gallery_obj.bookmark_container = this.element.querySelector("#project-parallax-bookmark-container");
+		gallery_obj.bookmark_preview_container = this.element.querySelector("#project-parallax-preview-container");
+		gallery_obj.bookmark_minimise_btn = this.element.querySelector("#project-parallax-bookmark-minimise-icon");
+		gallery_obj.bookmark_no_label = this.element.querySelector("#project-parallax-no-bookmark-label");
+		gallery_obj.no_bookmark_label = gallery_obj.bookmark_no_label;
+		gallery_obj.parallax_scroll_indicator = this.element.querySelector("#project-parallax-scroll-fill-indicator");
+		gallery_obj.parallax_buttons = this.element.querySelector("#project-parallax-dots-container");
 	}
 	
 	init() {
-		// Initialize Parallax engine if global Parallax exists
-		if (window.Parallax) {
-			this.parallax_engine = new Parallax(this.scene, {
-				scalarX: 12.5,
-				scalarY: 35,
-			});
-		}
-		
 		this.initGalleryTiles();
 		this.initGalleryUI();
 		
 		// Add hover listener for interaction logic
-		this.parallax_body.addEventListener("mousemove", (e) => this.onParallaxHover(e));
+		this.gallery.parallax_body.addEventListener("mousemove", (e) => this.onParallaxHover(e));
 	}
 	
-	addBookmarkItem(arg0_element_id, arg1_no_animation) {
-		let local_id = arg0_element_id;
-		let no_animation = arg1_no_animation;
+	magnify(arg0_element, arg1_zoom) {
+		var local_el = arg0_element;
+		var zoom = arg1_zoom;
+		var element_id = local_el.id;
 		
-		let bookmark_btn = this.element.querySelector(`#bookmark-btn-${local_id}`);
-		let local_element = this.element.querySelector(`#${local_id}`);
+		this.zoom_states[element_id] = zoom;
+		var local_magnifier = document.createElement("DIV");
+		local_magnifier.setAttribute("class", "image-magnifier-glass");
+		local_magnifier.style.backgroundImage = `url('${local_el.src}')`;
+		local_magnifier.style.backgroundRepeat = "no-repeat";
+		
+		local_el.parentElement.insertBefore(local_magnifier, local_el);
+		
+		local_el.addEventListener("mousemove", (e) => this.moveMagnifier(e, local_el, local_magnifier));
+		local_el.addEventListener("touchmove", (e) => this.moveMagnifier(e, local_el, local_magnifier));
+		
+		local_el.addEventListener("wheel", (e) => {
+			let current_zoom = this.zoom_states[element_id];
+			current_zoom += e.deltaY * -0.0025;
+			current_zoom = Math.min(Math.max(1.25, current_zoom), 10);
+			this.zoom_states[element_id] = current_zoom;
+			e.preventDefault();
+		});
+		
+		setInterval(() => {
+			let is_hovered = this.element.querySelector(`#${element_id}:hover`) !== null;
+			let active_preview = this.active_previews[element_id.replace(/-/gm, "_")] !== false;
+			local_magnifier.style.opacity = (is_hovered && active_preview) ? 1 : 0;
+		}, 100);
+	}
+	
+	moveMagnifier(e, arg0_element, arg1_magnifier) {
+		var local_el = arg0_element;
+		var magnifier = arg1_magnifier;
+		var element_id = local_el.id;
+		var local_bounds = local_el.getBoundingClientRect();
+		var position = this.getCursorPosition(e, local_el);
+		var zoom = this.zoom_states[element_id];
+		
+		var pan_x = position.x;
+		var pan_y = position.y;
+		
+		var h = magnifier.offsetHeight;
+		var w = magnifier.offsetWidth;
+		
+		var offset_x = pan_x - w / 2;
+		var offset_y = pan_y - h / 2;
+		
+		if (this.isMagnifierMaximised(element_id)) {
+			var container = local_el.parentElement;
+			var container_bounds = container.getBoundingClientRect();
+			offset_x = pan_x - (w / 2) + container_bounds.left;
+			offset_y = pan_y - (h / 2) + container_bounds.top;
+		}
+		
+		magnifier.style.left = `${offset_x}px`;
+		magnifier.style.top = `${offset_y}px`;
+		
+		var percent_x = pan_x / local_bounds.width;
+		var percent_y = pan_y / local_bounds.height;
+		
+		var bg_x = percent_x * (local_el.width * zoom - w);
+		var bg_y = percent_y * (local_el.height * zoom - h);
+		
+		magnifier.style.backgroundPosition = `-${bg_x}px -${bg_y}px`;
+		magnifier.style.backgroundSize = `${local_el.width * zoom}px ${local_el.height * zoom}px`;
+	}
+	
+	isMagnifierMaximised(arg0_element_id) {
+		return (this.element.querySelectorAll(`.${arg0_element_id}-panel.maximised .image-magnifier-glass`).length != 0);
+	}
+	
+	togglePreview(arg0_element_id) {
+		var element_id = arg0_element_id;
+		var img_el = this.element.querySelector("#" + arg0_element_id.replace(/_/gm, "-"));
+		var local_el = this.element.querySelector("#" + arg0_element_id + "-preview-btn");
+		let key = element_id.replace(/-/gm, "_");
+		
+		if (local_el.classList.contains("active")) {
+			local_el.classList.remove("active");
+			img_el.classList.add("cursor-shown");
+			this.active_previews[key] = false;
+		} else {
+			local_el.classList.add("active");
+			img_el.classList.remove("cursor-shown");
+			this.active_previews[key] = true;
+		}
+	}
+	
+	/* Restored Logic Methods */
+	
+	addBookmarkItem(arg0_element_id, arg1_no_animation) {
+		var local_id = arg0_element_id;
+		var no_animation = arg1_no_animation;
+		var gallery_obj = this.gallery;
+		
+		var bookmark_btn = this.element.querySelector(`#bookmark-btn-${local_id}`);
+		var local_element = this.element.querySelector(`#${local_id}`);
 		
 		if (!local_element) return;
 		
 		local_element.setAttribute("id", `preview-${local_id}`);
 		if (bookmark_btn) {
-			bookmark_btn.setAttribute(
-				"class",
-				bookmark_btn.getAttribute("class").replace("bookmark-empty", "bookmark-filled"),
+			bookmark_btn.setAttribute("class",
+				bookmark_btn.getAttribute("class").replace("bookmark-empty", "bookmark-filled")
 			);
 		}
 		
-		this.bookmark_preview_container.innerHTML += local_element.outerHTML;
-		if (!this.gallery.bookmark_items.includes(local_id)) this.gallery.bookmark_items.push(local_id);
+		gallery_obj.bookmark_preview_container.innerHTML += local_element.outerHTML;
+		if (!gallery_obj.bookmark_items.includes(local_id)) gallery_obj.bookmark_items.push(local_id);
 		
 		local_element.setAttribute("id", local_id);
 		
-		let all_bookmarks = this.element.querySelectorAll(".parallax-item-preview");
-		let bookmark_el = this.element.querySelector(`#preview-${local_id}`);
+		var all_bookmarks = this.element.querySelectorAll(".parallax-item-preview");
+		var bookmark_el = this.element.querySelector(`#preview-${local_id}`);
 		
-		bookmark_el.setAttribute(
-			"class",
-			bookmark_el.getAttribute("class").replace("parallax-item", "parallax-item-preview") +
-			" show-animation",
+		bookmark_el.setAttribute("class",
+			bookmark_el.getAttribute("class").replace("parallax-item", "parallax-item-preview") + " show-animation"
 		);
+		
 		bookmark_el.onclick = () => this.selectBookmarkItem(`preview-${local_id}`);
 		
 		for (let i = 0; i < all_bookmarks.length; i++) {
-			all_bookmarks[i].style.left = `calc(50% - 12vh - ${i * 12}vh)`;
-			all_bookmarks[i].style.zIndex = all_bookmarks.length - 1 - i;
+			all_bookmarks[i].setAttribute("style", `
+				left: calc(50% - 12vh - ${i * 12}vh);
+				z-index: ${all_bookmarks.length - 1 - i};
+			`);
 		}
 		
-		const closeBtn = document.createElement("div");
-		closeBtn.id = `btn-close-bookmark-${local_id}`;
-		closeBtn.className = "parallax-icon close-btn";
-		closeBtn.onclick = (e) => {
+		bookmark_el.innerHTML += `
+			<div id = "btn-close-bookmark-${local_id}" class = "parallax-icon close-btn"></div>
+		`;
+		bookmark_el.querySelector(".close-btn").onclick = (e) => {
 			e.stopPropagation();
 			this.bookmarkInteraction(local_id);
 		};
-		bookmark_el.appendChild(closeBtn);
 		
-		bookmark_el.style.left = `calc(50% - 12vh - ${all_bookmarks.length * 12}vh)`;
-		bookmark_el.style.zIndex = "-1";
+		bookmark_el.setAttribute("style", `
+			left: calc(50% - 12vh - ${all_bookmarks.length * 12}vh);
+			z-index: -1;
+		`);
 		
 		setTimeout(() => {
-			bookmark_el.style.left = `calc(50% - 12vh - ${all_bookmarks.length * 12}vh)`;
-			bookmark_el.style.zIndex = "-1";
-			bookmark_el.classList.remove("show-animation");
+			bookmark_el.setAttribute("style", `
+				left: calc(50% - 12vh - ${all_bookmarks.length * 12}vh);
+				z-index: -1;
+			`);
+			var new_bookmark_el = this.element.querySelector(`#${bookmark_el.id}`);
+			if (new_bookmark_el)
+				new_bookmark_el.setAttribute("class",
+					new_bookmark_el.getAttribute("class").replace(" show-animation", "")
+				);
 		}, 1000);
 		
-		if (!this.element.querySelector(`#btn-bookmark-preview-${local_id}`)) {
-			let local_class_name = !no_animation
-				? "parallax-bookmark-dot fade-in"
-				: "parallax-bookmark-dot";
-			let dot = document.createElement("div");
-			dot.id = `btn-bookmark-preview-${local_id}`;
-			dot.className = local_class_name;
-			dot.onclick = () => this.selectBookmarkItem(`preview-${local_id}`);
-			this.parallax_buttons.appendChild(dot);
+		var new_bookmarks = this.element.querySelectorAll(".parallax-item-preview");
+		for (let i = 0; i < new_bookmarks.length; i++) {
+			var dot_id = `btn-bookmark-${new_bookmarks[i].id}`;
+			var bookmark_dot_el = this.element.querySelector(`#${dot_id}`);
 			
-			setTimeout(() => {
-				let dots = this.element.querySelectorAll(".parallax-bookmark-dot.fade-in");
-				dots.forEach((d) => d.classList.remove("fade-in"));
-			}, 1000);
+			if (!bookmark_dot_el) {
+				var local_class_name = (!no_animation) ? "parallax-bookmark-dot fade-in" : "parallax-bookmark-dot";
+				var dot_el = document.createElement("div");
+				dot_el.id = dot_id;
+				dot_el.className = local_class_name;
+				dot_el.onclick = ((id) => () => this.selectBookmarkItem(id))(new_bookmarks[i].id);
+				gallery_obj.parallax_buttons.appendChild(dot_el);
+				
+				setTimeout(() => {
+					var all_animated = this.element.querySelectorAll(".parallax-bookmark-dot.fade-in");
+					for (var j = 0; j < all_animated.length; j++)
+						all_animated[j].setAttribute("class", all_animated[j].getAttribute("class").replace(" fade-in", ""));
+				}, 1000);
+			}
 		}
 		
-		if (this.gallery.bookmark_items.length == 1) {
-			this.gallery.bookmark_selected = local_id;
-		}
-		this.gallery.bookmark_selected = this.gallery.bookmark_selected == "" ? local_id : this.gallery.bookmark_selected;
-		if (!this.gallery.bookmark_selected.includes("preview-")) {
-			this.gallery.bookmark_selected = "preview-" + this.gallery.bookmark_selected;
-		}
+		if (gallery_obj.bookmark_items.length == 1) gallery_obj.bookmark_selected = local_id;
+		gallery_obj.bookmark_selected = (gallery_obj.bookmark_selected == "") ? local_id : gallery_obj.bookmark_selected;
+		gallery_obj.bookmark_selected = (!gallery_obj.bookmark_selected.includes("preview-")) ? "preview-" + gallery_obj.bookmark_selected : gallery_obj.bookmark_selected;
 		
-		try {
-			this.selectBookmarkItem(this.gallery.bookmark_selected, true, true);
-		} catch (e) {}
+		try { this.selectBookmarkItem(gallery_obj.bookmark_selected, true, true); } catch (e) { }
 		
-		this.bookmark_no_label.classList.add("hidden");
-		this.bookmark_container.classList.remove("no-bookmarks");
+		if (!gallery_obj.bookmark_no_label.getAttribute("class").includes(" hidden"))
+			gallery_obj.bookmark_no_label.setAttribute("class", gallery_obj.bookmark_no_label.getAttribute("class") + " hidden");
+		
+		gallery_obj.bookmark_container.setAttribute("class", gallery_obj.bookmark_container.getAttribute("class").replace(" no-bookmarks", ""));
 	}
 	
 	bookmarkInteraction(arg0_element_id) {
-		let local_id = arg0_element_id;
-		!this.gallery.bookmark_items.includes(local_id) && !this.element.querySelector(`#preview-${local_id}`)
-			? this.addBookmarkItem(local_id)
-			: this.removeBookmarkItem(local_id);
+		var local_id = arg0_element_id;
+		var gallery_obj = this.gallery;
+		(!gallery_obj.bookmark_items.includes(local_id) && !this.element.querySelector(`#preview-${local_id}`)) ?
+			this.addBookmarkItem(local_id) : this.removeBookmarkItem(local_id);
 	}
 	
 	clearBookmarkDots() {
-		let dots = this.element.querySelectorAll(".parallax-bookmark-dot");
-		dots.forEach((d) => d.classList.remove("filled"));
+		var all_bookmark_dots = this.element.querySelectorAll(".parallax-bookmark-dot");
+		for (let i = 0; i < all_bookmark_dots.length; i++)
+			all_bookmark_dots[i].setAttribute("class", all_bookmark_dots[i].getAttribute("class").replace(" filled", ""));
 	}
 	
 	closeContentPanel(arg0_element_id) {
-		let local_el = this.element.querySelector(`#${arg0_element_id}-content-panel`);
+		var local_el = this.element.querySelector(`#${arg0_element_id}-content-panel`);
+		var gallery_obj = this.gallery;
 		if (local_el) {
-			local_el.classList.remove("shown");
-			this.parallax_scroll_indicator.style.opacity = 1;
+			local_el.setAttribute("class", local_el.getAttribute("class").replace(" shown", ""));
+			gallery_obj.parallax_scroll_indicator.style.opacity = 1;
 		}
 	}
 	
 	createPanel(arg0_tile_id, arg1_options) {
-		let tile_id = arg0_tile_id;
-		let options = arg1_options ? arg1_options : {};
+		var tile_id = arg0_tile_id;
+		var options = (arg1_options) ? arg1_options : {};
+		var gallery_obj = this.gallery;
 		
 		if (!options.font_position) options.font_position = "bottom-right";
 		if (!options.font_size) options.font_size = 1;
@@ -252,189 +377,169 @@ window.HomepageGallery = class extends window.WebComponent {
 		if (!options.background_opacity) options.background_opacity = 0.3;
 		if (!options.colour) options.colour = "copper";
 		
-		let font_size_dict = {
-			1: "parallax-minor-project-text",
-			2: "parallax-major-project-text",
-			3: "parallax-group-text",
-		};
-		let size_dict = {
-			1: "large-square",
-			2: "sublarge-square",
-			3: "medium-square",
-			4: "submedium-square",
-			5: "small-square",
-			6: "tiny-square",
-		};
-		let size_vh_dict = {
-			1: 32,
-			2: 28,
-			3: 24,
-			4: 18,
-			5: 16,
-			6: 12,
-		};
+		var background_style = "";
+		var default_x_offset = "23vw";
+		var font_size_dict = { 1: "parallax-minor-project-text", 2: "parallax-major-project-text", 3: "parallax-group-text" };
+		var size_dict = { 1: "large-square", 2: "sublarge-square", 3: "medium-square", 4: "submedium-square", 5: "small-square", 6: "tiny-square" };
+		var size_vh_dict = { 1: 32, 2: 28, 3: 24, 4: 18, 5: 16, 6: 12 };
 		
-		let background_style = options.background_image
-			? `style="background-image: url(${options.background_image}); opacity: ${options.background_opacity};"`
-			: "";
+		var parallax_tile_container_el = this.element.querySelector("#main-parallax-content-wrapper");
+		var parallax_panel_container_el = this.element.querySelector("#main-parallax-content-panel-scroll-wrapper");
 		
-		let tile_element = `
-			<div id="${tile_id}" class="parallax-item ${size_dict[options.size]} ${options.colour}" style="position: absolute; top: calc(${options.y}vh + var(--parallax-offset-y)); left: calc(23vw + ${options.x}vh + var(--parallax-offset-x));">
-				<div class="parallax-item-colour-bg"></div>
-				<div class="parallax-item-bg" ${background_style}></div>
-				<span class="${font_size_dict[options.font_size]} ${options.font_position}" style="font-weight: ${options.font_weight}">${options.name}</span>
+		if (options.background_image) background_style = ` style = "background-image: url(${options.background_image}); opacity: ${options.background_opacity};"`;
+		
+		var tile_element = `
+			<div id = "${tile_id}" class = "parallax-item ${size_dict[options.size]} ${options.colour}" style = "position: absolute; top: calc(${options.y}vh + var(--parallax-offset-y)); left: calc(${default_x_offset} + ${options.x}vh + var(--parallax-offset-x));">
+				<div class = "parallax-item-colour-bg"></div>
+				<div class = "parallax-item-bg"${background_style}></div>
+				<span class = "${font_size_dict[options.font_size]} ${options.font_position}" style = "font-weight: ${options.font_weight}" >${options.name}</span>
 			</div>
 		`;
-		
-		this.element.querySelector("#main-parallax-content-wrapper").insertAdjacentHTML("beforeend", tile_element);
-		
-		const tile_dom = this.element.querySelector(`#${tile_id}`);
-		tile_dom.onclick = () => {
-			this.toggleContentPanel(tile_id);
-			this.selectParallaxItem(tile_id);
-		};
+		parallax_tile_container_el.innerHTML += tile_element;
 		
 		if (options.content) {
-			let panel_element = `
-				<div id="${tile_id}-content-panel" class="parallax-item-content-panel ${options.animation}-panel" style="top: calc(${options.y}vh + var(--parallax-offset-y) + var(--content-panel-offset-y)); left: calc(23vw + ${options.x}vh + ${size_vh_dict[options.size]}vh + 8vh + var(--parallax-offset-x) + var(--content-panel-offset-x));">
-					<div id="${tile_id}-content-wrapper" class="content-wrapper">
-						<div id="${tile_id}-text-wrapper" class="text-wrapper">
+			var panel_element = `
+				<div id = "${tile_id}-content-panel" class = "parallax-item-content-panel ${options.animation}-panel" style = "top: calc(${options.y}vh + var(--parallax-offset-y) + var(--content-panel-offset-y)); left: calc(23vw + ${options.x}vh + ${size_vh_dict[options.size]}vh + 8vh + var(--parallax-offset-x) + var(--content-panel-offset-x));">
+					<div id = "${tile_id}-content-wrapper" class = "content-wrapper">
+						<div id = "${tile_id}-text-wrapper" class = "text-wrapper">
 							${options.content}
 						</div>
 					</div>
 				</div>
 			`;
-			this.content_panel_scroll_container.insertAdjacentHTML("beforeend", panel_element);
+			parallax_panel_container_el.innerHTML += panel_element;
 		}
 		
-		let new_tile_obj = {};
+		var new_tile_obj = {};
 		if (options.animation) new_tile_obj.animation = options.animation;
 		if (options.dependencies) new_tile_obj.dependencies = options.dependencies;
 		if (options.is_base_node) new_tile_obj.is_base_node = options.is_base_node;
-		this.gallery.parallax_settings[tile_id] = new_tile_obj;
+		gallery_obj.parallax_settings[tile_id] = new_tile_obj;
 		
-		if (options.default_bookmark) {
-			if (!this.gallery.bookmark_items.includes(tile_id)) this.gallery.bookmark_items.push(tile_id);
-		}
-		if (options.default_pin) {
-			if (!this.gallery.parallax_pinned_items.includes(tile_id)) this.gallery.parallax_pinned_items.push(tile_id);
-		}
+		if (options.default_bookmark) if (!gallery_obj.bookmark_items.includes(tile_id)) gallery_obj.bookmark_items.push(tile_id);
+		if (options.default_pin) if (!gallery_obj.parallax_pinned_items.includes(tile_id)) gallery_obj.parallax_pinned_items.push(tile_id);
 	}
 	
 	getCursorPosition(e, arg0_image) {
-		e = e ? e : window.event;
-		let img_bounds = arg0_image.getBoundingClientRect();
-		return {
-			x: e.clientX - img_bounds.left,
-			y: e.clientY - img_bounds.top,
-		};
+		e = (e) ? e : window.event;
+		var img_bounds = arg0_image.getBoundingClientRect();
+		var pan_x = e.clientX - img_bounds.left;
+		var pan_y = e.clientY - img_bounds.top;
+		return { x: pan_x, y: pan_y };
 	}
 	
 	getDescendants(arg0_element_id) {
-		let descendants = [arg0_element_id];
-		let current_iterations = 0;
+		var local_element = arg0_element_id;
+		var gallery_obj = this.gallery;
+		var current_iterations = 0;
+		var descendants = [local_element];
 		try {
 			while (true) {
-				let start_len = descendants.length;
+				var initial_len = descendants.length;
 				for (let i = 0; i < descendants.length; i++) {
-					let local_obj = this.gallery.parallax_settings[descendants[i]];
-					if (local_obj && local_obj.dependencies) {
-						local_obj.dependencies.forEach((dep) => {
-							if (!descendants.includes(dep)) descendants.push(dep);
-						});
-					}
+					var local_obj = gallery_obj.parallax_settings[descendants[i]];
+					if (local_obj && local_obj.dependencies)
+						for (let x = 0; x < local_obj.dependencies.length; x++)
+							if (!descendants.includes(local_obj.dependencies[x])) descendants.push(local_obj.dependencies[x]);
 				}
-				if (descendants.length === start_len || current_iterations >= 15) break;
+				if (descendants.length == initial_len || current_iterations >= 15) break;
 				current_iterations++;
 			}
-		} catch (e) {}
-		return descendants.filter((id) => id !== arg0_element_id);
+		} catch (e) { }
+		return descendants.filter(d => d !== local_element);
 	}
 	
 	getMaximisedContentPanel() {
-		let maximised = this.element.querySelector(".parallax-item-content-panel.shown.maximised");
-		return maximised ? maximised.id.replace("-content-panel", "") : undefined;
+		var maximised = this.element.querySelector(".parallax-item-content-panel.shown.maximised");
+		return (maximised) ? maximised.id.replace("-content-panel", "") : undefined;
 	}
 	
 	hideAllContentPanels() {
-		let shown = this.element.querySelectorAll(".parallax-item-content-panel.shown");
-		shown.forEach((p) => p.classList.remove("shown"));
+		var shown = this.element.querySelectorAll(".parallax-item-content-panel.shown");
+		for (let i = 0; i < shown.length; i++)
+			shown[i].setAttribute("class", shown[i].getAttribute("class").replace(" shown", ""));
 	}
 	
 	hideBookmarkUI() {
-		this.bookmark_minimise_btn.classList.add("minimised");
-		this.bookmark_container.classList.add("minimised");
+		var gallery_obj = this.gallery;
+		gallery_obj.bookmark_minimise_btn.setAttribute("class", gallery_obj.bookmark_minimise_btn.getAttribute("class") + " minimised");
+		gallery_obj.bookmark_container.setAttribute("class", gallery_obj.bookmark_container.getAttribute("class") + " minimised");
 	}
 	
 	getParent(arg0_element_id) {
-		let potential_child = arg0_element_id;
-		let keys = Object.keys(this.gallery.parallax_settings);
-		let parents = [];
-		keys.forEach((k) => {
-			let obj = this.gallery.parallax_settings[k];
-			if (obj.dependencies && obj.dependencies.includes(potential_child)) parents.push(k);
-		});
+		var child = arg0_element_id;
+		var gallery_obj = this.gallery;
+		var keys = Object.keys(gallery_obj.parallax_settings);
+		var parents = [];
+		for (let i = 0; i < keys.length; i++) {
+			var obj = gallery_obj.parallax_settings[keys[i]];
+			if (obj.dependencies && obj.dependencies.includes(child)) parents.push(keys[i]);
+		}
 		return [...new Set(parents)];
 	}
 	
 	initGallery() {
-		let hide_elements = [];
-		let parallax_elements = this.element.querySelectorAll(".parallax-item");
+		var gallery_obj = this.gallery;
+		var hide_elements = [];
+		var parallax_elements = this.element.querySelectorAll(".parallax-item");
 		
-		parallax_elements.forEach((el) => {
-			this.initParallaxElement(el.id);
-			if (this.getParent(el.id).length > 0 && !this.gallery.parallax_pinned_items.includes(el.id)) {
-				hide_elements.push(el.id);
-			}
-		});
-		
+		for (let i = 0; i < parallax_elements.length; i++) {
+			this.initParallaxElement(parallax_elements[i].id);
+			if (this.getParent(parallax_elements[i].id).length > 0 && !gallery_obj.parallax_pinned_items.includes(parallax_elements[i].id))
+				hide_elements.push(parallax_elements[i].id);
+		}
 		hide_elements = [...new Set(hide_elements)];
-		hide_elements.forEach((id) => {
-			let el = this.element.querySelector(`#${id}`);
-			el.classList.add("hidden");
-			let obj = this.gallery.parallax_settings[id];
-			if (obj && obj.animation) el.setAttribute("animation", obj.animation);
-		});
 		
-		this.gallery.bookmark_items.forEach((id) => this.addBookmarkItem(id, true));
+		for (let i = 0; i < hide_elements.length; i++) {
+			var local_el = this.element.querySelector(`#${hide_elements[i]}`);
+			local_el.classList.add("hidden");
+			var local_obj = gallery_obj.parallax_settings[local_el.id];
+			if (local_obj && local_obj.animation)
+				local_el.setAttribute("animation", `${local_obj.animation}`);
+		}
+		
+		for (let i = 0; i < gallery_obj.bookmark_items.length; i++)
+			this.addBookmarkItem(gallery_obj.bookmark_items[i], true);
 	}
 	
 	initGalleryDesktopEventHandlers() {
-		this.parallax_body.addEventListener("mousemove", (e) => {
-			let half_width = this.parallax_body.clientWidth / 2;
-			let half_height = this.parallax_body.clientHeight / 2;
-			let mouse_x = half_width + this.parallax_body.offsetLeft - e.pageX;
-			let mouse_y = half_height + this.parallax_body.offsetTop - e.pageY;
+		var gallery_obj = this.gallery;
+		
+		gallery_obj.parallax_body.addEventListener("mousemove", (e) => {
+			var half_width = gallery_obj.parallax_body.clientWidth / 2,
+				half_height = gallery_obj.parallax_body.clientHeight / 2,
+				mouse_x = half_width + gallery_obj.parallax_body.offsetLeft - e.pageX,
+				mouse_y = half_height + gallery_obj.parallax_body.offsetTop - e.pageY;
 			
-			if (this.gallery.content_panel_update_paused) {
+			if (gallery_obj.content_panel_update_paused) {
 				mouse_x /= 32;
 				mouse_y /= 32;
 			}
 			
-			let max_deg = 1.25;
-			this.perspective_deg_x = (mouse_y / half_height) * max_deg * -1 + max_deg / 2;
-			this.perspective_deg_y = (mouse_x / half_width) * max_deg * -1 + 2;
+			var max_deg = 1.25;
+			this.perspective_deg_x = (mouse_y / half_height) * max_deg * -1 + max_deg / 2 + "deg";
+			this.perspective_deg_y = (mouse_x / half_width) * max_deg * -1 + 2 + "deg";
 			
-			let p_string = `rotateX(${this.perspective_deg_x}deg) rotateY(${this.perspective_deg_y}deg)`;
-			this.scene.style.transform = `perspective(20em) ${p_string}`;
+			this.perspective_string = `rotateX(${this.perspective_deg_x}) rotateY(${this.perspective_deg_y})`;
+			gallery_obj.scene.style.transform = `perspective(20em) ${this.perspective_string}`;
 		});
 		
 		window.addEventListener("scroll", () => {
-			const track = document.getElementById("gallery-section") || this.element;
-			const rect = track.getBoundingClientRect();
-			const scrollable_dist = rect.height - window.innerHeight;
+			var track = document.getElementById("gallery-section");
+			if (!track) return;
+			var rect = track.getBoundingClientRect();
+			var scrollable_dist = rect.height - window.innerHeight;
 			
-			let vertical_offset = 0;
+			var vertical_offset = 0;
 			if (rect.top <= 0 && rect.bottom >= 0) {
 				vertical_offset = Math.abs(rect.top);
 			} else if (rect.bottom < 0) {
 				vertical_offset = scrollable_dist;
 			}
 			
-			const container = this.element.querySelector(".project-parallax-container");
-			const siblings = container.children;
+			var siblings = gallery_obj.parallax_body.children;
 			for (let i = 0; i < siblings.length; i++) {
-				let child = siblings[i];
+				var child = siblings[i];
 				if (child.id === "project-parallax-bookmark-container") {
 					child.style.top = vertical_offset + window.innerHeight / 2 + "px";
 				} else if (child.id === "project-parallax-scroll-indicator") {
@@ -445,96 +550,81 @@ window.HomepageGallery = class extends window.WebComponent {
 			}
 			
 			if (rect.top <= 0 && rect.bottom >= window.innerHeight) {
-				let progress = Math.abs(rect.top) / scrollable_dist;
-				this.gallery.parallax_scroll_x = progress * this.gallery.gallery_width * -1;
-				this.parallax_container.style.transform = `translateX(${this.gallery.parallax_scroll_x}vh)`;
-				if (this.parallax_scroll_indicator) {
-					this.parallax_scroll_indicator.style.width = `${progress * 100}vw`;
-				}
+				var progress = Math.abs(rect.top) / scrollable_dist;
+				gallery_obj.parallax_scroll_x = progress * gallery_obj.gallery_width * -1;
+				gallery_obj.parallax_container.style.transform = `translateX(${gallery_obj.parallax_scroll_x}vh)`;
+				if (gallery_obj.parallax_scroll_indicator)
+					gallery_obj.parallax_scroll_indicator.style.width = `${progress * 100}vw`;
 			}
 		});
 		
-		this.parallax_body.addEventListener(
-			"wheel",
-			(e) => {
-				let panel = e.target.closest(".content-wrapper");
-				if (panel) {
-					let at_top = panel.scrollTop <= 0 && e.deltaY < 0;
-					let at_bottom = panel.scrollTop + panel.offsetHeight >= panel.scrollHeight && e.deltaY > 0;
-					if (!at_top && !at_bottom) e.stopPropagation();
-				}
-			},
-			{ passive: false },
-		);
+		gallery_obj.parallax_body.addEventListener("wheel", (e) => {
+			var panel = e.target.closest(".content-wrapper");
+			if (panel) {
+				var is_at_top = panel.scrollTop <= 0 && e.deltaY < 0;
+				var is_at_bottom = panel.scrollTop + panel.offsetHeight >= panel.scrollHeight && e.deltaY > 0;
+				if (!is_at_top && !is_at_bottom) e.stopPropagation();
+			}
+		}, { passive: false });
 	}
 	
 	initGalleryMobileEventHandlers() {
-		this.parallax_body.addEventListener(
-			"touchmove",
-			(e) => {
-				if (this.element.querySelectorAll(".maximised.shown").length !== 0) {
-					if (!e.target.closest(".parallax-item-content-panel")) {
-						e.preventDefault();
-					}
-				}
-			},
-			{ passive: false },
-		);
+		var gallery_obj = this.gallery;
+		gallery_obj.parallax_body.addEventListener("touchmove", (e) => {
+			if (this.element.querySelectorAll(".maximised.shown").length != 0) {
+				var is_over = e.target.closest(".parallax-item-content-panel") !== null;
+				if (!is_over) e.preventDefault();
+			}
+		}, { passive: false });
 	}
 	
 	initGalleryTiles() {
-		// Assume config.homepage.gallery.tiles exists globally or via constructor
-		let source = (window.config && config.homepage && config.homepage.gallery) ? config.homepage.gallery.tiles : {};
-		Object.keys(source).forEach((k) => {
-			try {
-				this.createPanel(k, source[k]);
-			} catch (e) {
-				console.error(e);
-			}
-		});
+		var source = (window.config && config.homepage && config.homepage.gallery) ? config.homepage.gallery.tiles : {};
+		var keys = Object.keys(source);
+		for (let i = 0; i < keys.length; i++) {
+			try { this.createPanel(keys[i], source[keys[i]]); } catch (e) { console.error(e); }
+		}
 	}
 	
 	initGalleryUI() {
-		this.bookmark_minimise_btn.onclick = () => {
-			this.bookmark_minimise_btn.classList.contains("minimised") ? this.showBookmarkUI() : this.hideBookmarkUI();
+		var gallery_obj = this.gallery;
+		gallery_obj.bookmark_minimise_btn.onclick = () => {
+			!gallery_obj.bookmark_minimise_btn.classList.contains("minimised") ? this.hideBookmarkUI() : this.showBookmarkUI();
 		};
 		
 		setTimeout(() => {
-			let panels = this.element.querySelectorAll(".content-wrapper");
-			panels.forEach((p) => {
-				let title = p.querySelector(".parallax-item-content-panel-title");
-				if (!title) return;
-				let id = p.id.replace("-content-wrapper", "");
-				let raw_id = id.replace("-content-panel", "");
-				
-				title.innerHTML = `
-					${title.textContent}
-					<img id="${raw_id}-close-btn" class="content-panel-close-btn" src="gfx/interface/icons/close_btn.png" draggable="false">
-					<img id="${raw_id}-maximise-btn" class="content-panel-maximise-btn" src="gfx/interface/icons/maximise_icon.png" draggable="false">
+			let all_panels = this.element.querySelectorAll(".content-wrapper");
+			for (let i = 0; i < all_panels.length; i++) {
+				let title = all_panels[i].querySelector(".parallax-item-content-panel-title");
+				if (!title) continue;
+				let id = all_panels[i].id.replace("-content-panel", "").replace("-content-wrapper", "");
+				title.innerHTML = `${title.textContent}
+					<img id="${id}-close-btn" class="content-panel-close-btn" src="gfx/interface/icons/close_btn.png" draggable="false">
+					<img id="${id}-maximise-btn" class="content-panel-maximise-btn" src="gfx/interface/icons/maximise_icon.png" draggable="false">
 				`;
-				
-				this.element.querySelector(`#${raw_id}-close-btn`).onclick = () => this.closeContentPanel(raw_id);
-				this.element.querySelector(`#${raw_id}-maximise-btn`).onclick = () => this.maximiseContentPanel(raw_id);
-			});
+				this.element.querySelector(`#${id}-close-btn`).onclick = () => this.closeContentPanel(id);
+				this.element.querySelector(`#${id}-maximise-btn`).onclick = () => this.maximiseContentPanel(id);
+			}
 		}, 500);
 		
 		this.initGalleryDesktopEventHandlers();
 		this.initGalleryMobileEventHandlers();
 		
 		setInterval(() => {
-			this.gallery.parallax_selected.forEach((id) => {
-				let obj = this.gallery.parallax_settings[id];
-				if (obj && obj.dependencies) {
-					obj.dependencies.forEach((dep_id) => {
-						let el = this.element.querySelector(`#${dep_id}`);
+			for (let i = 0; i < gallery_obj.parallax_selected.length; i++) {
+				var item_id = gallery_obj.parallax_selected[i];
+				var item_obj = gallery_obj.parallax_settings[item_id];
+				if (item_obj && item_obj.dependencies) {
+					item_obj.dependencies.forEach((dep_id) => {
+						var el = this.element.querySelector(`#${dep_id}`);
 						if (el && el.classList.contains("hidden")) {
 							el.classList.remove("hidden");
-							let dep_obj = this.gallery.parallax_settings[dep_id];
+							var dep_obj = gallery_obj.parallax_settings[dep_id];
 							if (dep_obj && dep_obj.show_function) dep_obj.show_function();
 						}
 					});
 				}
-			});
+			}
 		}, 100);
 		
 		setInterval(() => this.updateContentPanelContainer(), 16);
@@ -542,12 +632,14 @@ window.HomepageGallery = class extends window.WebComponent {
 	}
 	
 	initParallaxElement(arg0_element_id) {
-		let local_id = arg0_element_id;
-		if (!this.gallery.parallax_settings[local_id]) this.gallery.parallax_settings[local_id] = {};
-		let local_obj = this.gallery.parallax_settings[local_id];
+		var local_element = arg0_element_id;
+		var gallery_obj = this.gallery;
 		
-		local_obj.animation_queue = local_obj.animation_queue || [];
-		local_obj.id = local_id;
+		if (!gallery_obj.parallax_settings[local_element]) gallery_obj.parallax_settings[local_element] = {};
+		var local_obj = gallery_obj.parallax_settings[local_element];
+		
+		local_obj.animation_queue = (!local_obj.animation_queue) ? [] : local_obj.animation_queue;
+		local_obj.id = (!local_obj.id) ? local_element : local_obj.id;
 		
 		local_obj.hide_function = () => {
 			local_obj.animation_queue.push(local_obj.animation);
@@ -559,331 +651,281 @@ window.HomepageGallery = class extends window.WebComponent {
 			local_obj.animation_queue = [...new Set(local_obj.animation_queue.reverse())].reverse();
 		};
 		
-		let dependency_amount = this.getDescendants(local_id).length;
+		var dependency_amount = this.getDescendants(local_obj.id).length;
+		
 		local_obj.logic = setInterval(() => {
-			let all_children_done = true;
-			this.getDescendants(local_id).forEach((child_id) => {
-				let c_obj = this.gallery.parallax_settings[child_id];
-				if (c_obj && c_obj.animation_queue.length > 0) all_children_done = false;
-			});
+			var all_children_finished = true;
+			var descendants = this.getDescendants(local_obj.id);
+			for (let i = 0; i < descendants.length; i++) {
+				var d_obj = gallery_obj.parallax_settings[descendants[i]];
+				if (d_obj && d_obj.animation_queue.length > 0) all_children_finished = false;
+			}
 			
-			if (all_children_done && local_obj.animation_queue.length > 0) {
+			if (all_children_finished && local_obj.animation_queue.length > 0) {
 				try {
-					let el = this.element.querySelector(`#${local_id}`);
-					let anim = local_obj.animation_queue[0];
+					var el = this.element.querySelector(`#${local_obj.id}`);
+					var anim = local_obj.animation_queue[0];
 					el.setAttribute("animation", anim);
-					
 					setTimeout(() => {
 						if (anim.includes("-shown")) {
 							el.classList.remove("hidden");
 						} else {
 							el.classList.add("hidden");
 						}
-						local_obj.animation_queue.splice(0, 1);
+						local_obj.animation_queue.shift();
 					}, 750);
-				} catch (e) {}
+				} catch (e) { }
 			}
 		}, 750 - dependency_amount);
 		
-		let local_el = this.element.querySelector(`#${local_id}`);
+		var local_el = this.element.querySelector(`#${local_obj.id}`);
 		local_el.setAttribute("animation", local_el.id + "-shown");
-		local_el.onclick = () => {
-			this.toggleContentPanel(local_id);
-			this.selectParallaxItem(local_id);
-		};
+		local_el.onclick = () => { this.toggleContentPanel(local_el.id); this.selectParallaxItem(local_el.id); };
 		
 		if (local_obj.animation && !local_obj.is_base_node) {
-			local_el.insertAdjacentHTML(
-				"beforeend",
-				`
-				<div class="parallax-icon pin ${this.gallery.parallax_pinned_items.includes(local_id) ? "pin-filled" : "pin-empty"}"></div>
-				<div id="bookmark-btn-${local_id}" class="parallax-icon bookmark bookmark-empty"></div>
-				`,
-			);
-			local_el.querySelector(".pin").onclick = (e) => {
-				e.stopPropagation();
-				this.pinItem(local_id);
-			};
-			local_el.querySelector(".bookmark").onclick = (e) => {
-				e.stopPropagation();
-				this.bookmarkInteraction(local_id);
-			};
+			local_el.innerHTML += `
+				<div class = "parallax-icon pin ${(gallery_obj.parallax_pinned_items.includes(local_el.id)) ? "pin-filled" : "pin-empty"}"></div>
+				<div id = "bookmark-btn-${local_el.id}" class = "parallax-icon bookmark bookmark-empty"></div>
+			`;
+			local_el.querySelector(".pin").onclick = (e) => { e.stopPropagation(); this.pinItem(local_el.id); };
+			local_el.querySelector(".bookmark").onclick = (e) => { e.stopPropagation(); this.bookmarkInteraction(local_el.id); };
 		}
-	}
-	
-	magnify (arg0_element, arg1_zoom) {
-		//Convert from parameters
-		var local_el = arg0_element;
-		var zoom = arg1_zoom;
-		
-		//Declare global instance variables
-		var element_id = local_el.id;
-		
-		window[element_id + "_zoom"] = zoom;
-		var local_zoom = window[element_id + "_zoom"];
-		
-		//Create magnifying glass element
-		var local_magnifier = document.createElement("DIV");
-		local_magnifier.setAttribute("class", "image-magnifier-glass");
-		local_magnifier.style.backgroundImage = `url('${local_el.src}')`;
-		local_magnifier.style.backgroundRepeat = "no-repeat";
-		
-		local_el.parentElement.insertBefore(local_magnifier, local_el);
-		
-		//Dynamic movement events - PC
-		local_el.addEventListener("mousemove", (e) => moveMagnifier(e, local_el, local_magnifier));
-		
-		//Dynamic movement events - Mobile
-		local_el.addEventListener("touchmove", (e) => moveMagnifier(e, local_el, local_magnifier));
-		
-		//Dynamic zoom
-		local_el.addEventListener("wheel", (e) => {
-			local_zoom += e.deltaY*-0.0025;
-			
-			//Restrict zoom between 1.25-10
-			local_zoom = Math.min(Math.max(1.25, local_zoom), 10);
-			window[element_id + "_zoom"] = local_zoom;
-			
-			e.preventDefault();
-		});
-		
-		//Hide magnifier if image is not hovered on
-		setInterval(function(){
-			local_magnifier.style.opacity = (document.querySelectorAll(`#${element_id}:hover`).length != 0 && window[element_id.replace(/-/gm, "_") + "_active_preview"] != false) ? 1 : 0;
-		}, 0);
 	}
 	
 	pinItem(arg0_element_id) {
-		let local_el = this.element.querySelector(`#${arg0_element_id}`);
-		let pin_btn = local_el.querySelector(".pin");
-		if (this.gallery.parallax_pinned_items.includes(arg0_element_id)) {
-			this.gallery.parallax_pinned_items = this.gallery.parallax_pinned_items.filter((i) => i !== arg0_element_id);
-			pin_btn.classList.replace("pin-filled", "pin-empty");
-		} else {
-			this.gallery.parallax_pinned_items.push(arg0_element_id);
-			pin_btn.classList.replace("pin-empty", "pin-filled");
-		}
+		var local_id = arg0_element_id;
+		var gallery_obj = this.gallery;
+		var local_element = this.element.querySelector(`#${local_id}`);
+		try {
+			var pin_btn = local_element.querySelector(".pin");
+			(gallery_obj.parallax_pinned_items.includes(local_id)) ?
+				gallery_obj.parallax_pinned_items = gallery_obj.parallax_pinned_items.filter(i => i !== local_id) :
+				gallery_obj.parallax_pinned_items.push(local_id);
+			
+			pin_btn.setAttribute("class", (gallery_obj.parallax_pinned_items.includes(local_id)) ?
+				pin_btn.getAttribute("class").replace("pin-empty", "pin-filled") :
+				pin_btn.getAttribute("class").replace("pin-filled", "pin-empty")
+			);
+		} catch (e) { }
 	}
 	
 	selectBookmarkItem(arg0_element_id, arg1_automatic_selection, arg2_no_scroll) {
-		let actual_id = arg0_element_id.replace("preview-", "");
-		let local_bookmark = this.element.querySelector(`#${arg0_element_id}`);
-		let local_dot = this.element.querySelector(`#btn-bookmark-${arg0_element_id}`);
-		let parallax_el = this.element.querySelector(`#${actual_id}`);
+		var actual_id = arg0_element_id.replace("preview-", "");
+		var automatic_selection = arg1_automatic_selection;
+		var local_bookmark = this.element.querySelector(`#${arg0_element_id}`);
+		var local_el = this.element.querySelector(`#btn-bookmark-${arg0_element_id}`);
+		var local_id = arg0_element_id;
+		var no_scroll = arg2_no_scroll;
+		var gallery_obj = this.gallery;
+		var parallax_element = this.element.querySelector(`#${actual_id}`);
 		
-		let local_index = this.gallery.bookmark_items.indexOf(actual_id);
-		if (local_index === -1) local_index = 0;
+		var local_index = (gallery_obj.bookmark_items.includes(actual_id)) ? gallery_obj.bookmark_items.indexOf(actual_id) : 0;
 		
-		if (!this.closing_bookmark || arg1_automatic_selection) {
+		if (!gallery_obj.closing_bookmark || automatic_selection) {
 			this.clearBookmarkDots();
-			if (local_dot) local_dot.classList.add("filled");
+			if (local_el) local_el.setAttribute("class", local_el.getAttribute("class") + " filled");
 			
-			this.gallery.bookmark_selected = arg0_element_id;
-			this.bookmark_preview_container.style.left = `${local_index * -12}vh`;
+			gallery_obj.bookmark_selected = local_id;
+			gallery_obj.bookmark_preview_container.style.left = `${local_index * -12}vh`;
 			
-			let all_previews = this.element.querySelectorAll(".parallax-item-preview:not([item-state*='hidden'])");
-			all_previews.forEach((p, i) => {
-				p.style.left = `calc(50% - 12vh - ${i * 12}vh)`;
-				p.style.zIndex = i < local_index ? i : all_previews.length - i;
-				p.classList.remove("selected");
-			});
+			var all_bookmarks = this.element.querySelectorAll(".parallax-item-preview:not([item-state*='hidden'])");
+			for (let i = 0; i < all_bookmarks.length; i++) {
+				all_bookmarks[i].setAttribute("style", `
+					left: calc(50% - 12vh - ${i * 12}vh);
+					z-index: ${(i < local_index) ? i : all_bookmarks.length - i};
+				`);
+				all_bookmarks[i].classList.remove("selected");
+			}
 			
 			if (local_bookmark) {
 				local_bookmark.style.zIndex = 99;
 				local_bookmark.classList.add("selected");
 			}
 			
-			if (!arg2_no_scroll && parallax_el) {
-				let maximised = this.getMaximisedContentPanel();
+			if (!no_scroll && parallax_element) {
+				var maximised = this.getMaximisedContentPanel();
 				if (maximised) this.minimiseContentPanel(maximised);
 				
-				let vh = window.innerHeight / 100;
-				let vw = window.innerWidth / 100;
-				let local_width = parseInt(getComputedStyle(parallax_el).width) / vh;
-				let offset_x = (vw * 50) / vh;
-				let pan_x = parseInt(getComputedStyle(parallax_el).left) / vh;
+				var vh = window.innerHeight / 100;
+				var vw = window.innerWidth / 100;
+				var local_width = parseInt(getComputedStyle(parallax_element).width) / vh;
+				var offset_x = (vw * 50) / vh;
+				var pan_x = parseInt(getComputedStyle(parallax_element).left) / vh;
 				
-				this.gallery.parallax_scroll_x = pan_x * -1 + offset_x - local_width / 2;
-				this.parallax_container.classList.remove("fast-scroll");
-				this.parallax_container.classList.add("slow-scroll");
-				this.parallax_container.style.transform = `translateX(${this.gallery.parallax_scroll_x}vh)`;
+				gallery_obj.parallax_scroll_x = (pan_x * -1 + offset_x - local_width / 2);
+				gallery_obj.parallax_container.classList.remove("fast-scroll");
+				gallery_obj.parallax_container.classList.add("slow-scroll");
+				gallery_obj.parallax_container.style.transform = `translateX(${gallery_obj.parallax_scroll_x}vh)`;
 			}
 			
-			if (parallax_el && !parallax_el.getAttribute("animation").includes("shown")) {
-				parallax_el.setAttribute("animation", actual_id + "-shown");
-				parallax_el.classList.remove("hidden");
+			if (parallax_element && !parallax_element.getAttribute("animation").includes("shown")) {
+				parallax_element.setAttribute("animation", actual_id + "-shown");
+				parallax_element.classList.remove("hidden");
 			}
 		}
 	}
 	
 	removeBookmarkItem(arg0_element_id) {
-		let local_id = arg0_element_id;
-		let bookmark_btn = this.element.querySelector(`#bookmark-btn-${local_id}`);
-		let local_index = this.gallery.bookmark_items.indexOf(local_id);
+		var local_id = arg0_element_id;
+		var gallery_obj = this.gallery;
+		var bookmark_btn = this.element.querySelector(`#bookmark-btn-${local_id}`);
+		var local_index = gallery_obj.bookmark_items.indexOf(local_id);
 		
-		if (bookmark_btn) bookmark_btn.classList.replace("bookmark-filled", "bookmark-empty");
-		this.gallery.bookmark_items = this.gallery.bookmark_items.filter((i) => i !== local_id);
+		if (bookmark_btn) bookmark_btn.setAttribute("class", bookmark_btn.getAttribute("class").replace("bookmark-filled", "bookmark-empty"));
+		gallery_obj.bookmark_items = gallery_obj.bookmark_items.filter(i => i !== local_id);
+		gallery_obj.closing_bookmark = true;
+		setTimeout(() => gallery_obj.closing_bookmark = false, 100);
 		
-		this.closing_bookmark = true;
-		setTimeout(() => (this.closing_bookmark = false), 100);
+		var bookmark_dot_el = this.element.querySelector(`#btn-bookmark-preview-${local_id}`);
+		var preview_el = this.element.querySelector(`#preview-${local_id}`);
 		
-		let dot = this.element.querySelector(`#btn-bookmark-preview-${local_id}`);
-		let preview = this.element.querySelector(`#preview-${local_id}`);
+		if (preview_el) preview_el.setAttribute("item-state", "hidden");
+		if (bookmark_dot_el) bookmark_dot_el.setAttribute("class", bookmark_dot_el.getAttribute("class") + " fade-out");
 		
-		preview.setAttribute("item-state", "hidden");
-		if (dot) dot.classList.add("fade-out");
-		
-		let new_selected = this.gallery.bookmark_selected;
-		if (!this.gallery.bookmark_items.includes(new_selected.replace("preview-", ""))) {
-			let next = this.gallery.bookmark_items[local_index] || this.gallery.bookmark_items[local_index - 1];
-			new_selected = next ? "preview-" + next : "";
+		var new_selected = gallery_obj.bookmark_selected;
+		if (!gallery_obj.bookmark_items.includes(new_selected.replace("preview-", ""))) {
+			var next = gallery_obj.bookmark_items[local_index] || gallery_obj.bookmark_items[local_index - 1];
+			new_selected = (next) ? "preview-" + next : "";
 		}
 		
-		if (new_selected) {
-			this.selectBookmarkItem(new_selected, true, true);
-		}
+		try { if (new_selected) this.selectBookmarkItem(new_selected, true, true); } catch (e) { }
 		
 		setTimeout(() => {
-			if (preview) preview.remove();
-			if (dot) dot.remove();
-			if (this.gallery.bookmark_items.length === 0) {
-				this.bookmark_no_label.classList.remove("hidden");
-				this.bookmark_container.classList.add("no-bookmarks");
+			if (preview_el) preview_el.remove();
+			if (bookmark_dot_el) bookmark_dot_el.remove();
+			if (gallery_obj.bookmark_items.length == 0) {
+				gallery_obj.no_bookmark_label.classList.remove("hidden");
+				gallery_obj.bookmark_container.classList.add("no-bookmarks");
 			}
 		}, 500);
 	}
 	
 	selectParallaxItem(arg0_element_id) {
-		let id = arg0_element_id;
-		if (!this.gallery.parallax_selected.includes(id)) {
-			this.gallery.parallax_selected.push(id);
-		} else {
-			this.gallery.parallax_selected = this.gallery.parallax_selected.filter((i) => i !== id);
-		}
+		var id = arg0_element_id;
+		var gallery_obj = this.gallery;
+		(!gallery_obj.parallax_selected.includes(id)) ? gallery_obj.parallax_selected.push(id) :
+			gallery_obj.parallax_selected = gallery_obj.parallax_selected.filter(i => i !== id);
 	}
 	
 	showBookmarkUI() {
-		this.bookmark_minimise_btn.classList.remove("minimised");
-		this.bookmark_container.classList.remove("minimised");
+		var gallery_obj = this.gallery;
+		gallery_obj.bookmark_minimise_btn.classList.remove("minimised");
+		gallery_obj.bookmark_container.classList.remove("minimised");
 	}
 	
 	toggleContentPanel(arg0_element_id) {
-		let local_el = this.element.querySelector(`#${arg0_element_id}-content-panel`);
+		var gallery_obj = this.gallery;
+		var local_el = this.element.querySelector(`#${arg0_element_id}-content-panel`);
 		if (!local_el) return;
 		
-		let pre_check = local_el.classList.contains("shown");
-		let was_maximized = local_el.classList.contains("maximised");
+		var pre_check = local_el.classList.contains("shown");
+		var was_max = local_el.classList.contains("maximised");
 		
 		this.hideAllContentPanels();
 		if (!pre_check) {
-			let main_scene = this.element.querySelector(".layer.main");
-			this.content_panel_container.style.transform = main_scene.style.transform;
-			
+			var main_layer = this.element.querySelector(".layer.main");
+			gallery_obj.content_panel_container.setAttribute("style", main_layer.getAttribute("style"));
+			gallery_obj.content_panel_scroll_container.style.transform = `translateX(${gallery_obj.parallax_scroll_x}vh)`;
 			local_el.classList.add("shown");
-			if (was_maximized) this.maximiseContentPanel(arg0_element_id);
+			if (was_max) this.maximiseContentPanel(arg0_element_id);
 		}
 		
-		let maximised_id = this.getMaximisedContentPanel();
-		if (maximised_id && maximised_id !== arg0_element_id) {
-			this.minimiseContentPanel(maximised_id, true);
-		}
+		var current_max = this.getMaximisedContentPanel();
+		if (current_max && current_max != arg0_element_id) this.minimiseContentPanel(current_max, true);
 	}
 	
 	maximiseContentPanel(arg0_element_id) {
-		let panel = this.element.querySelector(`#${arg0_element_id}-content-panel`);
-		let btn = this.element.querySelector(`#${arg0_element_id}-maximise-btn`);
-		
-		this.gallery.content_panel_update_paused = true;
-		this.content_panel_container.style.cssText = `
-			transform-style: preserve-3d;
-			backface-visibility: hidden;
-			position: relative;
-			display: block;
-			left: 0vh;
-			top: 0px;
-			transition: all 1s ease;
-		`;
+		var panel = this.element.querySelector(`#${arg0_element_id}-content-panel`);
+		var gallery_obj = this.gallery;
+		if (!panel) return;
+		gallery_obj.content_panel_update_paused = true;
+		gallery_obj.content_panel_container.style.cssText = `transform-style: preserve-3d; backface-visibility: hidden; position: absolute; display: block; left: 0vh; height: 100%; width: 100%; top: 0px; transition: all 2s ease;`;
 		panel.classList.add("maximised");
-		btn.onclick = () => this.minimiseContentPanel(arg0_element_id);
-		this.parallax_scroll_indicator.style.opacity = 0;
+		gallery_obj.parallax_scroll_indicator.style.opacity = 0;
+		
+		gallery_obj.content_panel_scroll_container.style.transform = ``;
+		
+		console.log(`Maximising panel:`, arg0_element_id);
 	}
 	
 	minimiseContentPanel(arg0_element_id, arg1_instant) {
-		let panel = this.element.querySelector(`#${arg0_element_id}-content-panel`);
-		let btn = this.element.querySelector(`#${arg0_element_id}-maximise-btn`);
-		
-		this.gallery.content_panel_update_paused = false;
+		var panel = this.element.querySelector(`#${arg0_element_id}-content-panel`);
+		var gallery_obj = this.gallery;
+		if (!panel) return;
+		gallery_obj.content_panel_update_paused = false;
 		panel.classList.remove("maximised");
-		panel.classList.add(arg1_instant ? "instant-minimisation" : "being-minimised");
-		
-		setTimeout(() => {
-			panel.classList.remove("being-minimised", "instant-minimisation");
-		}, arg1_instant ? 100 : 1000);
-		
-		btn.onclick = () => this.maximiseContentPanel(arg0_element_id);
-		this.parallax_scroll_indicator.style.opacity = 1;
+		panel.classList.add((arg1_instant) ? "instant-minimisation" : "being-minimised");
+		setTimeout(() => panel.classList.remove("being-minimised", "instant-minimisation"), (arg1_instant) ? 500 : 1000);
+		gallery_obj.parallax_scroll_indicator.style.opacity = 1;
 	}
 	
 	updateContentPanelContainer() {
-		let main_scene = this.element.querySelector(".layer.main");
-		if (!this.gallery.content_panel_update_paused && main_scene) {
-			this.content_panel_container.style.transform = main_scene.style.transform;
-			this.content_panel_scroll_container.style.transform = `perspective(40em) rotateX(${
-				(this.perspective_deg_y || 0) * 0.5
-			}deg) translateX(${this.gallery.parallax_scroll_x}vh)`;
+		var gallery_obj = this.gallery;
+		var main_scene = this.element.querySelector(".layer.main");
+		
+		if (!gallery_obj.content_panel_update_paused && main_scene) {
+			gallery_obj.content_panel_container.style.transform = main_scene.style.transform;
+			gallery_obj.content_panel_scroll_container.style.transform = `translateX(${gallery_obj.parallax_scroll_x}vh)`;
+		}
+	}
+	
+	updateHiddenElements() {
+		var gallery_obj = this.gallery;
+		var all_dom = this.element.querySelectorAll(".parallax-item");
+		var keys = Object.keys(gallery_obj.parallax_settings);
+		var visible = [];
+		
+		for (let i = 0; i < gallery_obj.parallax_selected.length; i++) {
+			var id = gallery_obj.parallax_selected[i];
+			visible.push(id);
+			var obj = gallery_obj.parallax_settings[id];
+			if (obj && obj.dependencies) obj.dependencies.forEach(d => visible.push(d));
+		}
+		keys.forEach(k => {
+			if (this.getParent(k).length == 0) visible.push(k);
+			var panel = this.element.querySelector(`#${k}-content-panel`);
+			if (panel && panel.classList.contains("shown")) visible.push(k);
+		});
+		visible = [...new Set(visible)];
+		
+		for (let i = 0; i < all_dom.length; i++) {
+			var id = all_dom[i].id;
+			if (!visible.includes(id) && !gallery_obj.parallax_pinned_items.includes(id)) {
+				var obj = gallery_obj.parallax_settings[id];
+				if (obj && !all_dom[i].classList.contains("hidden")) obj.hide_function();
+			}
 		}
 	}
 	
 	onParallaxHover(e) {
-		let target = e.target.closest(".parallax-item") || e.target.closest(".parallax-item-preview");
+		var gallery_obj = this.gallery;
+		var target = e.target.closest(".parallax-item");
 		if (!target) return;
 		
-		let hover_time = parseInt(target.getAttribute("hover-time") || 0);
-		hover_time += 16; // Approx interval
+		var hover_time = parseInt(target.getAttribute("hover-time") || 0);
+		hover_time += 16;
 		target.setAttribute("hover-time", hover_time);
 		
-		if (hover_time > 500) {
-			let id = target.id.replace("preview-", "");
-			if (this.gallery.parallax_settings[id]) {
-				if (!this.gallery.parallax_selected.includes(id)) {
-					this.gallery.parallax_selected.push(id);
+		if (hover_time >= 500) {
+			var id = target.id;
+			if (gallery_obj.parallax_settings[id]) {
+				if (!gallery_obj.parallax_selected.includes(id)) {
+					gallery_obj.parallax_selected.push(id);
+					gallery_obj.parallax_selected = [...new Set(gallery_obj.parallax_selected)];
 					this.updateHiddenElements();
 				}
 			}
 		}
 	}
-	
-	updateHiddenElements() {
-		let all_items = this.element.querySelectorAll(".parallax-item");
-		let visible = new Set(this.gallery.parallax_selected);
-		
-		this.gallery.parallax_selected.forEach((id) => {
-			let obj = this.gallery.parallax_settings[id];
-			if (obj && obj.dependencies) obj.dependencies.forEach((d) => visible.add(d));
-		});
-		
-		// Add base nodes
-		Object.keys(this.gallery.parallax_settings).forEach((k) => {
-			if (this.getParent(k).length === 0) visible.add(k);
-		});
-		
-		all_items.forEach((el) => {
-			let id = el.id;
-			if (!visible.has(id) && !this.gallery.parallax_pinned_items.includes(id)) {
-				let obj = this.gallery.parallax_settings[id];
-				if (obj && obj.hide_function) obj.hide_function();
-			}
-		});
-	}
 };
 
-function initHomepageGallery () {
+function initHomepageGallery() {
 	let initialisation_loop = setInterval(() => {
 		try {
 			window.viewport_two = new window.HomepageGallery();
 			window.viewport_two.bind(document.getElementById("gallery-section"));
 			clearInterval(initialisation_loop);
 		} catch (e) { console.warn(e); }
-	});
+	}, 100);
 }
 initHomepageGallery();
