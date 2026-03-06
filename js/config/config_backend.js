@@ -16,6 +16,7 @@ config.homepage = {
     "js/UF/BrowserUI/context_menus.js",
     "js/UF/BrowserUI/groups_framework.js",
     "js/UF/BrowserUI/hierarchy_framework.js",
+    "js/UF/BrowserUI/WebComponent.js",
     "js/UF/class/class_basic.js",
     "js/UF/colours/basic_colours.js",
     "js/UF/curl/basic_curl.js",
@@ -33,6 +34,7 @@ config.homepage = {
     "js/UF/strings/split_strings.js",
     
     //Viewport 1
+    "js/pages/homepage/viewport_1/HomepageBanner.js",
     "js/pages/homepage/viewport_1/homepage_banner.js",
     
     //Viewport 2

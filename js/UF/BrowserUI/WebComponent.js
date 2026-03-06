@@ -3,11 +3,13 @@
  * - `arg0_value`: {@link any}
  * - `arg1_options`: {@link Object}
  *   - `.css`: {@link Array}<{@link string}>|{@link string}
+ *   - `.css_files`: {@link Array}<{@link string}>|{@link string}
  *   - `.element`: {@link HTMLElement}
  *   - `.id`: {@link string}
  *   
  * ##### Fields:
  * - `.css`: {@link Array}<{@link string}>|{@link string}
+ * - `.css_files`: {@link Array}<{@link string}> - Any CSS files to import on behalf of the present WebComponent.
  * 
  * ##### Static Methods:
  * 
@@ -31,7 +33,8 @@ window.WebComponent = class {
 		
 		//Draw generics
 		this.element.setAttribute("data-id", this.id);
-		
+		if (this.options.css) this.css = this.options.css;
+		if (this.options.css_files) this.css_files = this.options.css_files; 
 	}
 	
 	get css () {
@@ -51,6 +54,31 @@ window.WebComponent = class {
 		}
 		
 		this.style_el.textContent = value;
+	}
+	
+	get css_files () {
+		//Return statement
+		if (!this.style_els) return [];
+		return this.style_els;
+	}
+	
+	set css_files (arg0_value) {
+		//Convert from parameters
+		let value = (arg0_value) ? arg0_value : [];
+		if (!Array.isArray(value)) value = [value];
+		
+		//Declare local instance variables
+		if (!this.style_els) this.style_els = [];
+		
+		//Iterate over all value strings 
+		for (let i = 0; i < value.length; i++) {
+			let local_link_el = document.createElement("link");
+				local_link_el.href = value[i].toString();
+				local_link_el.rel = "stylesheet";
+				local_link_el.type = "text/css";
+			document.head.appendChild(local_link_el);
+			this.style_els.push(local_link_el);
+		}
 	}
 	
 	bind (arg0_element) {

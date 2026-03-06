@@ -1052,7 +1052,10 @@
 //Script
 {
   function initHomepageBanner () {
-    window.banner_settings = {
+    window.viewport_one = new window.HomepageBanner();
+    window.viewport_one.bind(document.getElementById("homepage-banner"));
+    
+    /*window.banner_settings = {
       animation_threshhold: 100,
       backgrounds: {
         main_video: {
@@ -1377,7 +1380,7 @@
     ];
     
     //Temp for debugging [WIP]
-    //setTimeout(() => homepageBannerDisplayDots(), 3000);
+    //setTimeout(() => homepageBannerDisplayDots(), 3000);*/
   }
   initHomepageBanner();
 }
