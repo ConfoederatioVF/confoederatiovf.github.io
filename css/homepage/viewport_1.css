@@ -6,7 +6,7 @@
 
 /* -- Cleveland National Forest background -- */
 .homepage-banner-cleveland-national-forest-bg {
-  background-image: url("../../../gfx/interface/cleveland_fog.png");
+  background-image: url("../../gfx/interface/cleveland_fog.png");
   background-size: cover;
   background-attachment: fixed;
   background-repeat: no-repeat;
@@ -20,7 +20,7 @@
   height: 100dvh;
 }
 .homepage-banner-rain-bg {
-  background-image: url("../../../gfx/interface/rainy_night_bg.png");
+  background-image: url("../../gfx/interface/rainy_night_bg.png");
   background-size: cover;
   background-attachment: fixed;
   background-repeat: no-repeat;
