@@ -1,249 +1,20 @@
-//Homepage Banner modification functions
+//Initialise functions
 {
-  function homepageBannerCentreAlign () {
-    title_element.setAttribute("alignment", "centre");
-
-    //Update selected button in settings
-    var all_alignments = document.querySelectorAll(".text-alignment-button");
-    for (var i = 0; i < all_alignments.length; i++) all_alignments[i].setAttribute("class", "text-alignment-button");
-    document.getElementById("change-centre-alignment").setAttribute("class", "text-alignment-button selected");
+  function applySettingsButtonFunctionality () {
+    //Increment click counter
+    settings_btn_clicked++;
+    
+    //Toggle switch
+    settings_window_open = (settings_window_open) ? false : true;
+    
+    //Open/close settings window
+    updateSettingsPanel();
+    
+    settings_btn.onclick = function () {
+      applySettingsButtonFunctionality();
+    };
   }
-
-  function homepageBannerChangeBanner (arg0_new_banner) {
-    //Convert from parameters
-    var new_banner = arg0_new_banner;
-
-    //Set dot indicator to active
-    homepageBannerClearAllDots();
-    document.getElementById("change-banner-btn-" + new_banner).setAttribute("class", "homepage-banner-change-bg-btn active");
-
-    //Update settings UI
-    var all_bg_btn_elements = document.querySelectorAll(".change-bg-container .change-bg-select-option-container");
-    for (var i = 0; i < all_bg_btn_elements.length; i++) all_bg_btn_elements[i].setAttribute("class", "change-bg-select-option-container");
-
-    document.getElementById("change-bg-" + new_banner + "-container").setAttribute("class", "change-bg-select-option-container selected");
-
-    //Switch to new banner
-    current_banner = new_banner;
-    switch (new_banner) {
-      case "cleveland_fog":
-        homepageBannerHideAllElements(cleveland_national_forest_bg);
-        break;
-      case "lava_lamp":
-        homepageBannerHideAllElements(lava_lamp_bg);
-        lava_lamp_animation_paused = false;
-        break;
-      case "main_video":
-        homepageBannerHideAllElements(main_video_bg);
-        //Play main_video_bg
-        main_video_bg.currentTime = 0;
-        main_video_bg.play();
-        break;
-      case "misty_forest":
-        homepageBannerHideAllElements(misty_forest_bg);
-        //Play misty_forest_bg
-        misty_forest_bg.currentTime = 0;
-        misty_forest_bg.play();
-        break;
-      case "rain":
-        homepageBannerHideAllElements(raindrop_bg);
-        raindrop_animation_paused = false; //Saves performance
-        break;
-      case "triumph_and_tragedy":
-        homepageBannerHideAllElements(triumph_and_tragedy_bg);
-        break;
-    }
-  }
-
-  function homepageBannerChangeFont (arg0_new_font) {
-    //Convert from parameters
-    var new_font_family = arg0_new_font;
-
-    //Declare instance variables
-    var font_obj = banner_settings.fonts[new_font_family];
-
-    //Apply font
-    current_font = new_font_family;
-    banner_title_text.style.fontFamily = font_obj.name;
-    banner_caret_element.style.fontFamily = font_obj.name;
-    banner_caret_spacer_element.style.fontFamily = font_obj.name;
-
-    currently_selected_font.style.fontFamily = font_obj.name;
-
-    //Update settings UI
-    var new_font_weight_value = parseInt(banner_title_text.style.fontWeight);
-    new_font_weight_value = new_font_weight_value/((font_obj.font_weight[1]-font_obj.font_weight[0])/100);
-
-    document.getElementById("settings-change-font-weight").value = new_font_weight_value;
-  }
-
-  function homepageBannerChangeFontSize (arg0_font_size) {
-    //Convert from parameters
-    var font_size = arg0_font_size;
-
-    //Declare local instance variables
-    var new_font_size = (((banner_settings.font_size[1]-banner_settings.font_size[0])/100)*font_size)+banner_settings.font_size[0];
-    var new_top = (100-new_font_size)/2;
-
-    banner_title_text.style.fontSize = `${new_font_size}vh`;
-    banner_caret_element.style.fontSize = `${new_font_size}vh`;
-    banner_caret_spacer_element.style.fontSize = `${new_font_size}vh`;
-
-    window.percentage_string = new_top;
-
-    adjustFontSize(title_element, banner_title_text, { homepage_banner: true });
-  }
-
-  function homepageBannerChangeFontWeight (arg0_font_weight) {
-    //Convert from parameters
-    var font_weight = arg0_font_weight;
-
-    //Declare instance variables
-    var base_font_weight = banner_settings.fonts[current_font].font_weight[0];
-    var new_font_weight = (((banner_settings.fonts[current_font].font_weight[1]-base_font_weight)/100)*font_weight)+base_font_weight;
-
-    //Apply font weight
-    banner_title_text.style.fontWeight = new_font_weight;
-    current_font_weight = new_font_weight;
-  }
-
-  function homepageBannerChangeOpacity (arg0_opacity) {
-    //Convert from parameters
-    var new_opacity = arg0_opacity/100;
-    var raw_opacity = arg0_opacity;
-
-    //Change actual opacity
-    homepage_banner_overlay.style.opacity = new_opacity.toString();
-
-    //Update settings UI
-    document.getElementById("settings-change-opacity").value = raw_opacity;
-  }
-
-  function homepageBannerChangeOverlay (arg0_colour) {
-    //Convert from parameters
-    var new_colour = arg0_colour;
-
-    homepage_banner_overlay.style.filter = banner_settings.overlay.colours[new_colour].filter;
-    current_overlay = new_colour;
-
-    //Set settings indicator
-    var all_overlay_elements = document.querySelectorAll(".change-overlay-container > .change-overlay-select-option-container");
-
-    for (var i = 0; i < all_overlay_elements.length; i++) all_overlay_elements[i].setAttribute("class",
-      all_overlay_elements[i].getAttribute("class").replace(" selected", "")
-    );
-
-    document.getElementById("change-overlay-" + new_colour + "-container").setAttribute("class", "change-overlay-select-option-container selected");
-  }
-
-  function homepageBannerChangeRawFontSize (arg0_font_size) {
-    //Convert from parameters
-    var font_size = arg0_font_size;
-
-    //Declare instance variables
-    var new_font_size = (font_size-banner_settings.font_size[0])/((banner_settings.font_size[1]-banner_settings.font_size[0])/100);
-
-    //Apply new font size
-    homepageBannerChangeFontSize(new_font_size);
-    document.getElementById("settings-change-font-size").value = new_font_size;
-  }
-
-  function homepageBannerClearAllDots () {
-    var all_dots = document.querySelectorAll(".homepage-banner-dots-container div");
-
-    for (var i = 0; i < all_dots.length; i++) all_dots[i].setAttribute("class", "homepage-banner-change-bg-btn");
-  }
-
-  function homepageBannerHideAllElements (arg0_exception) {
-    //Convert from parameters
-    var exception_element = arg0_exception;
-    var background_elements = [
-      cleveland_national_forest_bg,
-      lava_lamp_bg,
-      main_video_bg,
-      misty_forest_bg,
-      raindrop_bg,
-      triumph_and_tragedy_bg
-    ];
-    for (var i = 0; i < background_elements.length; i++) {
-      if (exception_element.getAttribute("id") == background_elements[i].getAttribute("id")) {
-        background_elements[i].setAttribute("class", background_elements[i].getAttribute("class").replace(" hidden", ""));
-      } else {
-        //Make sure hidden parameter isn't already included
-        if (!background_elements[i].getAttribute("class").includes("hidden")) {
-          background_elements[i].setAttribute("class", background_elements[i].getAttribute("class") + " hidden");
-        }
-      }
-    }
-
-    //Performance optimisations
-    lava_lamp_animation_paused = true;
-    raindrop_animation_paused = true;
-  }
-
-  function homepageBannerLeftAlign () {
-    //Cache old style for future restoration
-    title_element.setAttribute("alignment", "left");
-
-    //Update selected button in settings
-    var all_alignments = document.querySelectorAll(".text-alignment-button");
-    for (var i = 0; i < all_alignments.length; i++) all_alignments[i].setAttribute("class", "text-alignment-button");
-    document.getElementById("change-left-alignment").setAttribute("class", "text-alignment-button selected");
-  }
-
-  function homepageBannerResetFontSize () {
-    banner_title_text.style.fontSize = "";
-    banner_caret_element.style.fontSize = "";
-    banner_caret_spacer_element.style.fontSize = "";
-  }
-
-  function homepageBannerRightAlign () {
-    //Cache old style for future restoration
-    title_element.setAttribute("alignment", "right");
-
-    //Update selected button in settings
-    var all_alignments = document.querySelectorAll(".text-alignment-button");
-    for (var i = 0; i < all_alignments.length; i++) all_alignments[i].setAttribute("class", "text-alignment-button");
-    document.getElementById("change-right-alignment").setAttribute("class", "text-alignment-button selected");
-  }
-
-  function homepageBannerSetText (arg0_text) {
-    //Convert from parameters
-    var text = arg0_text;
-
-    //Set .innerHTML
-    banner_title_text.innerHTML = text;
-    homepageBannerTitleAdjustPosition();
-
-    adjustFontSize(title_element, banner_title_text, { homepage_banner: true });
-  }
-
-  function homepageBannerTitleAdjustPosition () {
-    //Set vertical offset
-    var scroll_y = window.pageYOffset;
-
-    //Fetch current percentage
-    var current_class = title_element.getAttribute("class");
-
-    //Set translateY
-    /*title_element.style.top = `calc(${percentage_string}% + ${scroll_y*-1.0025}px)`;
-    settings_container.style.bottom = `calc(8vh + ${scroll_y*0.7}px)`;
-    document.getElementById("project-parallax-container").style.top = `calc(100% - ${scroll_y*0.25}px)`;
-    document.getElementById("about-me-section").style.top = `calc(200% - ${scroll_y*0.25}px)`;*/
-  }
-
-  function homepageBannerToggleCaret () {
-    //Declare local instance variables
-    var caret_input = document.getElementById("settings-display-caret");
-    var caret_wrapper = document.getElementById("homepage-caret-wrapper");
-
-    //Apply new opacity
-    caret_wrapper.style.opacity = (caret_input.checked) ? 1 : 0;
-  }
-}
-
-//Typing framework functions
-{
+  
   /*
     clearText() - Clears text from the main animation banner.
     options: {
@@ -254,330 +25,68 @@
   function clearText (arg0_options) {
     //Convert from parameters
     var options = (arg0_options) ? arg0_options: {};
-
+    
     //Declare local instance variables
     var banner_el = options.banner_el;
     var caret_spacer_el = options.caret_spacer_el;
-
+    
     //Clear selected variables
     if (caret_spacer_el) {
       var caret_spacer_el_class = (caret_spacer_el.getAttribute("class")) ?
         caret_spacer_el.getAttribute("class") : "";
-
+      
       if (caret_spacer_el_class.length > 0)
         caret_spacer_el.setAttribute("class", caret_spacer_el_class.replace("selected", ""));
     }
-
+    
     //Clear text
     banner_el.innerHTML = "";
   }
-
-  /*
-    selectText() - Selects the text in the main animation banner.
-    options: {
-      banner_el: (HTMLElement) - The HTML banner to select text in
-      caret_el: (HTMLElement) - The HTML element that represents the typing caret
-      caret_spacer_el: (HTMLElement) - The HTML element that spaces the typing caret from the main banner
-      select_limit: (Number) - Optional. The number of characters to select from the right. 0 by default, meaning select all
-      select_speed: (Number) - Optional. The ms speed at which to select characters. 100 by default
-    }
-
-    Returns: Promise - This is returned once the animation is finished
-  */
-  function selectText (arg0_options) {
+  
+  function fetchLavaLampTransformProperties (arg0_string) {
     //Convert from parameters
-    var options = (arg0_options) ? arg0_options: {};
-
-    //Declare local instance variables
-    var banner_el = options.banner_el;
-    var caret_el = options.caret_el;
-    var caret_spacer_el = options.caret_spacer_el;
-    var select_limit = (options.select_limit) ? options.select_limit : 0;
-    var select_speed = (options.select_speed) ? options.select_speed : 100;
-
-    var max_delay = 0;
-    var span_amount = banner_el.querySelectorAll("span").length;
-    var speed_array = [];
-
-    //Select caret first
-    var caret_spacer_el_class = (caret_spacer_el.getAttribute("class")) ?
-      caret_spacer_el.getAttribute("class") : "";
-
-    if (caret_spacer_el)
-      caret_spacer_el.setAttribute("class", caret_spacer_el_class + " selected");
-
-    //Iterate over <span> elements in the selected banner
-    for (var i = 0; i < span_amount; i++) {
-      speed_array.push(select_speed);
-
-      //Fetch total_delay
-      var total_delay = sumArray(speed_array);
-
-      //Set max_delay
-      max_delay = Math.max(max_delay, total_delay);
-
-      //Set delay for selected string effect
-      setTimeout(function(){
-        if (!banner_settings.paused_animation) {
-          //Fetch current index/other instance variables
-          var all_spans = banner_el.querySelectorAll("span");
-          var current_index = banner_el.querySelectorAll("span").length - 1 - banner_el.querySelectorAll("span[class*='selected']").length;
-
-          //Apply selected class attribute to span
-          if (current_index >= select_limit) {
-            var current_el = all_spans[current_index];
-            var current_class = (current_el.getAttribute("class")) ? current_el.getAttribute("class") : "";
-
-            current_el.setAttribute("class", current_class + " selected");
-          }
-
-          //Increment anim_index when animation finishes playing
-          var current_anim_index = (banner_el.getAttribute("anim-index")) ? parseInt(banner_el.getAttribute("anim-index")) : 0;
-
-          if (current_index == select_limit)
-            banner_el.setAttribute("anim-index", current_anim_index + 1);
-        }
-      }, total_delay);
-    }
-
-    //Return statement
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve();
-      }, max_delay);
-    });
+    var local_transform_string = arg0_string;
+    
+    //Declare instance variables
+    var rotate_arg_one = "",
+      rotate_arg_two = "",
+      translate_arg = "";
+    
+    //Parse string
+    local_transform_string = local_transform_string.replace(/rotate\(/gm, "");
+    local_transform_string = local_transform_string.replace(/\) translate\(/gm, " ");
+    local_transform_string = local_transform_string.replace(/\) rotate\(/gm, " ");
+    local_transform_string = local_transform_string.replace(/\)/gm, "");
+    
+    return local_transform_string.split(" ");
   }
-
-  /*
-    typeText() - Types text within the main animation banner.
-    options: {
-      apply_class: (String) - The class to add/apply to the banner element.
-      banner_el: (HTMLElement) - The HTML banner to type in
-      constant_typing_speed: (Boolean) - Optional. Whether the typing speed is constant. False by default
-      slowdown: (Number) - Optional. Whether to slow text down as text is typed. 1 by default
-      typing_speed: (Number) - Optional. The initial typing speed per character in ms. 750 by default
-      typing_text: (String) - The text to type.
+  
+  function generateRaindropID () {
+    //Declare instance variables
+    var current_iteration = 0;
+    var valid_id = "";
+    
+    while (true) {
+      //Declare and initialise local instance variables
+      var all_raindrop_elements = raindrop_container.querySelectorAll(".raindrop");
+      var all_raindrop_ids = [];
+      for (var i = 0; i < all_raindrop_elements.length; i++) all_raindrop_ids.push(all_raindrop_elements[i].getAttribute("id").replace("raindrop-", ""));
+      
+      //Try to fetch valid ID
+      var new_id = randomNumber(0, 1000000000).toString();
+      if (!all_raindrop_ids.includes(new_id)) {
+        valid_id = new_id;
+        break;
+      }
+      
+      //Break it off after 15 iterations
+      current_iteration++;
+      if (current_iteration > 15) break;
     }
-
-    Returns: Promise - This is returned once the animation is finished
-  */
-  function typeText (arg0_options) {
-    //Convert from parameters
-    var options = (arg0_options) ? arg0_options: {};
-
-    //Declare local instance variables
-    var apply_class = (arg0_options.apply_class) ? `class = "${options.apply_class}"` : "";
-    var banner_el = options.banner_el;
-    var constant_typing_speed = options.constant_typing_speed;
-    var slowdown = (options.slowdown) ? options.slowdown : 1;
-    var typing_speed = (options.typing_speed) ? options.typing_speed : 750;
-    var typing_text = options.text;
-
-    var max_delay = 0;
-    var speed_array = [];
-
-    //Iterate over typing_text
-    for (var i = 0; i < typing_text.length; i++) {
-      //Reduce typing speed according to slowdown
-      if (!constant_typing_speed)
-        typing_speed -= typing_speed*0.35*Math.random()*slowdown;
-      speed_array.push(typing_speed);
-
-      //Fetch total delay
-      var total_delay = sumArray(speed_array);
-
-      //Set max_delay
-      max_delay = Math.max(max_delay, total_delay);
-
-      //Set delay for typed string
-      setTimeout(function(){
-        if (!banner_settings.paused_animation) {
-          var current_index = banner_el.querySelectorAll("span").length;
-
-          banner_el.innerHTML += `<span ${apply_class} id = "${banner_el.id}-${current_index}">${typing_text[current_index]}</span>`;
-
-          //Increment anim-index if detected as done (this allows for asynchronous detection elsewhere)
-          var current_anim_index = (banner_el.getAttribute("anim-index")) ?
-            parseInt(banner_el.getAttribute("anim-index")) : 0;
-
-          if (current_index + 1 == typing_text.length)
-            banner_el.setAttribute("anim-index", current_anim_index + 1);
-
-          //Set font size for banner to always fit
-          adjustFontSize(title_element, banner_title_text, { homepage_banner: true });
-        }
-      }, total_delay);
-    }
-
-    //Return statement
-    return new Promise((resolve, reject) => {
-      setTimeout(function(){
-        resolve();
-      }, max_delay);
-    });
+    
+    return valid_id;
   }
-}
-
-//Banner customisation variables
-{
-  window.banner_settings = {
-    animation_threshhold: 100,
-    backgrounds: {
-      main_video: {
-        name: "Confoederatio26"
-      },
-      cleveland_fog: {
-        name: "Sunset"
-      },
-      lava_lamp: {
-        name: "Lava Lamp"
-      },
-      misty_forest: {
-        name: "Misty Forest"
-      },
-      rain: {
-        name: "Rain"
-      },
-      triumph_and_tragedy: {
-        name: "Triumph & Tragedy"
-      }
-    },
-    fonts: {
-      bahnschrift: {
-        name: "Bahnschrift",
-        font_weight: [300, 700]
-      },
-      barlow: {
-        name: "Barlow",
-        font_weight: [100, 900]
-      },
-      fira_sans: {
-        name: "Fira Sans",
-        font_weight: [100, 900]
-      },
-      josefin_sans: {
-        name: "Josefin Sans",
-        font_weight: [100, 700]
-      },
-      quicksand: {
-        name: "Quicksand",
-        font_weight: [300, 700]
-      },
-      raleway: {
-        name: "Raleway",
-        font_weight: [100, 900]
-      }
-    },
-    font_size: [10, 50],
-    overlay: {
-      colours: {
-        azure: {
-          name: "Azure",
-          filter: "grayscale(0) hue-rotate(180deg)"
-        },
-        black: {
-          name: "Black",
-          filter: "brightness(0.2) grayscale(1)"
-        },
-        blue: {
-          name: "Blue",
-          filter: "grayscale(0) hue-rotate(225deg)"
-        },
-        copper: {
-          name: "Copper",
-          filter: "grayscale(0.6) hue-rotate(50deg)"
-        },
-        forest_green: {
-          name: "Forest Green",
-          filter: "grayscale(0.6) hue-rotate(100deg)"
-        },
-        grey: {
-          name: "Grey",
-          filter: "grayscale(1)"
-        },
-        light_blue: {
-          name: "Light Blue",
-          filter: "grayscale(0.5) hue-rotate(225deg)"
-        },
-        lime_green: {
-          name: "Lime Green",
-          filter: "grayscale(0) hue-rotate(90deg)"
-        },
-        magenta: {
-          name: "Magenta",
-          filter: "grayscale(0) hue-rotate(310deg)"
-        },
-        negative: {
-          name: "Negative",
-          filter: "grayscale(0) invert(1)"
-        },
-        orange: {
-          name: "Orange",
-          filter: "grayscale(0) hue-rotate(45deg)"
-        },
-        pink: {
-          name: "Pink",
-          filter: "grayscale(0) hue-rotate(340deg)"
-        },
-        red: {
-          name: "Red",
-          filter: "grayscale(0)"
-        },
-        salmon: {
-          name: "Salmon",
-          filter: "grayscale(0.3)"
-        },
-        soft_green: {
-          name: "Soft Green",
-          filter: "grayscale(0.7) hue-rotate(160deg)"
-        },
-        verdant_green: {
-          name: "Verdant Green",
-          filter: "grayscale(0) hue-rotate(160deg)"
-        },
-        violet: {
-          name: "Violet",
-          filter: "grayscale(0) hue-rotate(260deg)"
-        },
-        white: {
-          name: "White",
-          filter: "grayscale(1) brightness(2)"
-        }
-      },
-      opacity_settings: [15, 20, 30, 40],
-      default_opacity: 20,
-      default_splash_colours: ["red", "azure", "copper", "forest_green", "orange", "blue", "negative", "violet", "salmon", "lime_green", "magenta", "black", "verdant_green", "pink", "red", "azure", "copper", "forest_green", "orange", "blue", "negative", "violet", "salmon", "lime_green", "magenta", "black",  "light_blue"]
-    },
-    paused_animation: false,
-    paused_backgrounds: false,
-    text_selected: false
-  };
-}
-
-//Begin initial typing animation
-let banner_caret_element = document.getElementById("homepage-banner-caret-element");
-let banner_caret_spacer_element = document.getElementById("homepage-banner-caret-spacer");
-let banner_selected_once = false;
-let banner_title_text = document.getElementById("homepage-banner-main-title-text");
-let cleveland_national_forest_bg = document.getElementById("homepage-banner-cleveland-national-forest-bg");
-let content_editable_evt_listeners_added = false;
-let current_banner = "main_video";
-let current_font = "bahnschrift";
-let current_font_weight = 700;
-let current_overlay = "grey";
-let homepage_banner_overlay = document.getElementById("homepage-banner-plexus-overlay-bg");
-let lava_lamp_bg = document.getElementById("homepage-banner-lava-lamp-bg");
-let main_video_bg = document.getElementById("homepage-banner-video-bg");
-let misty_forest_bg = document.getElementById("homepage-banner-video-bg-misty-forest");
-let raindrop_bg = document.getElementById("homepage-banner-rain-bg-container");
-let settings_container = document.getElementById("homepage-banner-settings-container");
-let time_since_selection = 0;
-let title_element = document.getElementById("homepage-banner-main-title");
-let triumph_and_tragedy_bg = document.getElementById("homepage-banner-triumph-and-tragedy-bg");
-let typing_speed = 750;
-
-//Homepage banner functions
-{
+  
   function homepageBannerAnimation () {
     //Begin playing video background
     main_video_bg.play();
@@ -817,6 +326,15 @@ let typing_speed = 750;
     }, 100);
   }
   
+  function homepageBannerCentreAlign () {
+    title_element.setAttribute("alignment", "centre");
+    
+    //Update selected button in settings
+    var all_alignments = document.querySelectorAll(".text-alignment-button");
+    for (var i = 0; i < all_alignments.length; i++) all_alignments[i].setAttribute("class", "text-alignment-button");
+    document.getElementById("change-centre-alignment").setAttribute("class", "text-alignment-button selected");
+  }
+  
   function homepageBannerChangeAnimation () {
     //Declare tracker variables
     window.homepage_banner = {
@@ -850,6 +368,304 @@ let typing_speed = 750;
     }
   }
   
+  function homepageBannerChangeBanner (arg0_new_banner) {
+    //Convert from parameters
+    var new_banner = arg0_new_banner;
+    
+    //Set dot indicator to active
+    homepageBannerClearAllDots();
+    document.getElementById("change-banner-btn-" + new_banner).setAttribute("class", "homepage-banner-change-bg-btn active");
+    
+    //Update settings UI
+    var all_bg_btn_elements = document.querySelectorAll(".change-bg-container .change-bg-select-option-container");
+    for (var i = 0; i < all_bg_btn_elements.length; i++) all_bg_btn_elements[i].setAttribute("class", "change-bg-select-option-container");
+    
+    document.getElementById("change-bg-" + new_banner + "-container").setAttribute("class", "change-bg-select-option-container selected");
+    
+    //Switch to new banner
+    current_banner = new_banner;
+    switch (new_banner) {
+      case "cleveland_fog":
+        homepageBannerHideAllElements(cleveland_national_forest_bg);
+        break;
+      case "lava_lamp":
+        homepageBannerHideAllElements(lava_lamp_bg);
+        lava_lamp_animation_paused = false;
+        break;
+      case "main_video":
+        homepageBannerHideAllElements(main_video_bg);
+        //Play main_video_bg
+        main_video_bg.currentTime = 0;
+        main_video_bg.play();
+        break;
+      case "misty_forest":
+        homepageBannerHideAllElements(misty_forest_bg);
+        //Play misty_forest_bg
+        misty_forest_bg.currentTime = 0;
+        misty_forest_bg.play();
+        break;
+      case "rain":
+        homepageBannerHideAllElements(raindrop_bg);
+        raindrop_animation_paused = false; //Saves performance
+        break;
+      case "triumph_and_tragedy":
+        homepageBannerHideAllElements(triumph_and_tragedy_bg);
+        break;
+    }
+  }
+  
+  function homepageBannerChangeFont (arg0_new_font) {
+    //Convert from parameters
+    var new_font_family = arg0_new_font;
+    
+    //Declare instance variables
+    var font_obj = banner_settings.fonts[new_font_family];
+    
+    //Apply font
+    current_font = new_font_family;
+    banner_title_text.style.fontFamily = font_obj.name;
+    banner_caret_element.style.fontFamily = font_obj.name;
+    banner_caret_spacer_element.style.fontFamily = font_obj.name;
+    
+    currently_selected_font.style.fontFamily = font_obj.name;
+    
+    //Update settings UI
+    var new_font_weight_value = parseInt(banner_title_text.style.fontWeight);
+    new_font_weight_value = new_font_weight_value/((font_obj.font_weight[1]-font_obj.font_weight[0])/100);
+    
+    document.getElementById("settings-change-font-weight").value = new_font_weight_value;
+  }
+  
+  function homepageBannerChangeFontSize (arg0_font_size) {
+    //Convert from parameters
+    var font_size = arg0_font_size;
+    
+    //Declare local instance variables
+    var new_font_size = (((banner_settings.font_size[1]-banner_settings.font_size[0])/100)*font_size)+banner_settings.font_size[0];
+    var new_top = (100-new_font_size)/2;
+    
+    banner_title_text.style.fontSize = `${new_font_size}vh`;
+    banner_caret_element.style.fontSize = `${new_font_size}vh`;
+    banner_caret_spacer_element.style.fontSize = `${new_font_size}vh`;
+    
+    window.percentage_string = new_top;
+    
+    adjustFontSize(title_element, banner_title_text, { homepage_banner: true });
+  }
+  
+  function homepageBannerChangeFontWeight (arg0_font_weight) {
+    //Convert from parameters
+    var font_weight = arg0_font_weight;
+    
+    //Declare instance variables
+    var base_font_weight = banner_settings.fonts[current_font].font_weight[0];
+    var new_font_weight = (((banner_settings.fonts[current_font].font_weight[1]-base_font_weight)/100)*font_weight)+base_font_weight;
+    
+    //Apply font weight
+    banner_title_text.style.fontWeight = new_font_weight;
+    current_font_weight = new_font_weight;
+  }
+  
+  function homepageBannerChangeOpacity (arg0_opacity) {
+    //Convert from parameters
+    var new_opacity = arg0_opacity/100;
+    var raw_opacity = arg0_opacity;
+    
+    //Change actual opacity
+    homepage_banner_overlay.style.opacity = new_opacity.toString();
+    
+    //Update settings UI
+    document.getElementById("settings-change-opacity").value = raw_opacity;
+  }
+  
+  function homepageBannerChangeOverlay (arg0_colour) {
+    //Convert from parameters
+    var new_colour = arg0_colour;
+    
+    homepage_banner_overlay.style.filter = banner_settings.overlay.colours[new_colour].filter;
+    current_overlay = new_colour;
+    
+    //Set settings indicator
+    var all_overlay_elements = document.querySelectorAll(".change-overlay-container > .change-overlay-select-option-container");
+    
+    for (var i = 0; i < all_overlay_elements.length; i++) all_overlay_elements[i].setAttribute("class",
+      all_overlay_elements[i].getAttribute("class").replace(" selected", "")
+    );
+    
+    document.getElementById("change-overlay-" + new_colour + "-container").setAttribute("class", "change-overlay-select-option-container selected");
+  }
+  
+  function homepageBannerChangeRawFontSize (arg0_font_size) {
+    //Convert from parameters
+    var font_size = arg0_font_size;
+    
+    //Declare instance variables
+    var new_font_size = (font_size-banner_settings.font_size[0])/((banner_settings.font_size[1]-banner_settings.font_size[0])/100);
+    
+    //Apply new font size
+    homepageBannerChangeFontSize(new_font_size);
+    document.getElementById("settings-change-font-size").value = new_font_size;
+  }
+  
+  function homepageBannerClearAllDots () {
+    var all_dots = document.querySelectorAll(".homepage-banner-dots-container div");
+    
+    for (var i = 0; i < all_dots.length; i++) all_dots[i].setAttribute("class", "homepage-banner-change-bg-btn");
+  }
+  
+  function homepageBannerDisplayDots () {
+    //Declare local instance variables
+    var background_keys = Object.keys(banner_settings.backgrounds);
+    var total_time_taken = 0;
+    
+    for (var i = 0; i < background_keys.length; i++) {
+      var local_background = background_keys[i];
+      var local_id = "change-banner-btn-" + local_background;
+      
+      var local_el = document.getElementById(local_id);
+      
+      //Add animation
+      local_el.style.transform = "translateY(100vh)";
+      local_el.style.animation = "homepage-top-banner-btn-hop-up 1.5s forwards";
+      local_el.style.animationDelay = `${i*(i*0.25)/4}s`;
+      
+      //Increment total_time_taken
+      total_time_taken += i*(i*0.25)/4;
+      
+      //Add tooltip
+      tippy("#" + local_id, {
+        content: banner_settings.backgrounds[background_keys[i]].name
+      });
+    }
+    
+    //Display settings fade in animation
+    setTimeout(function(){
+      settings_btn.setAttribute("class",
+        "settings-btn settings-btn-animated-fade-in"
+      );
+      resetAnimation(settings_btn);
+      
+      chevron_icon.setAttribute("class",
+        chevron_icon.getAttribute("class").replace(" hidden", "")
+      );
+    }, total_time_taken*1000);
+  }
+  
+  function homepageBannerHideAllElements (arg0_exception) {
+    //Convert from parameters
+    var exception_element = arg0_exception;
+    var background_elements = [
+      cleveland_national_forest_bg,
+      lava_lamp_bg,
+      main_video_bg,
+      misty_forest_bg,
+      raindrop_bg,
+      triumph_and_tragedy_bg
+    ];
+    for (var i = 0; i < background_elements.length; i++) {
+      if (exception_element.getAttribute("id") == background_elements[i].getAttribute("id")) {
+        background_elements[i].setAttribute("class", background_elements[i].getAttribute("class").replace(" hidden", ""));
+      } else {
+        //Make sure hidden parameter isn't already included
+        if (!background_elements[i].getAttribute("class").includes("hidden")) {
+          background_elements[i].setAttribute("class", background_elements[i].getAttribute("class") + " hidden");
+        }
+      }
+    }
+    
+    //Performance optimisations
+    lava_lamp_animation_paused = true;
+    raindrop_animation_paused = true;
+  }
+  
+  function homepageBannerHideDots () {
+    //Declare local instance variables
+    var reversed_bg_array = Object.keys(banner_settings.backgrounds).reverse();
+    
+    //Settings fade out animation
+    settings_btn.setAttribute("class",
+      "settings-btn settings-btn-animated-fade-out"
+    );
+    resetAnimation(settings_btn);
+    
+    chevron_icon.setAttribute("class",
+      chevron_icon.getAttribute("class") + " hidden"
+    );
+    
+    //Hide buttons
+    setTimeout(function(){
+      for (var i = 0; i < reversed_bg_array.length; i++) {
+        var local_background = reversed_bg_array[i];
+        var local_id = "change-banner-btn-" + local_background;
+        
+        //Add animation
+        document.getElementById(local_id).style.transform = "translateY(0vh)";
+        document.getElementById(local_id).style.animation = "homepage-top-banner-btn-hop-down 1.5s forwards";
+        document.getElementById(local_id).style.animationDelay = `${i*(i*0.25)/4}s`;
+      }
+    }, 1000);
+  }
+  
+  function homepageBannerLeftAlign () {
+    //Cache old style for future restoration
+    title_element.setAttribute("alignment", "left");
+    
+    //Update selected button in settings
+    var all_alignments = document.querySelectorAll(".text-alignment-button");
+    for (var i = 0; i < all_alignments.length; i++) all_alignments[i].setAttribute("class", "text-alignment-button");
+    document.getElementById("change-left-alignment").setAttribute("class", "text-alignment-button selected");
+  }
+  
+  function homepageBannerResetFontSize () {
+    banner_title_text.style.fontSize = "";
+    banner_caret_element.style.fontSize = "";
+    banner_caret_spacer_element.style.fontSize = "";
+  }
+  
+  function homepageBannerRightAlign () {
+    //Cache old style for future restoration
+    title_element.setAttribute("alignment", "right");
+    
+    //Update selected button in settings
+    var all_alignments = document.querySelectorAll(".text-alignment-button");
+    for (var i = 0; i < all_alignments.length; i++) all_alignments[i].setAttribute("class", "text-alignment-button");
+    document.getElementById("change-right-alignment").setAttribute("class", "text-alignment-button selected");
+  }
+  
+  function homepageBannerSetText (arg0_text) {
+    //Convert from parameters
+    var text = arg0_text;
+    
+    //Set .innerHTML
+    banner_title_text.innerHTML = text;
+    homepageBannerTitleAdjustPosition();
+    
+    adjustFontSize(title_element, banner_title_text, { homepage_banner: true });
+  }
+  
+  function homepageBannerTitleAdjustPosition () {
+    //Set vertical offset
+    var scroll_y = window.pageYOffset;
+    
+    //Fetch current percentage
+    var current_class = title_element.getAttribute("class");
+    
+    //Set translateY
+    /*title_element.style.top = `calc(${percentage_string}% + ${scroll_y*-1.0025}px)`;
+    settings_container.style.bottom = `calc(8vh + ${scroll_y*0.7}px)`;
+    document.getElementById("project-parallax-container").style.top = `calc(100% - ${scroll_y*0.25}px)`;
+    document.getElementById("about-me-section").style.top = `calc(200% - ${scroll_y*0.25}px)`;*/
+  }
+  
+  function homepageBannerToggleCaret () {
+    //Declare local instance variables
+    var caret_input = document.getElementById("settings-display-caret");
+    var caret_wrapper = document.getElementById("homepage-caret-wrapper");
+    
+    //Apply new opacity
+    caret_wrapper.style.opacity = (caret_input.checked) ? 1 : 0;
+  }
+  
   function homepageBannerTypeHello () {
     if (!banner_settings.paused_animation) {
       banner_title_text.innerHTML = "";
@@ -880,41 +696,39 @@ let typing_speed = 750;
       });
     }
   }
-}
-
-//Parallax effect for label, initialised in scroll scope
-function parallaxLabelOnScroll () {
-  homepageBannerTitleAdjustPosition();
-}
-
-//Global instance variables
-var settings_bg_container = document.getElementById("homepage-banner-settings-change-bg-container");
-var settings_btn;
-var settings_btn_clicked = 0;
-var settings_btn_container = document.getElementById("settings-btn-container");
-var settings_close_btn = document.getElementById("settings-close-btn");
-var settings_font_select = document.getElementById("settings-change-font-family");
-var settings_minimised = true;
-var settings_minimise_btn = document.getElementById("settings-adjust-size-btn");
-var settings_overlay_container = document.getElementById("homepage-banner-settings-change-overlay-container");
-var settings_window = document.getElementById("homepage-banner-settings-container");
-var settings_window_open = false;
-
-//Local framework variables
-{
-  function applySettingsButtonFunctionality () {
-    //Increment click counter
-    settings_btn_clicked++;
-    
-    //Toggle switch
-    settings_window_open = (settings_window_open) ? false : true;
-    
-    //Open/close settings window
-    updateSettingsPanel();
-    
-    settings_btn.onclick = function () {
-      applySettingsButtonFunctionality();
-    };
+  
+  function initLavaLampCycle () {
+    //Reinitialise animations
+    window.lava_lamp_cycling_animation = TweenMax.staggerFromTo(".lava-lamp-blob", 8, {
+      cycle: {
+        attr: function (i) {
+          var r = i*90,
+            r_limit = i*90+360;
+          
+          //Fetch blob properties and reset r if necessary
+          var blob_properties = fetchLavaLampTransformProperties(document.querySelectorAll(".lava-lamp-blob")[i].getAttribute("transform"));
+          
+          //Check for r
+          var actual_r = parseInt(blob_properties[0]);
+          actual_r = (actual_r >= r_limit*0.9) ? actual_r-360 : actual_r;
+          
+          return {
+            transform: `rotate(${actual_r}) translate(${blob_properties[1].split(",")[0]}, 0) rotate(${actual_r*-1})`
+          }
+        }
+      }
+    }, {
+      cycle: {
+        attr: function (i) {
+          var r = i*90+360;
+          return {
+            transform: "rotate(" + r + ") translate(" + lava_lamp_bg_circuit + ", 0.1) rotate(" + r*-1 + ")"
+          }
+        }
+      },
+      ease: Linear.easeNone,
+      repeat: -1
+    });
   }
   
   function initialiseBackgroundSettings () {
@@ -961,6 +775,22 @@ var settings_window_open = false;
     currently_selected_font.style.fontFamily = banner_settings.fonts[current_font].name;
   }
   
+  function initialiseHomepageBannerUI () {
+    //Initialise DOM elements/buttons
+    var all_backgrounds = Object.keys(banner_settings.backgrounds);
+    
+    for (var i = 0; i < all_backgrounds.length; i++) {
+      var local_background = all_backgrounds[i];
+      
+      //Substantiate element
+      dots_container.innerHTML += `
+        <div id = "change-banner-btn-${local_background}" class = "homepage-banner-change-bg-btn"
+          onclick = "homepageBannerChangeBanner('${local_background}');"
+        ></div>
+      `;
+    }
+  }
+  
   function initialiseOverlaySettings () {
     //Declare instance variables
     var all_colours = Object.keys(banner_settings.overlay.colours);
@@ -998,18 +828,6 @@ var settings_window_open = false;
     }
   }
   
-  function minimiseSettings () {
-    settings_minimised = true;
-    
-    settings_window.style.height = "30vh";
-    settings_minimise_btn.setAttribute("class", "settings-chevron-btn minimised");
-    
-    window.minimise_btn_tooltip = tippy("#settings-adjust-size-btn", {
-      content: "Maximise Settings",
-      placement: "top"
-    });
-  }
-  
   function maximiseSettings () {
     settings_minimised = false;
     
@@ -1022,7 +840,183 @@ var settings_window_open = false;
     });
   }
   
-  function updateSettingsPanel () { //Pardon this mess
+  function minimiseSettings () {
+    settings_minimised = true;
+    
+    settings_window.style.height = "30vh";
+    settings_minimise_btn.setAttribute("class", "settings-chevron-btn minimised");
+    
+    window.minimise_btn_tooltip = tippy("#settings-adjust-size-btn", {
+      content: "Maximise Settings",
+      placement: "top"
+    });
+  }
+  
+
+  //Parallax effect for label, initialised in scroll scope
+  function parallaxLabelOnScroll () {
+    homepageBannerTitleAdjustPosition();
+  }
+  
+  /*
+    selectText() - Selects the text in the main animation banner.
+    options: {
+      banner_el: (HTMLElement) - The HTML banner to select text in
+      caret_el: (HTMLElement) - The HTML element that represents the typing caret
+      caret_spacer_el: (HTMLElement) - The HTML element that spaces the typing caret from the main banner
+      select_limit: (Number) - Optional. The number of characters to select from the right. 0 by default, meaning select all
+      select_speed: (Number) - Optional. The ms speed at which to select characters. 100 by default
+    }
+
+    Returns: Promise - This is returned once the animation is finished
+  */
+  function selectText (arg0_options) {
+    //Convert from parameters
+    var options = (arg0_options) ? arg0_options: {};
+    
+    //Declare local instance variables
+    var banner_el = options.banner_el;
+    var caret_el = options.caret_el;
+    var caret_spacer_el = options.caret_spacer_el;
+    var select_limit = (options.select_limit) ? options.select_limit : 0;
+    var select_speed = (options.select_speed) ? options.select_speed : 100;
+    
+    var max_delay = 0;
+    var span_amount = banner_el.querySelectorAll("span").length;
+    var speed_array = [];
+    
+    //Select caret first
+    var caret_spacer_el_class = (caret_spacer_el.getAttribute("class")) ?
+      caret_spacer_el.getAttribute("class") : "";
+    
+    if (caret_spacer_el)
+      caret_spacer_el.setAttribute("class", caret_spacer_el_class + " selected");
+    
+    //Iterate over <span> elements in the selected banner
+    for (var i = 0; i < span_amount; i++) {
+      speed_array.push(select_speed);
+      
+      //Fetch total_delay
+      var total_delay = sumArray(speed_array);
+      
+      //Set max_delay
+      max_delay = Math.max(max_delay, total_delay);
+      
+      //Set delay for selected string effect
+      setTimeout(function(){
+        if (!banner_settings.paused_animation) {
+          //Fetch current index/other instance variables
+          var all_spans = banner_el.querySelectorAll("span");
+          var current_index = banner_el.querySelectorAll("span").length - 1 - banner_el.querySelectorAll("span[class*='selected']").length;
+          
+          //Apply selected class attribute to span
+          if (current_index >= select_limit) {
+            var current_el = all_spans[current_index];
+            var current_class = (current_el.getAttribute("class")) ? current_el.getAttribute("class") : "";
+            
+            current_el.setAttribute("class", current_class + " selected");
+          }
+          
+          //Increment anim_index when animation finishes playing
+          var current_anim_index = (banner_el.getAttribute("anim-index")) ? parseInt(banner_el.getAttribute("anim-index")) : 0;
+          
+          if (current_index == select_limit)
+            banner_el.setAttribute("anim-index", current_anim_index + 1);
+        }
+      }, total_delay);
+    }
+    
+    //Return statement
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve();
+      }, max_delay);
+    });
+  }
+  
+  function triumphAndTragedyOnScroll () {
+    //Set vertical offset
+    var scroll_y = window.pageYOffset;
+    var triumph_and_tragedy_bg_elements = document.querySelectorAll(".homepage-banner-triumph-and-tragedy-bg img");
+    
+    for (var i = 0; i < triumph_and_tragedy_bg_elements.length; i++) {
+      var translate_y = scroll_y*triumph_and_tragedy_bg_offsets[i];
+      triumph_and_tragedy_bg_elements[i].setAttribute("style", `
+      transform: translateY(${translate_y}px);
+    `);
+    }
+  }
+  
+  /*
+    typeText() - Types text within the main animation banner.
+    options: {
+      apply_class: (String) - The class to add/apply to the banner element.
+      banner_el: (HTMLElement) - The HTML banner to type in
+      constant_typing_speed: (Boolean) - Optional. Whether the typing speed is constant. False by default
+      slowdown: (Number) - Optional. Whether to slow text down as text is typed. 1 by default
+      typing_speed: (Number) - Optional. The initial typing speed per character in ms. 750 by default
+      typing_text: (String) - The text to type.
+    }
+
+    Returns: Promise - This is returned once the animation is finished
+  */
+  function typeText (arg0_options) {
+    //Convert from parameters
+    var options = (arg0_options) ? arg0_options: {};
+    
+    //Declare local instance variables
+    var apply_class = (arg0_options.apply_class) ? `class = "${options.apply_class}"` : "";
+    var banner_el = options.banner_el;
+    var constant_typing_speed = options.constant_typing_speed;
+    var slowdown = (options.slowdown) ? options.slowdown : 1;
+    var typing_speed = (options.typing_speed) ? options.typing_speed : 750;
+    var typing_text = options.text;
+    
+    var max_delay = 0;
+    var speed_array = [];
+    
+    //Iterate over typing_text
+    for (var i = 0; i < typing_text.length; i++) {
+      //Reduce typing speed according to slowdown
+      if (!constant_typing_speed)
+        typing_speed -= typing_speed*0.35*Math.random()*slowdown;
+      speed_array.push(typing_speed);
+      
+      //Fetch total delay
+      var total_delay = sumArray(speed_array);
+      
+      //Set max_delay
+      max_delay = Math.max(max_delay, total_delay);
+      
+      //Set delay for typed string
+      setTimeout(function(){
+        if (!banner_settings.paused_animation) {
+          var current_index = banner_el.querySelectorAll("span").length;
+          
+          banner_el.innerHTML += `<span ${apply_class} id = "${banner_el.id}-${current_index}">${typing_text[current_index]}</span>`;
+          
+          //Increment anim-index if detected as done (this allows for asynchronous detection elsewhere)
+          var current_anim_index = (banner_el.getAttribute("anim-index")) ?
+            parseInt(banner_el.getAttribute("anim-index")) : 0;
+          
+          if (current_index + 1 == typing_text.length)
+            banner_el.setAttribute("anim-index", current_anim_index + 1);
+          
+          //Set font size for banner to always fit
+          adjustFontSize(title_element, banner_title_text, { homepage_banner: true });
+        }
+      }, total_delay);
+    }
+    
+    //Return statement
+    return new Promise((resolve, reject) => {
+      setTimeout(function(){
+        resolve();
+      }, max_delay);
+    });
+  }
+  
+  function updateSettingsPanel () { 
     //Toggle visibility of actual window
     if (!settings_window_open) settings_window.setAttribute("class",
       settings_window.getAttribute("class").replace(" settings-animated-open", "").replace(" hidden", "") + " settings-animated-close"
@@ -1056,260 +1050,260 @@ var settings_window_open = false;
   }
 }
 
-//Temp for debugging [WIP]
-//homepageBannerDisplayDots();
-
-//Add settings_btn to DOM, initialise DOM
-homepageBannerChangeRawFontSize(20);
-homepageBannerCentreAlign();
-initialiseBackgroundSettings();
-initialiseFontSettings();
-initialiseOverlaySettings();
-initialiseSettingsButton();
-maximiseSettings(); //Change to minimise in future [WIP]
-tippy("#settings-close-btn", {
-  content: "Close Settings",
-  placement: "top"
-});
-
-//Local event listeners for when settings is hovered over
-settings_btn.onclick = function () {
-  applySettingsButtonFunctionality();
-};
-
-//Settings UI button functionality
-settings_close_btn.onclick = function () {
-  settings_window_open = false;
-  updateSettingsPanel();
-};
-settings_minimise_btn.onclick = function () {
-  minimise_btn_tooltip[0].destroy();
-  
-  if (settings_minimised) {
-    maximiseSettings();
-  } else {
-    minimiseSettings();
-  }
-}
-
-//Declare local variables
-var chevron_icon = document.getElementById("homepage-banner-chevron-down");
-var dots_container = document.getElementById("homepage-banner-dots-container");
-
-//Declare framework functions
+//Script
 {
-  function homepageBannerDisplayDots () {
-    //Declare local instance variables
-    var background_keys = Object.keys(banner_settings.backgrounds);
-    var total_time_taken = 0;
-    
-    for (var i = 0; i < background_keys.length; i++) {
-      var local_background = background_keys[i];
-      var local_id = "change-banner-btn-" + local_background;
-      
-      var local_el = document.getElementById(local_id);
-      
-      //Add animation
-      local_el.style.transform = "translateY(100vh)";
-      local_el.style.animation = "homepage-top-banner-btn-hop-up 1.5s forwards";
-      local_el.style.animationDelay = `${i*(i*0.25)/4}s`;
-      
-      //Increment total_time_taken
-      total_time_taken += i*(i*0.25)/4;
-      
-      //Add tooltip
-      tippy("#" + local_id, {
-        content: banner_settings.backgrounds[background_keys[i]].name
-      });
-    }
-    
-    //Display settings fade in animation
-    setTimeout(function(){
-      settings_btn.setAttribute("class",
-        "settings-btn settings-btn-animated-fade-in"
-      );
-      resetAnimation(settings_btn);
-      
-      chevron_icon.setAttribute("class",
-        chevron_icon.getAttribute("class").replace(" hidden", "")
-      );
-    }, total_time_taken*1000);
-  }
-  
-  function homepageBannerHideDots () {
-    //Declare local instance variables
-    var reversed_bg_array = Object.keys(banner_settings.backgrounds).reverse();
-    
-    //Settings fade out animation
-    settings_btn.setAttribute("class",
-      "settings-btn settings-btn-animated-fade-out"
-    );
-    resetAnimation(settings_btn);
-    
-    chevron_icon.setAttribute("class",
-      chevron_icon.getAttribute("class") + " hidden"
-    );
-    
-    //Hide buttons
-    setTimeout(function(){
-      for (var i = 0; i < reversed_bg_array.length; i++) {
-        var local_background = reversed_bg_array[i];
-        var local_id = "change-banner-btn-" + local_background;
-        
-        //Add animation
-        document.getElementById(local_id).style.transform = "translateY(0vh)";
-        document.getElementById(local_id).style.animation = "homepage-top-banner-btn-hop-down 1.5s forwards";
-        document.getElementById(local_id).style.animationDelay = `${i*(i*0.25)/4}s`;
+  window.banner_settings = {
+    animation_threshhold: 100,
+    backgrounds: {
+      main_video: {
+        name: "Confoederatio26"
+      },
+      cleveland_fog: {
+        name: "Sunset"
+      },
+      lava_lamp: {
+        name: "Lava Lamp"
+      },
+      misty_forest: {
+        name: "Misty Forest"
+      },
+      rain: {
+        name: "Rain"
+      },
+      triumph_and_tragedy: {
+        name: "Triumph & Tragedy"
       }
-    }, 1000);
-  }
-  
-  function initialiseHomepageBannerUI () {
-    //Initialise DOM elements/buttons
-    var all_backgrounds = Object.keys(banner_settings.backgrounds);
-    
-    for (var i = 0; i < all_backgrounds.length; i++) {
-      var local_background = all_backgrounds[i];
-      
-      //Substantiate element
-      dots_container.innerHTML += `
-        <div id = "change-banner-btn-${local_background}" class = "homepage-banner-change-bg-btn"
-          onclick = "homepageBannerChangeBanner('${local_background}');"
-        ></div>
-      `;
-    }
-  }
-}
-
-//Declare animation instance variables
-var lava_lamp_animation_paused = true;
-var lava_lamp_bg_circuit = 8; //Determines how 'wide' the circuit the orb travels is
-
-//Main functions
-{
-  function fetchLavaLampTransformProperties (arg0_string) {
-    //Convert from parameters
-    var local_transform_string = arg0_string;
-    
-    //Declare instance variables
-    var rotate_arg_one = "",
-      rotate_arg_two = "",
-      translate_arg = "";
-    
-    //Parse string
-    local_transform_string = local_transform_string.replace(/rotate\(/gm, "");
-    local_transform_string = local_transform_string.replace(/\) translate\(/gm, " ");
-    local_transform_string = local_transform_string.replace(/\) rotate\(/gm, " ");
-    local_transform_string = local_transform_string.replace(/\)/gm, "");
-    
-    return local_transform_string.split(" ");
-  }
-  
-  function initLavaLampCycle () {
-    //Reinitialise animations
-    window.lava_lamp_cycling_animation = TweenMax.staggerFromTo(".lava-lamp-blob", 8, {
-      cycle: {
-        attr: function (i) {
-          var r = i*90,
-            r_limit = i*90+360;
-          
-          //Fetch blob properties and reset r if necessary
-          var blob_properties = fetchLavaLampTransformProperties(document.querySelectorAll(".lava-lamp-blob")[i].getAttribute("transform"));
-          
-          //Check for r
-          var actual_r = parseInt(blob_properties[0]);
-          actual_r = (actual_r >= r_limit*0.9) ? actual_r-360 : actual_r;
-          
-          return {
-            transform: `rotate(${actual_r}) translate(${blob_properties[1].split(",")[0]}, 0) rotate(${actual_r*-1})`
-          }
-        }
+    },
+    fonts: {
+      bahnschrift: {
+        name: "Bahnschrift",
+        font_weight: [300, 700]
+      },
+      barlow: {
+        name: "Barlow",
+        font_weight: [100, 900]
+      },
+      fira_sans: {
+        name: "Fira Sans",
+        font_weight: [100, 900]
+      },
+      josefin_sans: {
+        name: "Josefin Sans",
+        font_weight: [100, 700]
+      },
+      quicksand: {
+        name: "Quicksand",
+        font_weight: [300, 700]
+      },
+      raleway: {
+        name: "Raleway",
+        font_weight: [100, 900]
       }
-    }, {
-      cycle: {
-        attr: function (i) {
-          var r = i*90+360;
-          return {
-            transform: "rotate(" + r + ") translate(" + lava_lamp_bg_circuit + ", 0.1) rotate(" + r*-1 + ")"
-          }
+    },
+    font_size: [10, 50],
+    overlay: {
+      colours: {
+        azure: {
+          name: "Azure",
+          filter: "grayscale(0) hue-rotate(180deg)"
+        },
+        black: {
+          name: "Black",
+          filter: "brightness(0.2) grayscale(1)"
+        },
+        blue: {
+          name: "Blue",
+          filter: "grayscale(0) hue-rotate(225deg)"
+        },
+        copper: {
+          name: "Copper",
+          filter: "grayscale(0.6) hue-rotate(50deg)"
+        },
+        forest_green: {
+          name: "Forest Green",
+          filter: "grayscale(0.6) hue-rotate(100deg)"
+        },
+        grey: {
+          name: "Grey",
+          filter: "grayscale(1)"
+        },
+        light_blue: {
+          name: "Light Blue",
+          filter: "grayscale(0.5) hue-rotate(225deg)"
+        },
+        lime_green: {
+          name: "Lime Green",
+          filter: "grayscale(0) hue-rotate(90deg)"
+        },
+        magenta: {
+          name: "Magenta",
+          filter: "grayscale(0) hue-rotate(310deg)"
+        },
+        negative: {
+          name: "Negative",
+          filter: "grayscale(0) invert(1)"
+        },
+        orange: {
+          name: "Orange",
+          filter: "grayscale(0) hue-rotate(45deg)"
+        },
+        pink: {
+          name: "Pink",
+          filter: "grayscale(0) hue-rotate(340deg)"
+        },
+        red: {
+          name: "Red",
+          filter: "grayscale(0)"
+        },
+        salmon: {
+          name: "Salmon",
+          filter: "grayscale(0.3)"
+        },
+        soft_green: {
+          name: "Soft Green",
+          filter: "grayscale(0.7) hue-rotate(160deg)"
+        },
+        verdant_green: {
+          name: "Verdant Green",
+          filter: "grayscale(0) hue-rotate(160deg)"
+        },
+        violet: {
+          name: "Violet",
+          filter: "grayscale(0) hue-rotate(260deg)"
+        },
+        white: {
+          name: "White",
+          filter: "grayscale(1) brightness(2)"
         }
       },
-      ease: Linear.easeNone,
-      repeat: -1
-    });
-  }
-}
+      opacity_settings: [15, 20, 30, 40],
+      default_opacity: 20,
+      default_splash_colours: ["red", "azure", "copper", "forest_green", "orange", "blue", "negative", "violet", "salmon", "lime_green", "magenta", "black", "verdant_green", "pink", "red", "azure", "copper", "forest_green", "orange", "blue", "negative", "violet", "salmon", "lime_green", "magenta", "black",  "light_blue"]
+    },
+    paused_animation: false,
+    paused_backgrounds: false,
+    text_selected: false
+  };
+  
+  //Begin initial typing animation
+  window.banner_caret_element = document.getElementById("homepage-banner-caret-element");
+  window.banner_caret_spacer_element = document.getElementById("homepage-banner-caret-spacer");
+  window.banner_selected_once = false;
+  window.banner_title_text = document.getElementById("homepage-banner-main-title-text");
+  window.cleveland_national_forest_bg = document.getElementById("homepage-banner-cleveland-national-forest-bg");
+  window.content_editable_evt_listeners_added = false;
+  window.current_banner = "main_video";
+  window.current_font = "bahnschrift";
+  window.current_font_weight = 700;
+  window.current_overlay = "grey";
+  window.homepage_banner_overlay = document.getElementById("homepage-banner-plexus-overlay-bg");
+  window.lava_lamp_bg = document.getElementById("homepage-banner-lava-lamp-bg");
+  window.main_video_bg = document.getElementById("homepage-banner-video-bg");
+  window.misty_forest_bg = document.getElementById("homepage-banner-video-bg-misty-forest");
+  window.raindrop_bg = document.getElementById("homepage-banner-rain-bg-container");
+  window.settings_container = document.getElementById("homepage-banner-settings-container");
+  window.time_since_selection = 0;
+  window.title_element = document.getElementById("homepage-banner-main-title");
+  window.triumph_and_tragedy_bg = document.getElementById("homepage-banner-triumph-and-tragedy-bg");
+  window.typing_speed = 750;
+  
+  window.settings_bg_container = document.getElementById("homepage-banner-settings-change-bg-container");
+  window.settings_btn;
+  window.settings_btn_clicked = 0;
+  window.settings_btn_container = document.getElementById("settings-btn-container");
+  window.settings_close_btn = document.getElementById("settings-close-btn");
+  window.settings_font_select = document.getElementById("settings-change-font-family");
+  window.settings_minimised = true;
+  window.settings_minimise_btn = document.getElementById("settings-adjust-size-btn");
+  window.settings_overlay_container = document.getElementById("homepage-banner-settings-change-overlay-container");
+  window.settings_window = document.getElementById("homepage-banner-settings-container");
+  window.settings_window_open = false;
 
-initLavaLampCycle();
-var lava_lamp_circuit_logic = setInterval(function(){
-  if (!lava_lamp_animation_paused) {
-    //Change speed of lava lamp
-    lava_lamp_bg_circuit += randomElement([
-      Math.random()*-1*randomNumber(0, 4),
-      Math.random()*randomNumber(0, 5) //Slightly biased towards speeding up
-    ]);
-    //Set limits for how wide or small the circuit can be
-    lava_lamp_bg_circuit = Math.min(lava_lamp_bg_circuit, 64);
-    lava_lamp_bg_circuit = (lava_lamp_bg_circuit < 8) ? 8 : lava_lamp_bg_circuit;
+  //Temp for debugging [WIP]
+  //homepageBannerDisplayDots();
+  
+  //Add settings_btn to DOM, initialise DOM
+  homepageBannerChangeRawFontSize(20);
+  homepageBannerCentreAlign();
+  initialiseBackgroundSettings();
+  initialiseFontSettings();
+  initialiseOverlaySettings();
+  initialiseSettingsButton();
+  maximiseSettings(); //Change to minimise in future [WIP]
+  tippy("#settings-close-btn", {
+    content: "Close Settings",
+    placement: "top"
+  });
+
+  //Local event listeners for when settings is hovered over
+  settings_btn.onclick = function () {
+    applySettingsButtonFunctionality();
+  };
+
+  //Settings UI button functionality
+  settings_close_btn.onclick = function () {
+    settings_window_open = false;
+    updateSettingsPanel();
+  };
+  settings_minimise_btn.onclick = function () {
+    minimise_btn_tooltip[0].destroy();
     
-    //Kill all tweens
-    TweenMax.killAll();
-    initLavaLampCycle();
-  }
-}, 500);
-
-//Global animation instance variables
-var max_number_of_raindrops = 100; //Cap off the number of particles in order to reduce lag
-var raindrop_animation_paused = true;
-var raindrop_array = [];
-var raindrop_container = document.getElementById("homepage-banner-raindrops-container");
-var raindrop_iterations = 0;
-
-//Framework functions
-{
-  function generateRaindropID () {
-    //Declare instance variables
-    var current_iteration = 0;
-    var valid_id = "";
-    
-    while (true) {
-      //Declare and initialise local instance variables
-      var all_raindrop_elements = raindrop_container.querySelectorAll(".raindrop");
-      var all_raindrop_ids = [];
-      for (var i = 0; i < all_raindrop_elements.length; i++) all_raindrop_ids.push(all_raindrop_elements[i].getAttribute("id").replace("raindrop-", ""));
-      
-      //Try to fetch valid ID
-      var new_id = randomNumber(0, 1000000000).toString();
-      if (!all_raindrop_ids.includes(new_id)) {
-        valid_id = new_id;
-        break;
-      }
-      
-      //Break it off after 15 iterations
-      current_iteration++;
-      if (current_iteration > 15) break;
+    if (settings_minimised) {
+      maximiseSettings();
+    } else {
+      minimiseSettings();
     }
-    
-    return valid_id;
   }
-}
 
-//A class would be easier for substantiating raindrops
-class Raindrop {
-  constructor (arg0_x, arg1_y, arg2_width, arg3_height, arg4_opacity, arg5_duration) {
-    //Set parameters
-    this.x = arg0_x;
-    this.y = arg1_y;
-    this.width = arg2_width;
-    this.height = arg3_height;
-    
-    //Other generated parameters
-    this.duration = (arg5_duration) ? arg5_duration : randomNumber(20000, 30000); //How many ms should the raindrop appear on screen for before disappearing?
-    this.id = `raindrop-${generateRaindropID()}`;
-    this.opacity = (arg4_opacity) ? arg4_opacity : 0.15; //How transparent should the raindrop be?
-    
-    //Initialise element in DOM and local styling
-    raindrop_container.innerHTML += `
+  //Declare local variables
+  window.chevron_icon = document.getElementById("homepage-banner-chevron-down");
+  window.dots_container = document.getElementById("homepage-banner-dots-container");
+
+  //Declare animation instance variables
+  window.lava_lamp_animation_paused = true;
+  window.lava_lamp_bg_circuit = 8; //Determines how 'wide' the circuit the orb travels is
+  
+  initLavaLampCycle();
+  window.lava_lamp_circuit_logic = setInterval(function(){
+    if (!lava_lamp_animation_paused) {
+      //Change speed of lava lamp
+      lava_lamp_bg_circuit += randomElement([
+        Math.random()*-1*randomNumber(0, 4),
+        Math.random()*randomNumber(0, 5) //Slightly biased towards speeding up
+      ]);
+      //Set limits for how wide or small the circuit can be
+      lava_lamp_bg_circuit = Math.min(lava_lamp_bg_circuit, 64);
+      lava_lamp_bg_circuit = (lava_lamp_bg_circuit < 8) ? 8 : lava_lamp_bg_circuit;
+      
+      //Kill all tweens
+      TweenMax.killAll();
+      initLavaLampCycle();
+    }
+  }, 500);
+
+  //Global animation instance variables
+  window.max_number_of_raindrops = 100; //Cap off the number of particles in order to reduce lag
+  window.raindrop_animation_paused = true;
+  window.raindrop_array = [];
+  window.raindrop_container = document.getElementById("homepage-banner-raindrops-container");
+  window.raindrop_iterations = 0;
+
+  //A class would be easier for substantiating raindrops
+  window.Raindrop = class {
+    constructor (arg0_x, arg1_y, arg2_width, arg3_height, arg4_opacity, arg5_duration) {
+      //Set parameters
+      this.x = arg0_x;
+      this.y = arg1_y;
+      this.width = arg2_width;
+      this.height = arg3_height;
+      
+      //Other generated parameters
+      this.duration = (arg5_duration) ? arg5_duration : randomNumber(20000, 30000); //How many ms should the raindrop appear on screen for before disappearing?
+      this.id = `raindrop-${generateRaindropID()}`;
+      this.opacity = (arg4_opacity) ? arg4_opacity : 0.15; //How transparent should the raindrop be?
+      
+      //Initialise element in DOM and local styling
+      raindrop_container.innerHTML += `
       <div id = "${this.id}" class = "raindrop" style = "
         background-color: rgb(255, 255, 255);
         opacity: ${this.opacity};
@@ -1322,79 +1316,68 @@ class Raindrop {
         border-radius: 50%;
       "></div>
     `;
-    
-    //Set timeout to remove raindrop
-    var local_id = this.id; //Set to local_id to pass argument
-    setTimeout(function(){
-      document.getElementById(local_id).remove();
-    }, this.duration);
-  }
-  
-  //Fetch methods
-  fetchID () {
-    return this.id;
-  }
-  isDestroyed () {
-    return (!document.getElementById(this.id));
-  }
-}
-
-//Generate raindrops
-var raindrop_logic = setInterval(function(){
-  //Make sure raindrop animation isn't paused
-  if (!raindrop_animation_paused) {
-    //Remove all destroyed raindrops from array
-    var raindrops_to_remove = [];
-    for (var i = 0; i < raindrop_array.length; i++) if (raindrop_array[i].isDestroyed()) raindrops_to_remove.push(raindrop_array[i]);
-    for (var i = 0; i < raindrops_to_remove.length; i++) {
-      for (var x = 0; x < raindrop_array.length; x++) if (raindrop_array[x] == raindrops_to_remove[i]) raindrop_array.splice(x, 1);
+      
+      //Set timeout to remove raindrop
+      var local_id = this.id; //Set to local_id to pass argument
+      setTimeout(function(){
+        document.getElementById(local_id).remove();
+      }, this.duration);
     }
     
-    //Add raindrop if valid
-    var all_raindrops = raindrop_container.querySelectorAll(".raindrop");
-    var random_tick = randomNumber(9, 11);
-    
-    //Declare substantiation variables
-    var raindrop_size = randomNumber(15, 48);
-    if (raindrop_iterations % random_tick == 0 && all_raindrops.length < max_number_of_raindrops) raindrop_array.push(new Raindrop(
-      randomNumber(0, 100),
-      randomNumber(0, 100),
-      raindrop_size,
-      raindrop_size,
-      randomElement([
-        0.3,
-        0.4,
-        0.5,
-        0.7
-      ]),
-      raindrop_size*750
-    ));
+    //Fetch methods
+    fetchID () {
+      return this.id;
+    }
+    isDestroyed () {
+      return (!document.getElementById(this.id));
+    }
   }
-}, 500);
 
-//Declare global scroll offsets
-var triumph_and_tragedy_bg_offsets = [
-  0,
-  1,
-  1.025,
-  1.05,
-  1.075,
-  1.1,
-  1.125,
-  1.15,
-  1.175
-];
+  //Generate raindrops
+  window.raindrop_logic = setInterval(function(){
+    //Make sure raindrop animation isn't paused
+    if (!raindrop_animation_paused) {
+      //Remove all destroyed raindrops from array
+      var raindrops_to_remove = [];
+      for (var i = 0; i < raindrop_array.length; i++) if (raindrop_array[i].isDestroyed()) raindrops_to_remove.push(raindrop_array[i]);
+      for (var i = 0; i < raindrops_to_remove.length; i++) {
+        for (var x = 0; x < raindrop_array.length; x++) if (raindrop_array[x] == raindrops_to_remove[i]) raindrop_array.splice(x, 1);
+      }
+      
+      //Add raindrop if valid
+      var all_raindrops = raindrop_container.querySelectorAll(".raindrop");
+      var random_tick = randomNumber(9, 11);
+      
+      //Declare substantiation variables
+      var raindrop_size = randomNumber(15, 48);
+      if (raindrop_iterations % random_tick == 0 && all_raindrops.length < max_number_of_raindrops) raindrop_array.push(new Raindrop(
+        randomNumber(0, 100),
+        randomNumber(0, 100),
+        raindrop_size,
+        raindrop_size,
+        randomElement([
+          0.3,
+          0.4,
+          0.5,
+          0.7
+        ]),
+        raindrop_size*750
+      ));
+    }
+  }, 500);
 
-//Initialised in scroll scope
-function triumphAndTragedyOnScroll () {
-  //Set vertical offset
-  var scroll_y = window.pageYOffset;
-  var triumph_and_tragedy_bg_elements = document.querySelectorAll(".homepage-banner-triumph-and-tragedy-bg img");
+  //Declare global scroll offsets
+  window.triumph_and_tragedy_bg_offsets = [
+    0,
+    1,
+    1.025,
+    1.05,
+    1.075,
+    1.1,
+    1.125,
+    1.15,
+    1.175
+  ];
   
-  for (var i = 0; i < triumph_and_tragedy_bg_elements.length; i++) {
-    var translate_y = scroll_y*triumph_and_tragedy_bg_offsets[i];
-    triumph_and_tragedy_bg_elements[i].setAttribute("style", `
-      transform: translateY(${translate_y}px);
-    `);
-  }
+  
 }
