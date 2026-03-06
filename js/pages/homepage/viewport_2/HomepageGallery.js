@@ -1,11 +1,9 @@
 window.HomepageGallery = class extends window.WebComponent {
 	constructor(arg0_value, arg1_options) {
-		// Convert from parameters
 		let value = arg0_value ? arg0_value : {};
 		let options = arg1_options ? arg1_options : {};
 		super(value, options);
 		
-		// Initialize gallery state object
 		this.gallery = {
 			bookmark_container: null,
 			bookmark_items: [],
@@ -45,7 +43,6 @@ window.HomepageGallery = class extends window.WebComponent {
 			let all_art_preview_imgs = this.element.querySelectorAll(
 				".preview-image-container",
 			);
-			
 			for (let i = 0; i < all_art_preview_imgs.length; i++)
 				this.magnify(all_art_preview_imgs[i].querySelector("img"), 3);
 		}, 3000);
@@ -54,11 +51,9 @@ window.HomepageGallery = class extends window.WebComponent {
 	draw() {
 		this.element.innerHTML = `
 		<div id = "project-parallax-container" class = "project-parallax-container">
-			<!--Parallax background divs-->
 			<div id = "project-parallax-container-gradient-bg" class = "project-parallax-container-gradient-bg"></div>
 			<div id = "project-parallax-container-room-bg" class = "project-parallax-container-room-bg"></div>
 
-			<!--Parallax project gallery scene-->
 			<section id = "scene" class="scene" data-pointer-events = "true" data-x-origin = "0.5" data-y-origin = "50.0" data-scalar-y = "50.0" data-scalar-x = "25.0" data-friction-x = "0.05" data-friction-y = "0.04">
 				<div id = "project-parallax-scroll-container" class = "project-parallax-scroll-container">
 					<div class = "layer main" data-depth = "1.0">
@@ -68,22 +63,9 @@ window.HomepageGallery = class extends window.WebComponent {
 								<br><br>
 								<hr class = "parallax-line">
 							</div>
-
-							<div class = "ctd-header">
-								<span class = "parallax-subheader">Technical (CTD).</span>
-							</div>
-
-							<!--Research-->
-							<div class = "crd-header">
-								<span class = "parallax-subheader">Research (CRD).</span>
-							</div>
-
-							<!--Artistic-->
-							<div class = "cad-header">
-								<span class = "parallax-subheader">Artistic (CAD).</span>
-							</div>
-
-							<!--Preservés-->
+							<div class = "ctd-header"><span class = "parallax-subheader">Technical (CTD).</span></div>
+							<div class = "crd-header"><span class = "parallax-subheader">Research (CRD).</span></div>
+							<div class = "cad-header"><span class = "parallax-subheader">Artistic (CAD).</span></div>
 							<div class = "preserves-header">
 								<span class = "parallax-subheader">Preservés</span><br>
 								<div class = "parallax-header small">des Confoederatio</div>
@@ -92,12 +74,11 @@ window.HomepageGallery = class extends window.WebComponent {
 					</div>
 				</div>
 			</section>
-			<!--Parallax content panels - 2D Overlay-->
+
 			<div id = "main-parallax-content-panel-wrapper" class = "parallax-panel-container">
 				<div id = "main-parallax-content-panel-scroll-wrapper" class = "parallax-panel-scroll-container"></div>
 			</div>
 
-			<!--Bookmark overlay-->
 			<div id = "project-parallax-bookmark-container" class = "parallax-bookmark-container minimised">
 				<div id = "project-parallax-bookmark-labels-container" class = "project-parallax-text-container">
 					<div id = "project-parallax-bookmark-label" class = "bookmarks-title">
@@ -118,7 +99,6 @@ window.HomepageGallery = class extends window.WebComponent {
 				<div id = "project-parallax-dots-container" class = "project-parallax-dots-container"></div>
 			</div>
 
-			<!--Scroll progress indicator-->
 			<div id = "project-parallax-scroll-indicator" class = "project-parallax-scroll-indicator">
 				<div id = "project-parallax-scroll-fill-indicator" class = "project-parallax-scroll-fill-indicator"></div>
 			</div>
@@ -166,8 +146,6 @@ window.HomepageGallery = class extends window.WebComponent {
 	init() {
 		this.initGalleryTiles();
 		this.initGalleryUI();
-		
-		// Add hover listener for interaction logic
 		this.gallery.parallax_body.addEventListener("mousemove", (e) =>
 			this.onParallaxHover(e),
 		);
@@ -177,22 +155,18 @@ window.HomepageGallery = class extends window.WebComponent {
 		var local_el = arg0_element;
 		var zoom = arg1_zoom;
 		var element_id = local_el.id;
-		
 		this.zoom_states[element_id] = zoom;
 		var local_magnifier = document.createElement("DIV");
 		local_magnifier.setAttribute("class", "image-magnifier-glass");
 		local_magnifier.style.backgroundImage = `url('${local_el.src}')`;
 		local_magnifier.style.backgroundRepeat = "no-repeat";
-		
 		local_el.parentElement.insertBefore(local_magnifier, local_el);
-		
 		local_el.addEventListener("mousemove", (e) =>
 			this.moveMagnifier(e, local_el, local_magnifier),
 		);
 		local_el.addEventListener("touchmove", (e) =>
 			this.moveMagnifier(e, local_el, local_magnifier),
 		);
-		
 		local_el.addEventListener("wheel", (e) => {
 			let current_zoom = this.zoom_states[element_id];
 			current_zoom += e.deltaY * -0.0025;
@@ -200,7 +174,6 @@ window.HomepageGallery = class extends window.WebComponent {
 			this.zoom_states[element_id] = current_zoom;
 			e.preventDefault();
 		});
-		
 		setInterval(() => {
 			let is_hovered =
 				this.element.querySelector(`#${element_id}:hover`) !== null;
@@ -217,32 +190,20 @@ window.HomepageGallery = class extends window.WebComponent {
 		var local_bounds = local_el.getBoundingClientRect();
 		var position = this.getCursorPosition(e, local_el);
 		var zoom = this.zoom_states[element_id];
-		
-		var pan_x = position.x;
-		var pan_y = position.y;
-		
 		var h = magnifier.offsetHeight;
 		var w = magnifier.offsetWidth;
-		
-		var offset_x = pan_x - w / 2;
-		var offset_y = pan_y - h / 2;
-		
+		var offset_x = position.x - w / 2;
+		var offset_y = position.y - h / 2;
 		if (this.isMagnifierMaximised(element_id)) {
 			var container = local_el.parentElement;
 			var container_bounds = container.getBoundingClientRect();
-			offset_x = pan_x - w / 2 + container_bounds.left;
-			offset_y = pan_y - h / 2 + container_bounds.top;
+			offset_x = position.x - w / 2 + container_bounds.left;
+			offset_y = position.y - h / 2 + container_bounds.top;
 		}
-		
 		magnifier.style.left = `${offset_x}px`;
 		magnifier.style.top = `${offset_y}px`;
-		
-		var percent_x = pan_x / local_bounds.width;
-		var percent_y = pan_y / local_bounds.height;
-		
-		var bg_x = percent_x * (local_el.width * zoom - w);
-		var bg_y = percent_y * (local_el.height * zoom - h);
-		
+		var bg_x = (position.x / local_bounds.width) * (local_el.width * zoom - w);
+		var bg_y = (position.y / local_bounds.height) * (local_el.height * zoom - h);
 		magnifier.style.backgroundPosition = `-${bg_x}px -${bg_y}px`;
 		magnifier.style.backgroundSize = `${local_el.width * zoom}px ${local_el.height * zoom}px`;
 	}
@@ -264,7 +225,6 @@ window.HomepageGallery = class extends window.WebComponent {
 			"#" + arg0_element_id + "-preview-btn",
 		);
 		let key = element_id.replace(/-/gm, "_");
-		
 		if (local_el.classList.contains("active")) {
 			local_el.classList.remove("active");
 			img_el.classList.add("cursor-shown");
@@ -276,18 +236,13 @@ window.HomepageGallery = class extends window.WebComponent {
 		}
 	}
 	
-	/* Logic Methods */
-	
 	addBookmarkItem(arg0_element_id, arg1_no_animation) {
 		var local_id = arg0_element_id;
 		var no_animation = arg1_no_animation;
 		var gallery_obj = this.gallery;
-		
 		var bookmark_btn = this.element.querySelector(`#bookmark-btn-${local_id}`);
 		var local_element = this.element.querySelector(`#${local_id}`);
-		
 		if (!local_element) return;
-		
 		local_element.setAttribute("id", `preview-${local_id}`);
 		if (bookmark_btn) {
 			bookmark_btn.setAttribute(
@@ -297,59 +252,35 @@ window.HomepageGallery = class extends window.WebComponent {
 				.replace("bookmark-empty", "bookmark-filled"),
 			);
 		}
-		
 		gallery_obj.bookmark_preview_container.innerHTML += local_element.outerHTML;
 		if (!gallery_obj.bookmark_items.includes(local_id))
 			gallery_obj.bookmark_items.push(local_id);
-		
 		local_element.setAttribute("id", local_id);
-		
 		var all_bookmarks = this.element.querySelectorAll(".parallax-item-preview");
 		var bookmark_el = this.element.querySelector(`#preview-${local_id}`);
-		
 		bookmark_el.setAttribute(
 			"class",
 			bookmark_el
 			.getAttribute("class")
 			.replace("parallax-item", "parallax-item-preview") + " show-animation",
 		);
-		
 		bookmark_el.onclick = () => this.selectBookmarkItem(`preview-${local_id}`);
-		
 		for (let i = 0; i < all_bookmarks.length; i++) {
 			all_bookmarks[i].setAttribute(
 				"style",
-				`
-				left: calc(50% - 12vh - ${i * 12}vh);
-				z-index: ${all_bookmarks.length - 1 - i};
-			`,
+				`left: calc(50% - 12vh - ${i * 12}vh); z-index: ${all_bookmarks.length - 1 - i};`,
 			);
 		}
-		
-		bookmark_el.innerHTML += `
-			<div id = "btn-close-bookmark-${local_id}" class = "parallax-icon close-btn"></div>
-		`;
+		bookmark_el.innerHTML += `<div id = "btn-close-bookmark-${local_id}" class = "parallax-icon close-btn"></div>`;
 		bookmark_el.querySelector(".close-btn").onclick = (e) => {
 			e.stopPropagation();
 			this.bookmarkInteraction(local_id);
 		};
-		
 		bookmark_el.setAttribute(
 			"style",
-			`
-			left: calc(50% - 12vh - ${all_bookmarks.length * 12}vh);
-			z-index: -1;
-		`,
+			`left: calc(50% - 12vh - ${all_bookmarks.length * 12}vh); z-index: -1;`,
 		);
-		
 		setTimeout(() => {
-			bookmark_el.setAttribute(
-				"style",
-				`
-				left: calc(50% - 12vh - ${all_bookmarks.length * 12}vh);
-				z-index: -1;
-			`,
-			);
 			var new_bookmark_el = this.element.querySelector(`#${bookmark_el.id}`);
 			if (new_bookmark_el)
 				new_bookmark_el.setAttribute(
@@ -357,12 +288,10 @@ window.HomepageGallery = class extends window.WebComponent {
 					new_bookmark_el.getAttribute("class").replace(" show-animation", ""),
 				);
 		}, 1000);
-		
 		var new_bookmarks = this.element.querySelectorAll(".parallax-item-preview");
 		for (let i = 0; i < new_bookmarks.length; i++) {
 			var dot_id = `btn-bookmark-${new_bookmarks[i].id}`;
 			var bookmark_dot_el = this.element.querySelector(`#${dot_id}`);
-			
 			if (!bookmark_dot_el) {
 				var local_class_name = !no_animation
 					? "parallax-bookmark-dot fade-in"
@@ -374,7 +303,6 @@ window.HomepageGallery = class extends window.WebComponent {
 					new_bookmarks[i].id,
 				);
 				gallery_obj.parallax_buttons.appendChild(dot_el);
-				
 				setTimeout(() => {
 					var all_animated = this.element.querySelectorAll(
 						".parallax-bookmark-dot.fade-in",
@@ -387,7 +315,6 @@ window.HomepageGallery = class extends window.WebComponent {
 				}, 1000);
 			}
 		}
-		
 		if (gallery_obj.bookmark_items.length == 1)
 			gallery_obj.bookmark_selected = local_id;
 		gallery_obj.bookmark_selected =
@@ -399,11 +326,9 @@ window.HomepageGallery = class extends window.WebComponent {
 		)
 			? "preview-" + gallery_obj.bookmark_selected
 			: gallery_obj.bookmark_selected;
-		
 		try {
 			this.selectBookmarkItem(gallery_obj.bookmark_selected, true, true);
 		} catch (e) {}
-		
 		if (
 			!gallery_obj.bookmark_no_label.getAttribute("class").includes(" hidden")
 		)
@@ -411,7 +336,6 @@ window.HomepageGallery = class extends window.WebComponent {
 				"class",
 				gallery_obj.bookmark_no_label.getAttribute("class") + " hidden",
 			);
-		
 		gallery_obj.bookmark_container.setAttribute(
 			"class",
 			gallery_obj.bookmark_container
@@ -421,12 +345,11 @@ window.HomepageGallery = class extends window.WebComponent {
 	}
 	
 	bookmarkInteraction(arg0_element_id) {
-		var local_id = arg0_element_id;
 		var gallery_obj = this.gallery;
-		!gallery_obj.bookmark_items.includes(local_id) &&
-		!this.element.querySelector(`#preview-${local_id}`)
-			? this.addBookmarkItem(local_id)
-			: this.removeBookmarkItem(local_id);
+		!gallery_obj.bookmark_items.includes(arg0_element_id) &&
+		!this.element.querySelector(`#preview-${arg0_element_id}`)
+			? this.addBookmarkItem(arg0_element_id)
+			: this.removeBookmarkItem(arg0_element_id);
 	}
 	
 	clearBookmarkDots() {
@@ -448,6 +371,7 @@ window.HomepageGallery = class extends window.WebComponent {
 				"class",
 				local_el.getAttribute("class").replace(" shown", ""),
 			);
+			this.minimiseContentPanel(arg0_element_id, true);
 			gallery_obj.parallax_scroll_indicator.style.opacity = 1;
 		}
 	}
@@ -456,7 +380,6 @@ window.HomepageGallery = class extends window.WebComponent {
 		var tile_id = arg0_tile_id;
 		var options = arg1_options ? arg1_options : {};
 		var gallery_obj = this.gallery;
-		
 		if (!options.font_position) options.font_position = "bottom-right";
 		if (!options.font_size) options.font_size = 1;
 		if (!options.font_weight) options.font_weight = 300;
@@ -465,9 +388,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		if (!options.y) options.y = 0;
 		if (!options.background_opacity) options.background_opacity = 0.3;
 		if (!options.colour) options.colour = "copper";
-		
 		var background_style = "";
-		var default_x_offset = "23vw";
 		var font_size_dict = {
 			1: "parallax-minor-project-text",
 			2: "parallax-major-project-text",
@@ -482,29 +403,25 @@ window.HomepageGallery = class extends window.WebComponent {
 			6: "tiny-square",
 		};
 		var size_vh_dict = { 1: 32, 2: 28, 3: 24, 4: 18, 5: 16, 6: 12 };
-		
 		var parallax_tile_container_el = this.element.querySelector(
 			"#main-parallax-content-wrapper",
 		);
 		var parallax_panel_container_el = this.element.querySelector(
 			"#main-parallax-content-panel-scroll-wrapper",
 		);
-		
 		if (options.background_image)
 			background_style = ` style = "background-image: url(${options.background_image}); opacity: ${options.background_opacity};"`;
-		
 		var tile_element = `
-			<div id = "${tile_id}" class = "parallax-item ${size_dict[options.size]} ${options.colour}" style = "position: absolute; top: calc(${options.y}vh + var(--parallax-offset-y)); left: calc(${default_x_offset} + ${options.x}vh + var(--parallax-offset-x));">
+			<div id = "${tile_id}" class = "parallax-item ${size_dict[options.size]} ${options.colour}" style = "position: absolute; top: calc(${options.y}vh + var(--parallax-offset-y)); left: calc(23vw + ${options.x}vh + var(--parallax-offset-x));">
 				<div class = "parallax-item-colour-bg"></div>
 				<div class = "parallax-item-bg"${background_style}></div>
 				<span class = "${font_size_dict[options.font_size]} ${options.font_position}" style = "font-weight: ${options.font_weight}" >${options.name}</span>
 			</div>
 		`;
 		parallax_tile_container_el.innerHTML += tile_element;
-		
 		if (options.content) {
 			var panel_element = `
-				<div id = "${tile_id}-content-panel" class = "parallax-item-content-panel ${options.animation}-panel" style = "top: calc(${options.y}vh + var(--parallax-offset-y) + var(--content-panel-offset-y)); left: calc(23vw + ${options.x}vh + ${size_vh_dict[options.size]}vh + 8vh + var(--parallax-offset-x) + var(--content-panel-offset-x));">
+				<div id = "${tile_id}-content-panel" class = "parallax-item-content-panel ${options.animation}-panel" style = "top: calc(${options.y}vh - 40dvh); left: calc(23vw + ${options.x}vh + ${size_vh_dict[options.size]}vh + 8vh + var(--parallax-offset-x) + var(--content-panel-offset-x));">
 					<div id = "${tile_id}-content-wrapper" class = "content-wrapper">
 						<div id = "${tile_id}-text-wrapper" class = "text-wrapper">
 							${options.content}
@@ -514,13 +431,11 @@ window.HomepageGallery = class extends window.WebComponent {
 			`;
 			parallax_panel_container_el.innerHTML += panel_element;
 		}
-		
 		var new_tile_obj = {};
 		if (options.animation) new_tile_obj.animation = options.animation;
 		if (options.dependencies) new_tile_obj.dependencies = options.dependencies;
 		if (options.is_base_node) new_tile_obj.is_base_node = options.is_base_node;
 		gallery_obj.parallax_settings[tile_id] = new_tile_obj;
-		
 		if (options.default_bookmark)
 			if (!gallery_obj.bookmark_items.includes(tile_id))
 				gallery_obj.bookmark_items.push(tile_id);
@@ -532,31 +447,26 @@ window.HomepageGallery = class extends window.WebComponent {
 	getCursorPosition(e, arg0_image) {
 		e = e ? e : window.event;
 		var img_bounds = arg0_image.getBoundingClientRect();
-		var pan_x = e.clientX - img_bounds.left;
-		var pan_y = e.clientY - img_bounds.top;
-		return { x: pan_x, y: pan_y };
+		return { x: e.clientX - img_bounds.left, y: e.clientY - img_bounds.top };
 	}
 	
 	getDescendants(arg0_element_id) {
-		var local_element = arg0_element_id;
 		var gallery_obj = this.gallery;
+		var descendants = [arg0_element_id];
 		var current_iterations = 0;
-		var descendants = [local_element];
-		try {
-			while (true) {
-				var initial_len = descendants.length;
-				for (let i = 0; i < descendants.length; i++) {
-					var local_obj = gallery_obj.parallax_settings[descendants[i]];
-					if (local_obj && local_obj.dependencies)
-						for (let x = 0; x < local_obj.dependencies.length; x++)
-							if (!descendants.includes(local_obj.dependencies[x]))
-								descendants.push(local_obj.dependencies[x]);
-				}
-				if (descendants.length == initial_len || current_iterations >= 15) break;
-				current_iterations++;
+		while (true) {
+			var initial_len = descendants.length;
+			for (let i = 0; i < descendants.length; i++) {
+				var local_obj = gallery_obj.parallax_settings[descendants[i]];
+				if (local_obj && local_obj.dependencies)
+					for (let x = 0; x < local_obj.dependencies.length; x++)
+						if (!descendants.includes(local_obj.dependencies[x]))
+							descendants.push(local_obj.dependencies[x]);
 			}
-		} catch (e) {}
-		return descendants.filter((d) => d !== local_element);
+			if (descendants.length == initial_len || current_iterations >= 15) break;
+			current_iterations++;
+		}
+		return descendants.filter((d) => d !== arg0_element_id);
 	}
 	
 	getMaximisedContentPanel() {
@@ -588,13 +498,12 @@ window.HomepageGallery = class extends window.WebComponent {
 	}
 	
 	getParent(arg0_element_id) {
-		var child = arg0_element_id;
 		var gallery_obj = this.gallery;
 		var keys = Object.keys(gallery_obj.parallax_settings);
 		var parents = [];
 		for (let i = 0; i < keys.length; i++) {
 			var obj = gallery_obj.parallax_settings[keys[i]];
-			if (obj.dependencies && obj.dependencies.includes(child))
+			if (obj.dependencies && obj.dependencies.includes(arg0_element_id))
 				parents.push(keys[i]);
 		}
 		return [...new Set(parents)];
@@ -604,7 +513,6 @@ window.HomepageGallery = class extends window.WebComponent {
 		var gallery_obj = this.gallery;
 		var hide_elements = [];
 		var parallax_elements = this.element.querySelectorAll(".parallax-item");
-		
 		for (let i = 0; i < parallax_elements.length; i++) {
 			this.initParallaxElement(parallax_elements[i].id);
 			if (
@@ -614,7 +522,6 @@ window.HomepageGallery = class extends window.WebComponent {
 				hide_elements.push(parallax_elements[i].id);
 		}
 		hide_elements = [...new Set(hide_elements)];
-		
 		for (let i = 0; i < hide_elements.length; i++) {
 			var local_el = this.element.querySelector(`#${hide_elements[i]}`);
 			local_el.classList.add("hidden");
@@ -622,37 +529,28 @@ window.HomepageGallery = class extends window.WebComponent {
 			if (local_obj && local_obj.animation)
 				local_el.setAttribute("animation", `${local_obj.animation}`);
 		}
-		
 		for (let i = 0; i < gallery_obj.bookmark_items.length; i++)
 			this.addBookmarkItem(gallery_obj.bookmark_items[i], true);
 	}
 	
 	initGalleryDesktopEventHandlers() {
 		var gallery_obj = this.gallery;
-		
 		gallery_obj.parallax_body.addEventListener("mousemove", (e) => {
 			var half_width = gallery_obj.parallax_body.clientWidth / 2,
 				half_height = gallery_obj.parallax_body.clientHeight / 2,
 				mouse_x = half_width + gallery_obj.parallax_body.offsetLeft - e.pageX,
 				mouse_y = half_height + gallery_obj.parallax_body.offsetTop - e.pageY;
-			
 			if (gallery_obj.content_panel_update_paused) {
 				mouse_x /= 32;
 				mouse_y /= 32;
 			}
-			
 			var max_deg = 1.25;
 			this.perspective_deg_x = (mouse_y / half_height) * max_deg * -1 + max_deg / 2 + "deg";
 			this.perspective_deg_y = (mouse_x / half_width) * max_deg * -1 + 2 + "deg";
-			
 			this.perspective_string = `rotateX(${this.perspective_deg_x}) rotateY(${this.perspective_deg_y})`;
 			gallery_obj.scene.style.transform = `perspective(20em) ${this.perspective_string}`;
 		});
-		
-		window.addEventListener("scroll", () => {
-			this.updateParallaxScrollValues();
-		});
-		
+		window.addEventListener("scroll", () => this.updateParallaxScrollValues());
 		gallery_obj.parallax_body.addEventListener(
 			"wheel",
 			(e) => {
@@ -675,14 +573,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		if (!track) return;
 		var rect = track.getBoundingClientRect();
 		var scrollable_dist = rect.height - window.innerHeight;
-		
-		var vertical_offset = 0;
-		if (rect.top <= 0 && rect.bottom >= 0) {
-			vertical_offset = Math.abs(rect.top);
-		} else if (rect.bottom < 0) {
-			vertical_offset = scrollable_dist;
-		}
-		
+		var vertical_offset = rect.top <= 0 ? Math.min(Math.abs(rect.top), scrollable_dist) : 0;
 		var siblings = gallery_obj.parallax_body.children;
 		for (let i = 0; i < siblings.length; i++) {
 			var child = siblings[i];
@@ -690,11 +581,15 @@ window.HomepageGallery = class extends window.WebComponent {
 				child.style.top = vertical_offset + window.innerHeight / 2 + "px";
 			} else if (child.id === "project-parallax-scroll-indicator") {
 				child.style.top = vertical_offset + window.innerHeight - 5 + "px";
+			} else if (child.id === "main-parallax-content-panel-wrapper") {
+				// Vertical sync with scene
+				//child.style.top = vertical_offset + "px";
+			} else if (child.id === "scene") {
+				child.style.top = vertical_offset + "px";
 			} else {
 				child.style.top = vertical_offset + "px";
 			}
 		}
-		
 		if (rect.top <= 0 && rect.bottom >= window.innerHeight) {
 			var progress = Math.abs(rect.top) / scrollable_dist;
 			gallery_obj.parallax_scroll_x = progress * gallery_obj.gallery_width * -1;
@@ -705,13 +600,11 @@ window.HomepageGallery = class extends window.WebComponent {
 	}
 	
 	initGalleryMobileEventHandlers() {
-		var gallery_obj = this.gallery;
 		gallery_obj.parallax_body.addEventListener(
 			"touchmove",
 			(e) => {
 				if (this.element.querySelectorAll(".maximised.shown").length != 0) {
-					var is_over = e.target.closest(".parallax-item-content-panel") !== null;
-					if (!is_over) e.preventDefault();
+					if (!e.target.closest(".parallax-item-content-panel")) e.preventDefault();
 				}
 			},
 			{ passive: false },
@@ -724,13 +617,12 @@ window.HomepageGallery = class extends window.WebComponent {
 				? window.config.homepage.gallery.tiles
 				: {};
 		var keys = Object.keys(source);
-		for (let i = 0; i < keys.length; i++) {
+		for (let i = 0; i < keys.length; i++)
 			try {
 				this.createPanel(keys[i], source[keys[i]]);
 			} catch (e) {
 				console.error(e);
 			}
-		}
 	}
 	
 	initGalleryUI() {
@@ -740,7 +632,6 @@ window.HomepageGallery = class extends window.WebComponent {
 				? this.hideBookmarkUI()
 				: this.showBookmarkUI();
 		};
-		
 		setTimeout(() => {
 			let all_panels = this.element.querySelectorAll(".content-wrapper");
 			for (let i = 0; i < all_panels.length; i++) {
@@ -755,18 +646,18 @@ window.HomepageGallery = class extends window.WebComponent {
 				`;
 				this.element.querySelector(`#${id}-close-btn`).onclick = () =>
 					this.closeContentPanel(id);
-				this.element.querySelector(`#${id}-maximise-btn`).onclick = () =>
-					this.maximiseContentPanel(id);
+				this.element.querySelector(`#${id}-maximise-btn`).onclick = () => {
+					let panel = this.element.querySelector(`#${id}-content-panel`);
+					panel.classList.contains("maximised")
+						? this.minimiseContentPanel(id)
+						: this.maximiseContentPanel(id);
+				};
 			}
 		}, 500);
-		
 		this.initGalleryDesktopEventHandlers();
-		this.initGalleryMobileEventHandlers();
-		
 		setInterval(() => {
 			for (let i = 0; i < gallery_obj.parallax_selected.length; i++) {
-				var item_id = gallery_obj.parallax_selected[i];
-				var item_obj = gallery_obj.parallax_settings[item_id];
+				var item_obj = gallery_obj.parallax_settings[gallery_obj.parallax_selected[i]];
 				if (item_obj && item_obj.dependencies) {
 					item_obj.dependencies.forEach((dep_id) => {
 						var el = this.element.querySelector(`#${dep_id}`);
@@ -779,81 +670,54 @@ window.HomepageGallery = class extends window.WebComponent {
 				}
 			}
 		}, 100);
-		
-		// Constant logic loop for 2D UI updates and scroll sync
 		setInterval(() => {
 			this.updateParallaxScrollValues();
 			this.updateContentPanelContainer();
 		}, 16);
-		
 		this.initGallery();
 	}
 	
 	initParallaxElement(arg0_element_id) {
-		var local_element = arg0_element_id;
 		var gallery_obj = this.gallery;
-		
-		if (!gallery_obj.parallax_settings[local_element])
-			gallery_obj.parallax_settings[local_element] = {};
-		var local_obj = gallery_obj.parallax_settings[local_element];
-		
-		local_obj.animation_queue = !local_obj.animation_queue
-			? []
-			: local_obj.animation_queue;
-		local_obj.id = !local_obj.id ? local_element : local_obj.id;
-		
+		if (!gallery_obj.parallax_settings[arg0_element_id])
+			gallery_obj.parallax_settings[arg0_element_id] = {};
+		var local_obj = gallery_obj.parallax_settings[arg0_element_id];
+		local_obj.animation_queue = local_obj.animation_queue || [];
+		local_obj.id = local_obj.id || arg0_element_id;
 		local_obj.hide_function = () => {
 			local_obj.animation_queue.push(local_obj.animation);
-			local_obj.animation_queue = [
-				...new Set(local_obj.animation_queue.reverse()),
-			].reverse();
+			local_obj.animation_queue = [...new Set(local_obj.animation_queue.reverse())].reverse();
 		};
-		
 		local_obj.show_function = () => {
 			local_obj.animation_queue.push(`${local_obj.animation}-shown`);
-			local_obj.animation_queue = [
-				...new Set(local_obj.animation_queue.reverse()),
-			].reverse();
+			local_obj.animation_queue = [...new Set(local_obj.animation_queue.reverse())].reverse();
 		};
-		
 		var dependency_amount = this.getDescendants(local_obj.id).length;
-		
-		local_obj.logic = setInterval(
-			() => {
-				var all_children_finished = true;
-				var descendants = this.getDescendants(local_obj.id);
-				for (let i = 0; i < descendants.length; i++) {
-					var d_obj = gallery_obj.parallax_settings[descendants[i]];
-					if (d_obj && d_obj.animation_queue.length > 0)
-						all_children_finished = false;
-				}
-				
-				if (all_children_finished && local_obj.animation_queue.length > 0) {
-					try {
-						var el = this.element.querySelector(`#${local_obj.id}`);
-						var anim = local_obj.animation_queue[0];
-						el.setAttribute("animation", anim);
-						setTimeout(() => {
-							if (anim.includes("-shown")) {
-								el.classList.remove("hidden");
-							} else {
-								el.classList.add("hidden");
-							}
-							local_obj.animation_queue.shift();
-						}, 750);
-					} catch (e) {}
-				}
-			},
-			750 - dependency_amount,
-		);
-		
+		local_obj.logic = setInterval(() => {
+			var all_children_finished = true;
+			var descendants = this.getDescendants(local_obj.id);
+			for (let i = 0; i < descendants.length; i++) {
+				var d_obj = gallery_obj.parallax_settings[descendants[i]];
+				if (d_obj && d_obj.animation_queue.length > 0) all_children_finished = false;
+			}
+			if (all_children_finished && local_obj.animation_queue.length > 0) {
+				try {
+					var el = this.element.querySelector(`#${local_obj.id}`);
+					var anim = local_obj.animation_queue[0];
+					el.setAttribute("animation", anim);
+					setTimeout(() => {
+						anim.includes("-shown") ? el.classList.remove("hidden") : el.classList.add("hidden");
+						local_obj.animation_queue.shift();
+					}, 750);
+				} catch (e) {}
+			}
+		}, 750 - dependency_amount);
 		var local_el = this.element.querySelector(`#${local_obj.id}`);
 		local_el.setAttribute("animation", local_el.id + "-shown");
 		local_el.onclick = () => {
 			this.toggleContentPanel(local_el.id);
 			this.selectParallaxItem(local_el.id);
 		};
-		
 		if (local_obj.animation && !local_obj.is_base_node) {
 			local_el.innerHTML += `
 				<div class = "parallax-icon pin ${gallery_obj.parallax_pinned_items.includes(local_el.id) ? "pin-filled" : "pin-empty"}"></div>
@@ -871,20 +735,18 @@ window.HomepageGallery = class extends window.WebComponent {
 	}
 	
 	pinItem(arg0_element_id) {
-		var local_id = arg0_element_id;
 		var gallery_obj = this.gallery;
-		var local_element = this.element.querySelector(`#${local_id}`);
+		var local_element = this.element.querySelector(`#${arg0_element_id}`);
 		try {
 			var pin_btn = local_element.querySelector(".pin");
-			gallery_obj.parallax_pinned_items.includes(local_id)
+			gallery_obj.parallax_pinned_items.includes(arg0_element_id)
 				? (gallery_obj.parallax_pinned_items = gallery_obj.parallax_pinned_items.filter(
-					(i) => i !== local_id,
+					(i) => i !== arg0_element_id,
 				))
-				: gallery_obj.parallax_pinned_items.push(local_id);
-			
+				: gallery_obj.parallax_pinned_items.push(arg0_element_id);
 			pin_btn.setAttribute(
 				"class",
-				gallery_obj.parallax_pinned_items.includes(local_id)
+				gallery_obj.parallax_pinned_items.includes(arg0_element_id)
 					? pin_btn.getAttribute("class").replace("pin-empty", "pin-filled")
 					: pin_btn.getAttribute("class").replace("pin-filled", "pin-empty"),
 			);
@@ -893,65 +755,35 @@ window.HomepageGallery = class extends window.WebComponent {
 	
 	selectBookmarkItem(arg0_element_id, arg1_automatic_selection, arg2_no_scroll) {
 		var actual_id = arg0_element_id.replace("preview-", "");
-		var automatic_selection = arg1_automatic_selection;
-		var local_bookmark = this.element.querySelector(`#${arg0_element_id}`);
-		var local_el = this.element.querySelector(`#btn-bookmark-${arg0_element_id}`);
-		var local_id = arg0_element_id;
-		var no_scroll = arg2_no_scroll;
 		var gallery_obj = this.gallery;
 		var parallax_element = this.element.querySelector(`#${actual_id}`);
-		
-		var local_index = gallery_obj.bookmark_items.includes(actual_id)
-			? gallery_obj.bookmark_items.indexOf(actual_id)
-			: 0;
-		
-		if (!gallery_obj.closing_bookmark || automatic_selection) {
+		var local_index = gallery_obj.bookmark_items.indexOf(actual_id);
+		if (!gallery_obj.closing_bookmark || arg1_automatic_selection) {
 			this.clearBookmarkDots();
-			if (local_el)
-				local_el.setAttribute("class", local_el.getAttribute("class") + " filled");
-			
-			gallery_obj.bookmark_selected = local_id;
+			var local_el = this.element.querySelector(`#btn-bookmark-${arg0_element_id}`);
+			if (local_el) local_el.classList.add("filled");
+			gallery_obj.bookmark_selected = arg0_element_id;
 			gallery_obj.bookmark_preview_container.style.left = `${local_index * -12}vh`;
-			
-			var all_bookmarks = this.element.querySelectorAll(
-				".parallax-item-preview:not([item-state*='hidden'])",
-			);
+			var all_bookmarks = this.element.querySelectorAll(".parallax-item-preview");
 			for (let i = 0; i < all_bookmarks.length; i++) {
 				all_bookmarks[i].setAttribute(
 					"style",
-					`
-					left: calc(50% - 12vh - ${i * 12}vh);
-					z-index: ${i < local_index ? i : all_bookmarks.length - i};
-				`,
+					`left: calc(50% - 12vh - ${i * 12}vh); z-index: ${i < local_index ? i : all_bookmarks.length - i};`,
 				);
 				all_bookmarks[i].classList.remove("selected");
 			}
-			
+			var local_bookmark = this.element.querySelector(`#${arg0_element_id}`);
 			if (local_bookmark) {
 				local_bookmark.style.zIndex = 99;
 				local_bookmark.classList.add("selected");
 			}
-			
-			if (!no_scroll && parallax_element) {
-				var maximised = this.getMaximisedContentPanel();
-				if (maximised) this.minimiseContentPanel(maximised);
-				
+			if (!arg2_no_scroll && parallax_element) {
 				var vh = window.innerHeight / 100;
-				var vw = window.innerWidth / 100;
-				var local_width = parseInt(getComputedStyle(parallax_element).width) / vh;
-				var offset_x = (vw * 50) / vh;
 				var pan_x = parseInt(getComputedStyle(parallax_element).left) / vh;
-				
-				gallery_obj.parallax_scroll_x = pan_x * -1 + offset_x - local_width / 2;
-				gallery_obj.parallax_container.classList.remove("fast-scroll");
-				gallery_obj.parallax_container.classList.add("slow-scroll");
+				gallery_obj.parallax_scroll_x = pan_x * -1 + (window.innerWidth / 100) * 50 / vh - (parseInt(getComputedStyle(parallax_element).width) / vh) / 2;
 				gallery_obj.parallax_container.style.transform = `translateX(${gallery_obj.parallax_scroll_x}vh)`;
 			}
-			
-			if (
-				parallax_element &&
-				!parallax_element.getAttribute("animation").includes("shown")
-			) {
+			if (parallax_element) {
 				parallax_element.setAttribute("animation", actual_id + "-shown");
 				parallax_element.classList.remove("hidden");
 			}
@@ -959,134 +791,66 @@ window.HomepageGallery = class extends window.WebComponent {
 	}
 	
 	removeBookmarkItem(arg0_element_id) {
-		var local_id = arg0_element_id;
 		var gallery_obj = this.gallery;
-		var bookmark_btn = this.element.querySelector(`#bookmark-btn-${local_id}`);
-		var local_index = gallery_obj.bookmark_items.indexOf(local_id);
-		
-		if (bookmark_btn)
-			bookmark_btn.setAttribute(
-				"class",
-				bookmark_btn
-				.getAttribute("class")
-				.replace("bookmark-filled", "bookmark-empty"),
-			);
-		gallery_obj.bookmark_items = gallery_obj.bookmark_items.filter(
-			(i) => i !== local_id,
-		);
+		var bookmark_btn = this.element.querySelector(`#bookmark-btn-${arg0_element_id}`);
+		var local_index = gallery_obj.bookmark_items.indexOf(arg0_element_id);
+		if (bookmark_btn) bookmark_btn.setAttribute("class", bookmark_btn.getAttribute("class").replace("bookmark-filled", "bookmark-empty"));
+		gallery_obj.bookmark_items = gallery_obj.bookmark_items.filter((i) => i !== arg0_element_id);
 		gallery_obj.closing_bookmark = true;
 		setTimeout(() => (gallery_obj.closing_bookmark = false), 100);
-		
-		var bookmark_dot_el = this.element.querySelector(
-			`#btn-bookmark-preview-${local_id}`,
-		);
-		var preview_el = this.element.querySelector(`#preview-${local_id}`);
-		
-		if (preview_el) preview_el.setAttribute("item-state", "hidden");
-		if (bookmark_dot_el)
-			bookmark_dot_el.setAttribute(
-				"class",
-				bookmark_dot_el.getAttribute("class") + " fade-out",
-			);
-		
-		var new_selected = gallery_obj.bookmark_selected;
-		if (
-			!gallery_obj.bookmark_items.includes(new_selected.replace("preview-", ""))
-		) {
-			var next =
-				gallery_obj.bookmark_items[local_index] ||
-				gallery_obj.bookmark_items[local_index - 1];
-			new_selected = next ? "preview-" + next : "";
+		var preview_el = this.element.querySelector(`#preview-${arg0_element_id}`);
+		if (preview_el) preview_el.remove();
+		this.element.querySelector(`#btn-bookmark-preview-${arg0_element_id}`)?.remove();
+		if (gallery_obj.bookmark_items.length == 0) {
+			gallery_obj.no_bookmark_label.classList.remove("hidden");
+			gallery_obj.bookmark_container.classList.add("no-bookmarks");
 		}
-		
-		try {
-			if (new_selected) this.selectBookmarkItem(new_selected, true, true);
-		} catch (e) {}
-		
-		setTimeout(() => {
-			if (preview_el) preview_el.remove();
-			if (bookmark_dot_el) bookmark_dot_el.remove();
-			if (gallery_obj.bookmark_items.length == 0) {
-				gallery_obj.no_bookmark_label.classList.remove("hidden");
-				gallery_obj.bookmark_container.classList.add("no-bookmarks");
-			}
-		}, 500);
 	}
 	
 	selectParallaxItem(arg0_element_id) {
-		var id = arg0_element_id;
 		var gallery_obj = this.gallery;
-		!gallery_obj.parallax_selected.includes(id)
-			? gallery_obj.parallax_selected.push(id)
-			: (gallery_obj.parallax_selected = gallery_obj.parallax_selected.filter(
-				(i) => i !== id,
-			));
+		!gallery_obj.parallax_selected.includes(arg0_element_id)
+			? gallery_obj.parallax_selected.push(arg0_element_id)
+			: (gallery_obj.parallax_selected = gallery_obj.parallax_selected.filter((i) => i !== arg0_element_id));
 	}
 	
 	showBookmarkUI() {
-		var gallery_obj = this.gallery;
-		gallery_obj.bookmark_minimise_btn.classList.remove("minimised");
-		gallery_obj.bookmark_container.classList.remove("minimised");
+		this.gallery.bookmark_minimise_btn.classList.remove("minimised");
+		this.gallery.bookmark_container.classList.remove("minimised");
 	}
 	
 	toggleContentPanel(arg0_element_id) {
-		var gallery_obj = this.gallery;
 		var local_el = this.element.querySelector(`#${arg0_element_id}-content-panel`);
 		if (!local_el) return;
-		
-		var pre_check = local_el.classList.contains("shown");
-		var was_max = local_el.classList.contains("maximised");
-		
+		var is_shown = local_el.classList.contains("shown");
 		this.hideAllContentPanels();
-		if (!pre_check) {
-			local_el.classList.add("shown");
-			if (was_max) this.maximiseContentPanel(arg0_element_id);
-		}
-		
-		var current_max = this.getMaximisedContentPanel();
-		if (current_max && current_max != arg0_element_id)
-			this.minimiseContentPanel(current_max, true);
+		if (!is_shown) local_el.classList.add("shown");
 	}
 	
 	maximiseContentPanel(arg0_element_id) {
 		var panel = this.element.querySelector(`#${arg0_element_id}-content-panel`);
-		var gallery_obj = this.gallery;
 		if (!panel) return;
-		gallery_obj.content_panel_update_paused = true;
-		
-		// Remove transforms from container to center maximized panel
-		gallery_obj.content_panel_container.style.transform = "none";
-		gallery_obj.content_panel_scroll_container.style.transform = "none";
-		
+		this.gallery.content_panel_update_paused = true;
+		this.gallery.content_panel_container.style.transform = "none";
+		this.gallery.content_panel_scroll_container.style.transform = "none";
 		panel.classList.add("maximised");
-		gallery_obj.parallax_scroll_indicator.style.opacity = 0;
+		this.gallery.parallax_scroll_indicator.style.opacity = 0;
 	}
 	
 	minimiseContentPanel(arg0_element_id, arg1_instant) {
 		var panel = this.element.querySelector(`#${arg0_element_id}-content-panel`);
-		var gallery_obj = this.gallery;
 		if (!panel) return;
-		
 		panel.classList.remove("maximised");
-		gallery_obj.content_panel_update_paused = false;
-		
+		this.gallery.content_panel_update_paused = false;
 		panel.classList.add(arg1_instant ? "instant-minimisation" : "being-minimised");
-		setTimeout(
-			() => panel.classList.remove("being-minimised", "instant-minimisation"),
-			arg1_instant ? 500 : 1000,
-		);
-		gallery_obj.parallax_scroll_indicator.style.opacity = 1;
+		setTimeout(() => panel.classList.remove("being-minimised", "instant-minimisation"), arg1_instant ? 500 : 1000);
+		this.gallery.parallax_scroll_indicator.style.opacity = 1;
 	}
 	
 	updateContentPanelContainer() {
 		var gallery_obj = this.gallery;
-		
-		// When not paused (minimized), maintain strict 2D tracking
 		if (!gallery_obj.content_panel_update_paused) {
-			// Content panel container MUST remain 2D flat (no rotateX/rotateY)
-			gallery_obj.content_panel_container.style.transform = `none`;
-			
-			// Scroll container mirrors horizontal parallax scroll
+			gallery_obj.content_panel_container.style.transform = "none";
 			gallery_obj.content_panel_scroll_container.style.transform = `translateX(${gallery_obj.parallax_scroll_x}vh)`;
 		}
 	}
@@ -1094,64 +858,43 @@ window.HomepageGallery = class extends window.WebComponent {
 	updateHiddenElements() {
 		var gallery_obj = this.gallery;
 		var all_dom = this.element.querySelectorAll(".parallax-item");
-		var keys = Object.keys(gallery_obj.parallax_settings);
 		var visible = [];
-		
-		for (let i = 0; i < gallery_obj.parallax_selected.length; i++) {
-			var id = gallery_obj.parallax_selected[i];
+		gallery_obj.parallax_selected.forEach((id) => {
 			visible.push(id);
-			var obj = gallery_obj.parallax_settings[id];
-			if (obj && obj.dependencies) obj.dependencies.forEach((d) => visible.push(d));
-		}
-		keys.forEach((k) => {
-			if (this.getParent(k).length == 0) visible.push(k);
-			var panel = this.element.querySelector(`#${k}-content-panel`);
-			if (panel && panel.classList.contains("shown")) visible.push(k);
+			gallery_obj.parallax_settings[id]?.dependencies?.forEach((d) => visible.push(d));
+		});
+		Object.keys(gallery_obj.parallax_settings).forEach((k) => {
+			if (this.getParent(k).length == 0 || this.element.querySelector(`#${k}-content-panel.shown`)) visible.push(k);
 		});
 		visible = [...new Set(visible)];
-		
-		for (let i = 0; i < all_dom.length; i++) {
-			var id = all_dom[i].id;
-			if (!visible.includes(id) && !gallery_obj.parallax_pinned_items.includes(id)) {
-				var obj = gallery_obj.parallax_settings[id];
-				if (obj && !all_dom[i].classList.contains("hidden")) obj.hide_function();
+		all_dom.forEach((el) => {
+			if (!visible.includes(el.id) && !gallery_obj.parallax_pinned_items.includes(el.id)) {
+				if (!el.classList.contains("hidden")) gallery_obj.parallax_settings[el.id]?.hide_function();
 			}
-		}
+		});
 	}
 	
 	onParallaxHover(e) {
-		var gallery_obj = this.gallery;
 		var target = e.target.closest(".parallax-item");
 		if (!target) return;
-		
-		var hover_time = parseInt(target.getAttribute("hover-time") || 0);
-		hover_time += 16;
+		var hover_time = (parseInt(target.getAttribute("hover-time") || 0)) + 16;
 		target.setAttribute("hover-time", hover_time);
-		
-		if (hover_time >= 500) {
-			var id = target.id;
-			if (gallery_obj.parallax_settings[id]) {
-				if (!gallery_obj.parallax_selected.includes(id)) {
-					gallery_obj.parallax_selected.push(id);
-					gallery_obj.parallax_selected = [...new Set(gallery_obj.parallax_selected)];
-					this.updateHiddenElements();
-				}
-			}
+		if (hover_time >= 500 && !this.gallery.parallax_selected.includes(target.id)) {
+			this.gallery.parallax_selected.push(target.id);
+			this.updateHiddenElements();
 		}
 	}
 };
 
 function initHomepageGallery() {
-	let initialisation_loop = setInterval(() => {
+	let loop = setInterval(() => {
 		try {
 			if (window.WebComponent) {
 				window.viewport_two = new window.HomepageGallery();
 				window.viewport_two.bind(document.getElementById("gallery-section"));
-				clearInterval(initialisation_loop);
+				clearInterval(loop);
 			}
-		} catch (e) {
-			console.warn(e);
-		}
+		} catch (e) {}
 	}, 100);
 }
 initHomepageGallery();
