@@ -240,7 +240,9 @@ window.HomepageGallery = class extends window.WebComponent {
 		var local_id = arg0_element_id;
 		var no_animation = arg1_no_animation;
 		var gallery_obj = this.gallery;
-		var bookmark_btn = this.element.querySelector(`#bookmark-btn-${local_id}`);
+		var bookmark_btn = this.element.querySelector(
+			`#bookmark-btn-${local_id}`,
+		);
 		var local_element = this.element.querySelector(`#${local_id}`);
 		if (!local_element) return;
 		local_element.setAttribute("id", `preview-${local_id}`);
@@ -252,26 +254,38 @@ window.HomepageGallery = class extends window.WebComponent {
 				.replace("bookmark-empty", "bookmark-filled"),
 			);
 		}
-		gallery_obj.bookmark_preview_container.innerHTML += local_element.outerHTML;
+		// FIX: Use insertAdjacentHTML instead of innerHTML +=
+		gallery_obj.bookmark_preview_container.insertAdjacentHTML(
+			"beforeend",
+			local_element.outerHTML,
+		);
 		if (!gallery_obj.bookmark_items.includes(local_id))
 			gallery_obj.bookmark_items.push(local_id);
 		local_element.setAttribute("id", local_id);
-		var all_bookmarks = this.element.querySelectorAll(".parallax-item-preview");
+		var all_bookmarks = this.element.querySelectorAll(
+			".parallax-item-preview",
+		);
 		var bookmark_el = this.element.querySelector(`#preview-${local_id}`);
 		bookmark_el.setAttribute(
 			"class",
 			bookmark_el
 			.getAttribute("class")
-			.replace("parallax-item", "parallax-item-preview") + " show-animation",
+			.replace("parallax-item", "parallax-item-preview") +
+			" show-animation",
 		);
-		bookmark_el.onclick = () => this.selectBookmarkItem(`preview-${local_id}`);
+		bookmark_el.onclick = () =>
+			this.selectBookmarkItem(`preview-${local_id}`);
 		for (let i = 0; i < all_bookmarks.length; i++) {
 			all_bookmarks[i].setAttribute(
 				"style",
 				`left: calc(50% - 12vh - ${i * 12}vh); z-index: ${all_bookmarks.length - 1 - i};`,
 			);
 		}
-		bookmark_el.innerHTML += `<div id = "btn-close-bookmark-${local_id}" class = "parallax-icon close-btn"></div>`;
+		// FIX: Use insertAdjacentHTML instead of innerHTML +=
+		bookmark_el.insertAdjacentHTML(
+			"beforeend",
+			`<div id="btn-close-bookmark-${local_id}" class="parallax-icon close-btn"></div>`,
+		);
 		bookmark_el.querySelector(".close-btn").onclick = (e) => {
 			e.stopPropagation();
 			this.bookmarkInteraction(local_id);
@@ -281,14 +295,20 @@ window.HomepageGallery = class extends window.WebComponent {
 			`left: calc(50% - 12vh - ${all_bookmarks.length * 12}vh); z-index: -1;`,
 		);
 		setTimeout(() => {
-			var new_bookmark_el = this.element.querySelector(`#${bookmark_el.id}`);
+			var new_bookmark_el = this.element.querySelector(
+				`#${bookmark_el.id}`,
+			);
 			if (new_bookmark_el)
 				new_bookmark_el.setAttribute(
 					"class",
-					new_bookmark_el.getAttribute("class").replace(" show-animation", ""),
+					new_bookmark_el
+					.getAttribute("class")
+					.replace(" show-animation", ""),
 				);
 		}, 1000);
-		var new_bookmarks = this.element.querySelectorAll(".parallax-item-preview");
+		var new_bookmarks = this.element.querySelectorAll(
+			".parallax-item-preview",
+		);
 		for (let i = 0; i < new_bookmarks.length; i++) {
 			var dot_id = `btn-bookmark-${new_bookmarks[i].id}`;
 			var bookmark_dot_el = this.element.querySelector(`#${dot_id}`);
@@ -310,7 +330,9 @@ window.HomepageGallery = class extends window.WebComponent {
 					for (var j = 0; j < all_animated.length; j++)
 						all_animated[j].setAttribute(
 							"class",
-							all_animated[j].getAttribute("class").replace(" fade-in", ""),
+							all_animated[j]
+							.getAttribute("class")
+							.replace(" fade-in", ""),
 						);
 				}, 1000);
 			}
@@ -330,7 +352,9 @@ window.HomepageGallery = class extends window.WebComponent {
 			this.selectBookmarkItem(gallery_obj.bookmark_selected, true, true);
 		} catch (e) {}
 		if (
-			!gallery_obj.bookmark_no_label.getAttribute("class").includes(" hidden")
+			!gallery_obj.bookmark_no_label
+			.getAttribute("class")
+			.includes(" hidden")
 		)
 			gallery_obj.bookmark_no_label.setAttribute(
 				"class",
@@ -421,7 +445,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		parallax_tile_container_el.innerHTML += tile_element;
 		if (options.content) {
 			var panel_element = `
-				<div id = "${tile_id}-content-panel" class = "parallax-item-content-panel ${options.animation}-panel" style = "top: calc(${options.y}vh - 40dvh); left: calc(23vw + ${options.x}vh + ${size_vh_dict[options.size]}vh + 8vh + var(--parallax-offset-x) + var(--content-panel-offset-x));">
+				<div id = "${tile_id}-content-panel" class = "parallax-item-content-panel ${options.animation}-panel" style = "top: calc(${options.y}vh - 40dvh + ${size_vh_dict[options.size]}vh/2); left: calc(23vw + ${options.x}vh + ${size_vh_dict[options.size]}vh + 8vh + var(--parallax-offset-x) + var(--content-panel-offset-x));">
 					<div id = "${tile_id}-content-wrapper" class = "content-wrapper">
 						<div id = "${tile_id}-text-wrapper" class = "text-wrapper">
 							${options.content}
@@ -573,7 +597,8 @@ window.HomepageGallery = class extends window.WebComponent {
 		if (!track) return;
 		var rect = track.getBoundingClientRect();
 		var scrollable_dist = rect.height - window.innerHeight;
-		var vertical_offset = rect.top <= 0 ? Math.min(Math.abs(rect.top), scrollable_dist) : 0;
+		var vertical_offset =
+			rect.top <= 0 ? Math.min(Math.abs(rect.top), scrollable_dist) : 0;
 		var siblings = gallery_obj.parallax_body.children;
 		for (let i = 0; i < siblings.length; i++) {
 			var child = siblings[i];
@@ -593,7 +618,10 @@ window.HomepageGallery = class extends window.WebComponent {
 		if (rect.top <= 0 && rect.bottom >= window.innerHeight) {
 			var progress = Math.abs(rect.top) / scrollable_dist;
 			gallery_obj.parallax_scroll_x = progress * gallery_obj.gallery_width * -1;
+			
+			// Apply both X and Y to the underlay
 			gallery_obj.parallax_container.style.transform = `translateX(${gallery_obj.parallax_scroll_x}vh)`;
+			
 			if (gallery_obj.parallax_scroll_indicator)
 				gallery_obj.parallax_scroll_indicator.style.width = `${progress * 100}vw`;
 		}
@@ -758,13 +786,18 @@ window.HomepageGallery = class extends window.WebComponent {
 		var gallery_obj = this.gallery;
 		var parallax_element = this.element.querySelector(`#${actual_id}`);
 		var local_index = gallery_obj.bookmark_items.indexOf(actual_id);
+		
 		if (!gallery_obj.closing_bookmark || arg1_automatic_selection) {
 			this.clearBookmarkDots();
-			var local_el = this.element.querySelector(`#btn-bookmark-${arg0_element_id}`);
+			var local_el = this.element.querySelector(
+				`#btn-bookmark-${arg0_element_id}`,
+			);
 			if (local_el) local_el.classList.add("filled");
 			gallery_obj.bookmark_selected = arg0_element_id;
 			gallery_obj.bookmark_preview_container.style.left = `${local_index * -12}vh`;
-			var all_bookmarks = this.element.querySelectorAll(".parallax-item-preview");
+			var all_bookmarks = this.element.querySelectorAll(
+				".parallax-item-preview",
+			);
 			for (let i = 0; i < all_bookmarks.length; i++) {
 				all_bookmarks[i].setAttribute(
 					"style",
@@ -772,19 +805,49 @@ window.HomepageGallery = class extends window.WebComponent {
 				);
 				all_bookmarks[i].classList.remove("selected");
 			}
-			var local_bookmark = this.element.querySelector(`#${arg0_element_id}`);
+			var local_bookmark = this.element.querySelector(
+				`#${arg0_element_id}`,
+			);
 			if (local_bookmark) {
 				local_bookmark.style.zIndex = 99;
 				local_bookmark.classList.add("selected");
 			}
+			
 			if (!arg2_no_scroll && parallax_element) {
-				var vh = window.innerHeight / 100;
-				var pan_x = parseInt(getComputedStyle(parallax_element).left) / vh;
-				gallery_obj.parallax_scroll_x = pan_x * -1 + (window.innerWidth / 100) * 50 / vh - (parseInt(getComputedStyle(parallax_element).width) / vh) / 2;
-				gallery_obj.parallax_container.style.transform = `translateX(${gallery_obj.parallax_scroll_x}vh)`;
+				// Instead of setting parallax_scroll_x directly,
+				// compute the required vertical scroll position and
+				// scroll the window so updateParallaxScrollValues
+				// naturally arrives at the correct X offset.
+				var track = document.getElementById("gallery-section");
+				if (track) {
+					var track_rect = track.getBoundingClientRect();
+					var scrollable_dist = track_rect.height - window.innerHeight;
+					var vh = window.innerHeight / 100;
+					var pan_x =
+						parseInt(getComputedStyle(parallax_element).left) / vh;
+					var desired_scroll_x =
+						pan_x * -1 +
+						(window.innerWidth / 100) * 50 / vh -
+						parseInt(getComputedStyle(parallax_element).width) / vh / 2;
+					// Reverse the formula: parallax_scroll_x = progress * gallery_width * -1
+					// So progress = parallax_scroll_x / (gallery_width * -1)
+					var progress = desired_scroll_x / (gallery_obj.gallery_width * -1);
+					progress = Math.max(0, Math.min(1, progress));
+					var target_scroll_top =
+						track_rect.top + window.pageYOffset + progress * scrollable_dist;
+					
+					window.scrollTo({
+						top: target_scroll_top,
+						behavior: "smooth",
+					});
+				}
 			}
+			
 			if (parallax_element) {
-				parallax_element.setAttribute("animation", actual_id + "-shown");
+				parallax_element.setAttribute(
+					"animation",
+					actual_id + "-shown",
+				);
 				parallax_element.classList.remove("hidden");
 			}
 		}
@@ -850,8 +913,26 @@ window.HomepageGallery = class extends window.WebComponent {
 	updateContentPanelContainer() {
 		var gallery_obj = this.gallery;
 		if (!gallery_obj.content_panel_update_paused) {
+			// Find the main parallax layer to extract its current dynamic Y offset
+			let main_layer = this.element.querySelector(".layer.main");
+			let translate_x = 0;
+			let translate_y = 0;
+			
+			if (main_layer) {
+				// Extract the current translateY/translate3d value applied by the parallax engine
+				let style = window.getComputedStyle(main_layer);
+				let matrix = new WebKitCSSMatrix(style.transform);
+				translate_x = matrix.m41; //m41 represents the X translation in the matrix
+				translate_y = matrix.m42; // m42 represents the Y translation in the matrix
+			}
+			
 			gallery_obj.content_panel_container.style.transform = "none";
-			gallery_obj.content_panel_scroll_container.style.transform = `translateX(${gallery_obj.parallax_scroll_x}vh)`;
+			
+			// Sync the content panel scroll wrapper with:
+			// 1. Horizontal Scroll (gallery_obj.parallax_scroll_x in vh)
+			// 2. Vertical Parallax displacement (translate_y in pixels)
+			gallery_obj.content_panel_scroll_container.style.transform =
+				`translateX(calc(${gallery_obj.parallax_scroll_x}vh + ${translate_x}px)) translateY(${translate_y}px)`;
 		}
 	}
 	
