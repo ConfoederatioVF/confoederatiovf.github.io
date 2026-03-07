@@ -13,7 +13,7 @@
               -2dvh 0 5dvh rgba(0, 0, 0, 0.7);
   z-index: 2;
 }
-.project-parallax-container > * { will-change: top, transform; }
+.project-parallax-container > * { will-change: top, transform; transition: none !important; }
 section#scene { 
     height: 100dvh; 
 }
@@ -288,7 +288,7 @@ section#scene {
   font-family: var(--website-tertiary-font), sans-serif;
   font-size: 1.5rem;
   height: 0;
-  width: 25rem;
+  width: calc(clamp(20rem, 25rem, 50dvw));
 
   transition: all 0.5s ease;
   z-index: 3;
