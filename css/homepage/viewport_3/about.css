@@ -46,11 +46,10 @@
     }
     > div {
       margin: 0 auto;
-      padding: 1rem;
-      padding-left: 2rem;
+      padding: 1rem 4rem 1rem 2rem;
     }
     
-    .about-body-container { max-width: 40rem; margin: inherit; }
+    .about-body-container { max-width: 50rem; margin: inherit; }
   }
 
   /* -- Ministrat -- */
