@@ -121,12 +121,14 @@
     //Return statement
     return [screen_x, screen_y];
   }
-
-  function updateMapCoords () {
-    //Declare local reference variables
+  
+  function updateMapCoords() {
     var map_elements_obj = ministrat.main.map_elements;
-
-    for (let i = 0; i < map_elements_obj.all_map_elements.length; i++)
-      map_elements_obj.all_map_elements[i].style.transform = `translate(${ministrat.main.map.x}px, ${ministrat.main.map.y}px) scale(${ministrat.main.map.zoom})`;
+    
+    for (let i = 0; i < map_elements_obj.all_map_elements.length; i++) {
+      map_elements_obj.all_map_elements[i].style.transformOrigin = "0 0";
+      map_elements_obj.all_map_elements[i].style.transform =
+        `translate(${ministrat.main.map.x}px, ${ministrat.main.map.y}px) scale(${ministrat.main.map.zoom})`;
+    }
   }
 }

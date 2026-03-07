@@ -31,38 +31,37 @@
       return true;
     }
   }
-
-  function ministratMapWheelHandler (e) {
-    //Declare local reference variables
-    var screen_x = e.clientX;
-    var screen_y = e.clientY;
-    const zoom_before = ministrat.main.map.zoom;
-    var zoom_changed = false;
-
-    var map_x = (screen_x - ministrat.main.map.x)/zoom_before;
-    var map_y = (screen_y - ministrat.main.map.y)/zoom_before;
-
-    //Apply zoom change
+  
+  function ministratMapWheelHandler(e) {
+    e.preventDefault();
+    
+    var container_rect =
+      ministrat.main.map_elements.main_map_el.getBoundingClientRect();
+    
+    // Cursor position relative to the container, NOT the viewport
+    var cursor_x = e.clientX - container_rect.left;
+    var cursor_y = e.clientY - container_rect.top;
+    
+    var old_zoom = ministrat.main.map.zoom;
+    var new_zoom;
+    
     if (e.deltaY > 0) {
-      if (ministrat.main.map.zoom > 1) {
-        ministrat.main.map.zoom *= 0.9;
-        zoom_changed = true;
-      }
+      new_zoom = Math.max(1, old_zoom * 0.9);
     } else {
-      if (ministrat.main.map.zoom < 25) {
-        ministrat.main.map.zoom *= 1.1;
-        zoom_changed = true;
-      }
+      new_zoom = Math.min(25, old_zoom * 1.1);
     }
-
-    if (zoom_changed) {
-      const zoom_after = ministrat.main.map.zoom;
-
-      //Update pan to keep cursor point anchored
-      ministrat.main.map.x = screen_x - map_x*zoom_after;
-      ministrat.main.map.y = screen_y - map_y*zoom_after;
-
-      updateMapCoords();
-    }
+    
+    if (new_zoom === old_zoom) return;
+    
+    // Map-space point under cursor
+    var map_x = (cursor_x - ministrat.main.map.x) / old_zoom;
+    var map_y = (cursor_y - ministrat.main.map.y) / old_zoom;
+    
+    // Adjust pan so that same map-space point stays under cursor
+    ministrat.main.map.x = cursor_x - map_x * new_zoom;
+    ministrat.main.map.y = cursor_y - map_y * new_zoom;
+    ministrat.main.map.zoom = new_zoom;
+    
+    updateMapCoords();
   }
 }

@@ -266,11 +266,12 @@ window.HomepageBanner = class extends window.WebComponent {
 			</div>
 		</div>
 
-		<!--Plexus overlay, keep all this stuff at hte bottom of the homepage banner container-->
+		<!--Plexus overlay, keep all this stuff at the bottom of the homepage banner container-->
 		<img id = "homepage-banner-plexus-overlay-bg" class = "homepage-banner-plexus-overlay-bg" src = "gfx/interface/vector_plexus_overlay_bg.png" draggable = "false">
 
+		<!-- Actual title -->
 		<div id = "homepage-banner-main-title" class = "homepage-banner-main-title">
-			<span id = "homepage-banner-main-title-text" class = "homepage-banner-main-title-text"></span>
+			<span id = "homepage-banner-main-title-text" class = "homepage-banner-main-title-text" spellcheck = "false"></span>
 			<span id = "homepage-caret-wrapper" class = "homepage-caret-container">
 				<span id = "homepage-banner-caret-spacer" class = "homepage-caret-spacer">.</span>
 				<span id = "homepage-banner-caret-element" class = "homepage-banner-blinking-caret"></span>
@@ -286,6 +287,11 @@ window.HomepageBanner = class extends window.WebComponent {
 			</div>
 			<div id = "homepage-banner-chevron-down" class = "homepage-banner-chevron-down hidden">
 				<img id = "homepage-banner-chevron-down-image" class = "homepage-banner-chevron-down-icon" src = "gfx/interface/icons/chevron.png" draggable = "false">
+			</div>
+			
+			<div id = "homepage-banner-subtitle" class = "homepage-banner-subtitle hidden">
+				Data from<br>
+				the Neolithic to Now
 			</div>
 		</div>
 
@@ -509,18 +515,18 @@ window.HomepageBanner = class extends window.WebComponent {
 						raindrops_to_remove.push(this.raindrop_array[i]);
 				for (let i = 0; i < raindrops_to_remove.length; i++) {
 					for (let x = 0; x < this.raindrop_array.length; x++)
-						if (this.raindrop_array[x] == raindrops_to_remove[i])
+						if (this.raindrop_array[x] === raindrops_to_remove[i])
 							this.raindrop_array.splice(x, 1);
 				}
 				
 				let all_raindrops = this.raindrop_container.querySelectorAll(
 					".raindrop",
 				);
-				let random_tick = randomNumber(9, 11);
 				let raindrop_size = randomNumber(15, 48);
+				let spawn_chance = 0.2;
 				
 				if (
-					this.raindrop_iterations % random_tick == 0 &&
+					Math.random() < spawn_chance &&
 					all_raindrops.length < this.max_number_of_raindrops
 				) {
 					this.raindrop_array.push(
@@ -537,7 +543,7 @@ window.HomepageBanner = class extends window.WebComponent {
 				}
 				this.raindrop_iterations++;
 			}
-		}, 500);
+		}, 250);
 		
 		this.homepageBannerAnimation();
 		this.initialiseHomepageBannerUI();
@@ -765,11 +771,11 @@ window.HomepageBanner = class extends window.WebComponent {
 				})
 				.then(() => delay(1500))
 				.then(() => {
-					this.homepageBannerSetText(`WHEN`);
+					this.homepageBannerSetText(`WE BUILD`);
 				})
 				.then(() => delay(250))
 				.then(() => {
-					this.homepageBannerSetText(`WHEN WE BUILD`);
+					this.homepageBannerSetText(`TOOLS`);
 				})
 				.then(() => delay(100))
 				.then(() => {
@@ -788,7 +794,7 @@ window.HomepageBanner = class extends window.WebComponent {
 				.then(() => {
 					this.homepageBannerChangeRawFontSize(50);
 					return this.homepageBannerSetText(
-						`<span class = "enlarged-slash">/</span>`,
+						`<span class = "enlarged-slash">&</span>`,
 					);
 				})
 				.then(() => delay(1000))
@@ -800,12 +806,14 @@ window.HomepageBanner = class extends window.WebComponent {
 						.replace(" slash-positioning", ""),
 					);
 					this.homepageBannerChangeRawFontSize(24);
-					this.homepageBannerSetText(`LET US THINK`);
+					this.homepageBannerSetText(`DATASETS`);
 				})
 				.then(() => delay(1100))
 				.then(() => {
-					this.homepageBannerSetText(`WE BUILD FOREVER`);
+					this.homepageBannerSetText(`USABLE DATA`);
 				})
+				.then(() => delay(1000))
+				.then(() => this.homepageBannerSetText(`FROM THE NEOLITHIC TO NOW`))
 				.then(() => delay(1200))
 				.then(() => {
 					const caret_wrap = this.element.querySelector(
@@ -898,6 +906,7 @@ window.HomepageBanner = class extends window.WebComponent {
 				);
 				setTimeout(() => this.homepageBannerChangeBanner("lava_lamp"), 12000);
 				setTimeout(() => {
+					setTimeout(() => this.element.querySelector(`#homepage-banner-subtitle`).classList.remove("hidden"), 500);
 					this.homepageBannerChangeBanner("rain");
 					this.homepageBannerDisplayDots();
 					this.lava_lamp_animation_paused = true;

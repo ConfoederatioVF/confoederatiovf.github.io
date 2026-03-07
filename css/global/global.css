@@ -1,3 +1,9 @@
+:root {
+  --website-primary-font: "Barlow", sans-serif;
+  --website-secondary-font: "Space Grotesk", sans-serif;
+  --website-tertiary-font: "Karla", sans-serif;
+}
+
 /* -- Declare global constants -- */
 html, head, body {
   margin: 0px;
@@ -161,14 +167,11 @@ select:-moz-focusring {
   border-radius: 0px;
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
-  font-family: "Quicksand";
-  font-size: 1vw;
+  font-family: "Quicksand", sans-serif;
+  font-size: 1rem;
   font-weight: 300;
 
-  padding-top: 0.25dvh;
-  padding-bottom: 0.25dvh;
-  padding-left: 0.5vw;
-  padding-right: 0.5vw;
+  padding: 0.5rem;
 }
 .tippy-box > .tippy-arrow::before {
   visibility: hidden;

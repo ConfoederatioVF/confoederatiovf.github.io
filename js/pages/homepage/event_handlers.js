@@ -14,7 +14,7 @@ function initEventHandlers () {
 		}, 100);
 		hover_throttle.push("on_parallax_hover");
 	};
-	window.onscroll = (e) => {
+	window.onscroll = function (e) {
 		//Declare local instance variables
 		var delta_y = window.pageYOffset || document.documentElement.scrollTop;
 		var vh_scroll = (window.scrollY/window.innerHeight)*100;
@@ -29,3 +29,4 @@ function initEventHandlers () {
 		if (ministratMapScrollHandler(e)) return;
 	}
 }
+initEventHandlers();

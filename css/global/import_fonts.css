@@ -295,6 +295,13 @@
   font-style: italic;
 }
 
+/* -- Karla -- */
+@font-face {
+  font-family: "Karla";
+  src: url("../../gfx/fonts/karla.ttf") format("truetype");
+  font-weight: 100 900;
+}
+
 /* -- Quicksand -- */
 @font-face {
   font-family: "Quicksand";
@@ -320,6 +327,13 @@
   font-family: "Quicksand";
   src: url("../../gfx/fonts/quicksand_light.ttf") format("truetype");
   font-weight: 300;
+}
+
+/* -- Space Grotesk -- */
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("../../gfx/fonts/space_grotesk.ttf") format("truetype");
+  font-weight: 100 900;
 }
 
 /* -- Raleway -- */

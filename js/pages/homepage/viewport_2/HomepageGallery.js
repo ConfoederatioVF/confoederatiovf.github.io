@@ -632,7 +632,7 @@ window.HomepageGallery = class extends window.WebComponent {
 				child.style.top = vertical_offset + window.innerHeight - 5 + "px";
 			} else if (child.id === "main-parallax-content-panel-wrapper") {
 				// Vertical sync with scene
-				//child.style.top = vertical_offset + "px";
+				child.style.top = vertical_offset + "px";
 			} else if (child.id === "scene") {
 				child.style.top = vertical_offset + "px";
 			} else {

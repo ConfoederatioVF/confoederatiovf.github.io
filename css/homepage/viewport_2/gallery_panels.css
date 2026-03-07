@@ -1,8 +1,8 @@
 /* -- gallery_panels.css -- */
 .parallax-panel-container {
-  position: fixed;
-  top: 0px;
-  left: 0px;
+  position: absolute;
+  top: 0;
+  left: 0;
   height: 100%;
   width: 100%;
 
@@ -83,10 +83,6 @@
   margin-left: calc(15% + 1.5dvh);
   margin-right: 25%;
   margin-top: 10dvh;
-
-  .parallax-item-content-panel-body-text {
-    margin-right: 11.5dvh;
-  }
 }
 .parallax-item-content-panel.maximised > .content-wrapper, .parallax-item-content-panel.being-minimised > .content-wrapper {
   transition: all 2s ease;

@@ -1,3 +1,26 @@
+div[data-viewport="1"] {
+  .homepage-banner-subtitle {
+    position: absolute;
+    
+    bottom: 12.5%;
+    left: 2.5vw;
+
+    color: white;
+    font-family: "Space Grotesk";
+    font-size: 2rem;
+    font-weight: 700;
+    opacity: 1;
+    transform: none;
+    
+    transition: all 2s ease;
+  }
+  .homepage-banner-subtitle.hidden {
+    opacity: 0;
+    transform: translateY(12.5vh);
+  }
+}
+
+/* -- LEGACY CSS -- */
 /* -- Apply parallax to main video background -- */
 .homepage-banner-video-bg {
   position: absolute;
@@ -73,7 +96,7 @@
 /* -- Homepage top banner - main title styling -- */
 /* -- Top banner title positioning -- */
 .homepage-banner-main-title {
-  top: 0dvh;
+  top: 0;
   height: 100dvh;
   width: 100vw;
   margin: 0 auto;
@@ -115,15 +138,16 @@
   user-select: text;
 }
 .homepage-banner-main-title.finished-animation .homepage-banner-main-title-text {
-  max-height: 22dvh;
   overflow: hidden;
+  br { display: none; }
+  * { display: inline; white-space: nowrap; }
 }
 .homepage-banner-main-title-text {
-  font-family: "Bahnschrift";
+  font-family: "Bahnschrift", sans-serif;
   font-size: 20dvh;
   font-stretch: semi-condensed;
   font-weight: 700;
-  line-height: 1;
+  line-height: inherit;
 
   color: white;
   text-transform: uppercase;

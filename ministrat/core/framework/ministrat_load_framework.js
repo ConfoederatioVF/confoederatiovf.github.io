@@ -15,7 +15,7 @@
 
     //Pause game; scroll down to about page
     setMinistratGameSpeed(0);
-    document.getElementById("ministrat-anchor").scrollIntoView({
+    document.getElementById("about-me-section").scrollIntoView({
       behavior: "instant"
     });
   }
