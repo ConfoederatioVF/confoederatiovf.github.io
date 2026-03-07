@@ -679,53 +679,73 @@ window.HomepageGallery = class extends window.WebComponent {
 	
 	initGalleryUI() {
 		var gallery_obj = this.gallery;
+		
 		gallery_obj.bookmark_minimise_btn.onclick = () => {
 			!gallery_obj.bookmark_minimise_btn.classList.contains("minimised")
 				? this.hideBookmarkUI()
 				: this.showBookmarkUI();
 		};
+		
 		setTimeout(() => {
 			let all_panels = this.element.querySelectorAll(".content-wrapper");
 			for (let i = 0; i < all_panels.length; i++) {
-				let title = all_panels[i].querySelector(".parallax-item-content-panel-title");
+				let title = all_panels[i].querySelector(
+					".parallax-item-content-panel-title"
+				);
 				if (!title) continue;
 				let id = all_panels[i].id
 				.replace("-content-panel", "")
 				.replace("-content-wrapper", "");
 				title.innerHTML = `${title.textContent}
-					<img id="${id}-close-btn" class="content-panel-close-btn" src="gfx/interface/icons/close_btn.png" draggable="false">
-					<img id="${id}-maximise-btn" class="content-panel-maximise-btn" src="gfx/interface/icons/maximise_icon.png" draggable="false">
-				`;
+        <img id="${id}-close-btn" class="content-panel-close-btn" src="gfx/interface/icons/close_btn.png" draggable="false">
+        <img id="${id}-maximise-btn" class="content-panel-maximise-btn" src="gfx/interface/icons/maximise_icon.png" draggable="false">
+      `;
 				this.element.querySelector(`#${id}-close-btn`).onclick = () =>
 					this.closeContentPanel(id);
-				this.element.querySelector(`#${id}-maximise-btn`).onclick = () => {
-					let panel = this.element.querySelector(`#${id}-content-panel`);
-					panel.classList.contains("maximised")
-						? this.minimiseContentPanel(id)
-						: this.maximiseContentPanel(id);
-				};
+				this.element.querySelector(`#${id}-maximise-btn`).onclick =
+					() => {
+						let panel = this.element.querySelector(
+							`#${id}-content-panel`
+						);
+						panel.classList.contains("maximised")
+							? this.minimiseContentPanel(id)
+							: this.maximiseContentPanel(id);
+					};
 			}
 		}, 500);
+		
 		this.initGalleryDesktopEventHandlers();
+		
+		// Dependency visibility check — 100ms is fine, this is not
+		// per-frame work
 		setInterval(() => {
 			for (let i = 0; i < gallery_obj.parallax_selected.length; i++) {
-				var item_obj = gallery_obj.parallax_settings[gallery_obj.parallax_selected[i]];
+				var item_obj =
+					gallery_obj.parallax_settings[
+						gallery_obj.parallax_selected[i]
+						];
 				if (item_obj && item_obj.dependencies) {
 					item_obj.dependencies.forEach((dep_id) => {
 						var el = this.element.querySelector(`#${dep_id}`);
 						if (el && el.classList.contains("hidden")) {
 							el.classList.remove("hidden");
 							var dep_obj = gallery_obj.parallax_settings[dep_id];
-							if (dep_obj && dep_obj.show_function) dep_obj.show_function();
+							if (dep_obj && dep_obj.show_function)
+								dep_obj.show_function();
 						}
 					});
 				}
 			}
 		}, 100);
-		setInterval(() => {
+		
+		// USE requestAnimationFrame INSTEAD OF setInterval(16)
+		const tick = () => {
 			this.updateParallaxScrollValues();
 			this.updateContentPanelContainer();
-		}, 16);
+			this._rafId = requestAnimationFrame(tick);
+		};
+		this._rafId = requestAnimationFrame(tick);
+		
 		this.initGallery();
 	}
 	
