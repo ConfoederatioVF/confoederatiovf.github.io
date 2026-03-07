@@ -80,13 +80,12 @@ config.homepage = {
     "ministrat/core/ui/ministrat_ui_draw_loop.js",
     
     //Event handling
-    "js/pages/homepage/event_handlers/homepage_on_hover.js",
-    "js/pages/homepage/event_handlers/homepage_on_resize.js",
-    "js/pages/homepage/event_handlers/homepage_on_scroll.js",
+    "js/pages/homepage/event_handlers.js",
     
     //Config files
     "js/config/homepage/defines/common_defines.js",
-    "js/config/homepage/gallery_tiles/gallery_tiles.js"
+    "js/config/homepage/gallery_tiles/gallery_tiles.js",
+    "ministrat/core/startup.js",
   ],
   
   defines: {},
