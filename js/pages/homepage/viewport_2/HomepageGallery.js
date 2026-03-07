@@ -651,15 +651,21 @@ window.HomepageGallery = class extends window.WebComponent {
 		}
 	}
 	
-	initGalleryMobileEventHandlers() {
+	initGalleryMobileEventHandlers () {
+		var gallery_obj = this.gallery;
+		
 		gallery_obj.parallax_body.addEventListener(
 			"touchmove",
 			(e) => {
-				if (this.element.querySelectorAll(".maximised.shown").length != 0) {
-					if (!e.target.closest(".parallax-item-content-panel")) e.preventDefault();
+				if (
+					this.element.querySelectorAll(".maximised.shown").length !==
+					0
+				) {
+					if (!e.target.closest(".parallax-item-content-panel"))
+						e.preventDefault();
 				}
 			},
-			{ passive: false },
+			{ passive: false }
 		);
 	}
 	
