@@ -81,11 +81,12 @@ div[data-viewport="1"] {
   width: 100vw;
 }
 .homepage-banner-video-bg, .homepage-banner-video-bg-misty-forest, .homepage-banner-triumph-and-tragedy-bg, .homepage-banner-cleveland-national-forest-bg {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
-  min-height: 100dvh;
-  min-width: 100dvw;
+  height: 100dvh;
+  width: 100dvw;
+  object-fit: cover;
 }
 .homepage-banner-triumph-and-tragedy-bg {
   position: relative;
