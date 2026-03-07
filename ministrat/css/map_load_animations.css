@@ -74,8 +74,6 @@
 .ministrat-map-btn:not(.expanded) svg {
   position: relative;
   height: 20vw;
-  left: 62.5vw;
-  top: 5dvh;
   transform: rotate(12.5deg);
   width: 20vw;
 

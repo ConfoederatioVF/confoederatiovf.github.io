@@ -1,8 +1,76 @@
+[data-viewport="3"] {
+  color: white;
+  font-family: var(--website-tertiary-font), sans-serif;
+  
+  /* -- Atomics -- */
+  div:has(> img) {
+    display: flex; 
+    justify-content: center;
+    padding: 1rem;
+  }
+  .subtitle.h1 { font-size: 2rem; font-weight: 700; }
+  .subtitle.h2 { font-size: 1.5rem; }
+  
+  /* -- Specifics -- */
+  .about-me-overlay-title {
+    position: absolute;
+    
+    left: 10dvw;
+    top: 2.5dvh;
+    
+    color: white;
+    font-family: var(--website-primary-font), sans-serif;
+    font-size: 10dvh;
+    font-weight: 700;
+    letter-spacing: 0.5rem;
+    text-shadow: 0 0 1rem rgba(0, 0, 0, 0.85);
+    text-transform: uppercase;
+    z-index: 2;
+  }
+  
+  .about-me-content-container {
+    position: absolute;
+    
+    border-radius: 1rem;
+    height: calc(100dvh - 1rem);
+    left: 15dvw;
+    top: 0.5rem;
+    width: calc(85dvw - 0.5rem);
+    
+    backdrop-filter: blur(0.5rem);
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1;
+    
+    > div:first-child {
+      margin-top: calc(10dvh + 2.5dvh);
+    }
+    > div {
+      margin: 0 auto;
+      padding: 1rem;
+      padding-left: 2rem;
+    }
+    
+    .about-body-container { max-width: 40rem; margin: inherit; }
+  }
+
+  /* -- Ministrat -- */
+  #main-map {
+    position: absolute;
+    
+    left: calc(100dvw - 20vw - 1rem);
+    top: 1rem;
+  }
+  .ministrat-container {
+    position: absolute;
+    z-index: 3;
+  }
+}
+
 /* -- About Me elements styling -- */
 #about-me-section {
-  position: static; /* Statically positioned as requested */
-  width: 100%;
-  min-height: 100dvh;
+  position: relative; /* Statically positioned as requested */
+  height: 100dvh;
+  width: 100dvw;
 
   a {
     color: rgba(255, 255, 255, 0.5);
@@ -32,5 +100,4 @@
   overflow: hidden;
   z-index: 1;
   
-  #main-map { height: 0; }
 }

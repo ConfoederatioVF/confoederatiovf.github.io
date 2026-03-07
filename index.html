@@ -64,44 +64,16 @@
     <div id = "gallery-section" class = "page-container"></div>
 
     <!--About Me/Contact sections-->
-    <div id = "about-me-section" class = "about-me-section-container" style = "height: 100vh; width: 100vw; position: static;">
+    <div data-viewport = "3" id = "about-me-section" class = "about-me-section-container">
       <div id = "about-me-overlay-title" class = "about-me-overlay-title">
         About-
       </div>
       <div id = "about-me-overlay" class = "about-me-content-container">
-        <!-- Ministrat Container -->
-        <div id = "main-map-blackout-container" class = "ministrat-container">
-          <div id = "main-map" class = "ministrat-map-btn"></div>
-
-          <img id = "ministrat-close-button" src = "./gfx/interface/icons/close_no_bounds.png" draggable = "false" onclick = "closeMinistrat();">
-          <div id = "ministrat-topbar-container">
-            <div id = "ministrat-topbar-time-controls">
-              <div id = "date-container">
-                9. November 1983, 00:00
-              </div>
-              <div id = "time-controls-container">
-                <img id = "pause-button" class = "time-icon active" src = "./ministrat/gfx/ui_icons/pause_btn.png" draggable = "false">
-                <img id = "speed-one-button" class = "time-icon" src = "./ministrat/gfx/ui_icons/forwards_one_btn.png" draggable = "false">
-                <img id = "speed-two-button" class = "time-icon" src = "./ministrat/gfx/ui_icons/forwards_two_btn.png" draggable = "false">
-                <img id = "speed-three-button" class = "time-icon" src = "./ministrat/gfx/ui_icons/forwards_three_btn.png" draggable = "false">
-              </div>
-            </div>
-            <div id = "ministrat-clock-container">
-              <canvas id = "ministrat-clock" height = "64" width = "64"></canvas>
-            </div>
-          </div>
-          <div id = "ministrat-leftbar-container">
-          </div>
-          <div id = "ministrat-rightbar-container">
-          </div>
-          <div id = "ministrat-bottombar-container"></div>
-        </div>
-
         <!--Preview Map and Signature-->
-        <div id = "about-me-overlay-subtitle" class = "about-me-overlay-subtitle">
-          Sedag. Vetsonne.
+        <div id = "about-me-overlay-subtitle" class = "subtitle h1">
+          Minimally Competent. Maximally Capable.
         </div>
-        <div id = "biography-overlay-subtitle" class = "biography-overlay-subtitle">
+        <div id = "biography-overlay-subtitle" class = "subtitle h2">
           Biography-
         </div>
 
@@ -125,7 +97,9 @@
             All of these datasets are provided at 5-arcminute or finer resolution from 10000BC - Present.
   
             <hr class = "about-me-divider">
-            <img src = "gfx/interface/logos/confoederatio_icon.png" class = "confoederatio-icon" draggable = "false" height = "128" width = "128"></img>
+            <div>
+              <img src = "gfx/interface/logos/confoederatio_icon.png" class = "confoederatio-icon" draggable = "false" height = "128" width = "128"></img>
+            </div>
           </div>
           <div id = "biography-body-text" class = "biography-body-text">
             Confoederatio's underpinnings mainly go back to the Cold War modding community from 2019-2020, particular amongst <b>11:59</b> and AOC2/AOC3 with Midnight. As these projects no longer became viable, much of the community's work was forked to independent grand-strategy projects such as Triumph & Tragedy, as well as applied modelling and geospatial statistics.
@@ -139,6 +113,34 @@
             This in addition to the <b>Preservés</b> des Confoederatio, which operates our physical/digital archives that we are currently working on migrating.
           </div>
         </div>
+      </div>
+      
+      <!-- Ministrat Container -->
+      <div id = "main-map-blackout-container" class = "ministrat-container">
+        <div id = "main-map" class = "ministrat-map-btn"></div>
+
+        <img id = "ministrat-close-button" src = "./gfx/interface/icons/close_no_bounds.png" draggable = "false" onclick = "closeMinistrat();">
+        <div id = "ministrat-topbar-container">
+          <div id = "ministrat-topbar-time-controls">
+            <div id = "date-container">
+              9. November 1983, 00:00
+            </div>
+            <div id = "time-controls-container">
+              <img id = "pause-button" class = "time-icon active" src = "./ministrat/gfx/ui_icons/pause_btn.png" draggable = "false">
+              <img id = "speed-one-button" class = "time-icon" src = "./ministrat/gfx/ui_icons/forwards_one_btn.png" draggable = "false">
+              <img id = "speed-two-button" class = "time-icon" src = "./ministrat/gfx/ui_icons/forwards_two_btn.png" draggable = "false">
+              <img id = "speed-three-button" class = "time-icon" src = "./ministrat/gfx/ui_icons/forwards_three_btn.png" draggable = "false">
+            </div>
+          </div>
+          <div id = "ministrat-clock-container">
+            <canvas id = "ministrat-clock" height = "64" width = "64"></canvas>
+          </div>
+        </div>
+        <div id = "ministrat-leftbar-container">
+        </div>
+        <div id = "ministrat-rightbar-container">
+        </div>
+        <div id = "ministrat-bottombar-container"></div>
       </div>
     </div>
 
