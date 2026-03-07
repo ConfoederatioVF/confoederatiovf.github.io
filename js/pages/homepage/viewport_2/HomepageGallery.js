@@ -651,7 +651,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		}
 	}
 	
-	initGalleryMobileEventHandlers () {
+	initGalleryMobileEventHandlers() {
 		var gallery_obj = this.gallery;
 		
 		gallery_obj.parallax_body.addEventListener(
