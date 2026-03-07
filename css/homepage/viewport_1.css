@@ -1,3 +1,4 @@
+/* -- 1. Viewport Scope -- */
 div[data-viewport="1"] {
   .homepage-banner-subtitle {
     position: absolute;
@@ -6,18 +7,42 @@ div[data-viewport="1"] {
     left: 2.5vw;
 
     color: white;
-    font-family: "Space Grotesk";
+    font-family: var(--website-secondary-font), sans-serif;
     font-size: 2rem;
     font-weight: 700;
     opacity: 1;
-    transform: none;
-    
-    transition: all 2s ease;
   }
   .homepage-banner-subtitle.hidden {
     opacity: 0;
+  }
+  .homepage-banner-subtitle:not(.hidden) { animation: homepage-banner-subtitle-fade-in 1.5s forwards; }
+}
+
+/* -- Animations -- */
+@keyframes homepage-banner-subtitle-fade-in {
+  0% {
+    opacity: 0;
     transform: translateY(12.5vh);
   }
+  50% {
+    opacity: 0.5;
+    transform: none;
+  }
+
+  70% { opacity: 0.5; }
+  70.1% { opacity: 0; }
+  
+  75% { opacity: 0.7; }
+  75.1% { opacity: 0; }
+  
+  80% { opacity: 0.5; }
+  80.1% { opacity: 1; }
+  
+  85% { opacity: 1; }
+  85.1% { opacity: 0; }
+  
+  90% { opacity: 0; }
+  90.1% { opacity: 1; }
 }
 
 /* -- LEGACY CSS -- */

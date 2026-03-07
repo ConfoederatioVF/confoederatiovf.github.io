@@ -810,11 +810,36 @@ window.HomepageBanner = class extends window.WebComponent {
 				})
 				.then(() => delay(1100))
 				.then(() => {
-					this.homepageBannerSetText(`USABLE DATA`);
+					this.clearText({
+						banner_el: this.banner_title_text,
+						caret_spacer_el: this.banner_caret_spacer_element,
+					});
+					return this.typeText({
+						apply_class: "homepage-banner-text-subelement",
+						banner_el: this.banner_title_text,
+						initial_typing_speed: 400,
+						text: "USABLE DATA",
+					});
 				})
 				.then(() => delay(1000))
-				.then(() => this.homepageBannerSetText(`FROM THE NEOLITHIC TO NOW`))
-				.then(() => delay(1200))
+				.then(() => {
+					return this.selectText({
+						banner_el: this.banner_title_text,
+						caret_el: this.banner_caret_element,
+						caret_spacer_el: this.banner_caret_spacer_element,
+						select_speed: 10,
+					});
+				})
+				.then(() => {
+					this.clearText({
+						banner_el: this.banner_title_text,
+						caret_spacer_el: this.banner_caret_spacer_element,
+					});
+				})
+				.then(() => {
+					return this.homepageBannerSetText(`FROM THE NEOLITHIC TO NOW`);
+				})
+				.then(() => delay(5000))
 				.then(() => {
 					const caret_wrap = this.element.querySelector(
 						"#homepage-caret-wrapper",
