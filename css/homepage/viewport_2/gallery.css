@@ -50,7 +50,7 @@ section#scene {
 	transition: all 0.25s ease;
 }
 .parallax-panel-scroll-container {
-	transition: all 0.5s ease;
+	/*transition: all 0.5s ease;*/
 }
 .parallax-content-container {
   transform: translateY(-25dvh);
@@ -276,10 +276,6 @@ section#scene {
 }
 
 /* -- Parallax content panel styling -- */
-.parallax-panel-container {
-  position: absolute;
-  transition: all 0.25s ease;
-}
 .parallax-item-content-panel {
   position: absolute;
   background-color: rgba(0, 0, 0, 0.95);

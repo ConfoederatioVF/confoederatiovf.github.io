@@ -1,8 +1,8 @@
 window.HomepageGallery = class extends window.WebComponent {
-	constructor(arg0_value, arg1_options) {
+	constructor (arg0_value, arg1_options) {
 		let value = arg0_value ? arg0_value : {};
 		let options = arg1_options ? arg1_options : {};
-		super(value, options);
+			super(value, options);
 		
 		this.gallery = {
 			bookmark_container: null,
@@ -40,7 +40,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		this.init();
 	}
 	
-	draw() {
+	draw () {
 		this.element.innerHTML = `
 		<div id = "project-parallax-container" class = "project-parallax-container">
 			<div id = "project-parallax-container-gradient-bg" class = "project-parallax-container-gradient-bg"></div>
@@ -99,7 +99,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		this.element.style.height = "100%";
 	}
 	
-	mountSelectors() {
+	mountSelectors () {
 		let gallery_obj = this.gallery;
 		gallery_obj.scene = this.element.querySelector("#scene");
 		gallery_obj.parallax_body = this.element.querySelector(
@@ -135,7 +135,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		);
 	}
 	
-	init() {
+	init () {
 		this.initGalleryTiles();
 		this.initGalleryUI();
 		this.gallery.parallax_body.addEventListener("mousemove", (e) =>
@@ -150,12 +150,17 @@ window.HomepageGallery = class extends window.WebComponent {
 			this.magnify(all_art_preview_imgs[i].querySelector("img"), 3);
 	}
 	
-	magnify(arg0_element, arg1_zoom) {
-		var local_el = arg0_element;
-		var zoom = arg1_zoom;
-		var element_id = local_el.id;
+	isMagnifierMaximised(arg0_element_id) {
+		return (this.element.querySelectorAll(`.${arg0_element_id}-panel.maximised .image-magnifier-glass`).length !== 0);
+	}
+	
+	magnify (arg0_element, arg1_zoom) {
+		let local_el = arg0_element;
+		let zoom = arg1_zoom;
+		
+		let element_id = local_el.id;
 		this.zoom_states[element_id] = zoom;
-		var local_magnifier = document.createElement("DIV");
+		let local_magnifier = document.createElement("DIV");
 		local_magnifier.setAttribute("class", "image-magnifier-glass");
 		local_magnifier.style.backgroundImage = `url('${local_el.src}')`;
 		local_magnifier.style.backgroundRepeat = "no-repeat";
@@ -182,7 +187,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		}, 100);
 	}
 	
-	moveMagnifier(e, arg0_element, arg1_magnifier) {
+	moveMagnifier (e, arg0_element, arg1_magnifier) {
 		var local_el = arg0_element;
 		var magnifier = arg1_magnifier;
 		var element_id = local_el.id;
@@ -224,23 +229,12 @@ window.HomepageGallery = class extends window.WebComponent {
 		magnifier.style.backgroundSize = `${local_el.width * zoom}px ${local_el.height * zoom}px`;
 	}
 	
-	isMagnifierMaximised(arg0_element_id) {
-		return (
-			this.element.querySelectorAll(
-				`.${arg0_element_id}-panel.maximised .image-magnifier-glass`,
-			).length != 0
-		);
-	}
-	
-	togglePreview(arg0_element_id) {
-		var element_id = arg0_element_id;
-		var img_el = this.element.querySelector(
-			"#" + arg0_element_id.replace(/_/gm, "-"),
-		);
-		var local_el = this.element.querySelector(
-			"#" + arg0_element_id + "-preview-btn",
-		);
+	togglePreview (arg0_element_id) {
+		let element_id = arg0_element_id;
+		let img_el = this.element.querySelector("#" + arg0_element_id.replace(/_/gm, "-"));
+		let local_el = this.element.querySelector(`#${element_id}-preview-btn`);
 		let key = element_id.replace(/-/gm, "_");
+		
 		if (local_el.classList.contains("active")) {
 			local_el.classList.remove("active");
 			img_el.classList.add("cursor-shown");
@@ -404,14 +398,16 @@ window.HomepageGallery = class extends window.WebComponent {
 	}
 	
 	closeContentPanel(arg0_element_id) {
-		var local_el = this.element.querySelector(`#${arg0_element_id}-content-panel`);
+		var local_el = this.element.querySelector(
+			`#${arg0_element_id}-content-panel`,
+		);
 		var gallery_obj = this.gallery;
 		if (local_el) {
-			local_el.setAttribute(
-				"class",
-				local_el.getAttribute("class").replace(" shown", ""),
-			);
-			this.minimiseContentPanel(arg0_element_id, true);
+			local_el.classList.remove("shown");
+			// Only run minimise logic if the panel was actually maximised
+			if (local_el.classList.contains("maximised")) {
+				this.minimiseContentPanel(arg0_element_id, true);
+			}
 			gallery_obj.parallax_scroll_indicator.style.opacity = 1;
 		}
 	}
@@ -552,25 +548,37 @@ window.HomepageGallery = class extends window.WebComponent {
 	initGallery() {
 		var gallery_obj = this.gallery;
 		var hide_elements = [];
-		var parallax_elements = this.element.querySelectorAll(".parallax-item");
+		var parallax_elements =
+			this.element.querySelectorAll(".parallax-item");
 		for (let i = 0; i < parallax_elements.length; i++) {
 			this.initParallaxElement(parallax_elements[i].id);
 			if (
 				this.getParent(parallax_elements[i].id).length > 0 &&
-				!gallery_obj.parallax_pinned_items.includes(parallax_elements[i].id)
+				!gallery_obj.parallax_pinned_items.includes(
+					parallax_elements[i].id,
+				)
 			)
 				hide_elements.push(parallax_elements[i].id);
 		}
 		hide_elements = [...new Set(hide_elements)];
 		for (let i = 0; i < hide_elements.length; i++) {
-			var local_el = this.element.querySelector(`#${hide_elements[i]}`);
+			var local_el = this.element.querySelector(
+				`#${hide_elements[i]}`,
+			);
 			local_el.classList.add("hidden");
-			var local_obj = gallery_obj.parallax_settings[local_el.id];
+			var local_obj =
+				gallery_obj.parallax_settings[local_el.id];
 			if (local_obj && local_obj.animation)
-				local_el.setAttribute("animation", `${local_obj.animation}`);
+				local_el.setAttribute(
+					"animation",
+					`${local_obj.animation}`,
+				);
 		}
 		for (let i = 0; i < gallery_obj.bookmark_items.length; i++)
 			this.addBookmarkItem(gallery_obj.bookmark_items[i], true);
+		
+		// Save all panel styles ONCE after everything is built
+		this.saveOriginalPanelStyles();
 	}
 	
 	initGalleryDesktopEventHandlers() {
@@ -888,9 +896,16 @@ window.HomepageGallery = class extends window.WebComponent {
 	
 	selectParallaxItem(arg0_element_id) {
 		var gallery_obj = this.gallery;
-		!gallery_obj.parallax_selected.includes(arg0_element_id)
-			? gallery_obj.parallax_selected.push(arg0_element_id)
-			: (gallery_obj.parallax_selected = gallery_obj.parallax_selected.filter((i) => i !== arg0_element_id));
+		
+		if (gallery_obj.parallax_selected.includes(arg0_element_id)) {
+			// Clicking the already-selected tile deselects everything
+			gallery_obj.parallax_selected = [];
+		} else {
+			// Replace selection entirely
+			gallery_obj.parallax_selected = [arg0_element_id];
+		}
+		
+		this.updateHiddenElements();
 	}
 	
 	showBookmarkUI() {
@@ -907,23 +922,102 @@ window.HomepageGallery = class extends window.WebComponent {
 	}
 	
 	maximiseContentPanel(arg0_element_id) {
-		var panel = this.element.querySelector(`#${arg0_element_id}-content-panel`);
+		var panel = this.element.querySelector(
+			`#${arg0_element_id}-content-panel`,
+		);
 		if (!panel) return;
+		
+		// 1. Capture current visual position
+		var rect = panel.getBoundingClientRect();
+		
+		// 2. Freeze the panel in place
+		panel.style.transition = "none";
+		panel.style.position = "fixed";
+		panel.style.top = `${rect.top}px`;
+		panel.style.left = `${rect.left}px`;
+		panel.style.width = `${rect.width}px`;
+		panel.style.height = `${rect.height}px`;
+		panel.style.margin = "0";
+		
+		// 3. Stop the container from moving
 		this.gallery.content_panel_update_paused = true;
 		this.gallery.content_panel_container.style.transform = "none";
-		this.gallery.content_panel_scroll_container.style.transform = "none";
-		panel.classList.add("maximised");
+		this.gallery.content_panel_scroll_container.style.transform =
+			"none";
+		
+		// 4. Trigger transition to maximised state
+		requestAnimationFrame(() => {
+			panel.style.transition = "";
+			panel.classList.add("maximised");
+			
+			// Restore original inline style underneath — the .maximised
+			// class handles positioning from here
+			setTimeout(() => {
+				this.restorePanelStyle(panel);
+			}, 50);
+		});
+		
 		this.gallery.parallax_scroll_indicator.style.opacity = 0;
 	}
 	
 	minimiseContentPanel(arg0_element_id, arg1_instant) {
-		var panel = this.element.querySelector(`#${arg0_element_id}-content-panel`);
+		var panel = this.element.querySelector(
+			`#${arg0_element_id}-content-panel`,
+		);
 		if (!panel) return;
+		
+		// If the panel isn't actually maximised, just restore and bail
+		if (!panel.classList.contains("maximised")) {
+			this.restorePanelStyle(panel);
+			return;
+		}
+		
+		if (arg1_instant) {
+			panel.classList.remove("maximised");
+			this.gallery.content_panel_update_paused = false;
+			this.restorePanelStyle(panel);
+			return;
+		}
+		
+		// 1. Capture maximised position
+		var max_rect = panel.getBoundingClientRect();
+		
+		// 2. Remove .maximised and restore original positioning
 		panel.classList.remove("maximised");
+		this.restorePanelStyle(panel);
+		
+		// 3. Resume parallax so scroll container is correct
 		this.gallery.content_panel_update_paused = false;
-		panel.classList.add((arg1_instant) ? "instant-minimisation" : "being-minimised");
-		setTimeout(() => panel.classList.remove("being-minimised", "instant-minimisation"), 500);
-		this.gallery.parallax_scroll_indicator.style.opacity = 1;
+		this.updateContentPanelContainer();
+		
+		// 4. Measure the natural target position
+		var nat_rect = panel.getBoundingClientRect();
+		
+		// 5. Offset panel back to maximised position via transform
+		var dx = max_rect.left - nat_rect.left;
+		var dy = max_rect.top - nat_rect.top;
+		
+		panel.style.transition = "none";
+		panel.style.transform = `translate(${dx}px, ${dy}px)`;
+		panel.style.width = `${max_rect.width}px`;
+		panel.style.height = `${max_rect.height}px`;
+		
+		// 6. Animate transform away
+		requestAnimationFrame(() => {
+			panel.style.transition = "";
+			
+			setTimeout(() => {
+				panel.style.transform = "";
+				panel.style.width = "";
+				panel.style.height = "";
+			}, 50);
+			
+			// 7. Final cleanup — restore clean original style
+			setTimeout(() => {
+				this.restorePanelStyle(panel);
+				this.gallery.parallax_scroll_indicator.style.opacity = 1;
+			}, 550);
+		});
 	}
 	
 	updateContentPanelContainer() {
@@ -956,31 +1050,98 @@ window.HomepageGallery = class extends window.WebComponent {
 		var gallery_obj = this.gallery;
 		var all_dom = this.element.querySelectorAll(".parallax-item");
 		var visible = [];
+		
+		// Selected items and their direct dependencies
 		gallery_obj.parallax_selected.forEach((id) => {
 			visible.push(id);
-			gallery_obj.parallax_settings[id]?.dependencies?.forEach((d) => visible.push(d));
+			gallery_obj.parallax_settings[id]?.dependencies?.forEach((d) =>
+				visible.push(d),
+			);
 		});
+		
+		// Root nodes (no parent) always visible
 		Object.keys(gallery_obj.parallax_settings).forEach((k) => {
-			if (this.getParent(k).length == 0 || this.element.querySelector(`#${k}-content-panel.shown`)) visible.push(k);
+			if (this.getParent(k).length == 0) visible.push(k);
 		});
+		
+		// Pinned items always visible
+		gallery_obj.parallax_pinned_items.forEach((id) => visible.push(id));
+		
 		visible = [...new Set(visible)];
+		
 		all_dom.forEach((el) => {
-			if (!visible.includes(el.id) && !gallery_obj.parallax_pinned_items.includes(el.id)) {
-				if (!el.classList.contains("hidden")) gallery_obj.parallax_settings[el.id]?.hide_function();
+			var is_exempt = gallery_obj.exempt_id_patterns.some((p) =>
+				el.id.startsWith(p),
+			);
+			if (is_exempt) return;
+			
+			if (visible.includes(el.id)) {
+				// Should be visible — show if currently hidden
+				if (el.classList.contains("hidden")) {
+					var obj = gallery_obj.parallax_settings[el.id];
+					if (obj && obj.show_function) obj.show_function();
+				}
+			} else {
+				// Should be hidden — retract if currently visible
+				if (!el.classList.contains("hidden")) {
+					var obj = gallery_obj.parallax_settings[el.id];
+					if (obj && obj.hide_function) obj.hide_function();
+				}
 			}
 		});
 	}
 	
 	onParallaxHover(e) {
+		var gallery_obj = this.gallery;
 		var target = e.target.closest(".parallax-item");
+		
+		// Reset hover-time on every tile that isn't the current target
+		var all_tiles = this.element.querySelectorAll(".parallax-item");
+		for (let i = 0; i < all_tiles.length; i++) {
+			if (!target || all_tiles[i].id !== target.id) {
+				all_tiles[i].setAttribute("hover-time", 0);
+			}
+		}
+		
 		if (!target) return;
-		var hover_time = (parseInt(target.getAttribute("hover-time") || 0)) + 16;
+		
+		var hover_time =
+			parseInt(target.getAttribute("hover-time") || 0) + 16;
 		target.setAttribute("hover-time", hover_time);
-		if (hover_time >= 500 && !this.gallery.parallax_selected.includes(target.id)) {
-			this.gallery.parallax_selected.push(target.id);
+		
+		if (
+			hover_time >= 500 &&
+			!gallery_obj.parallax_selected.includes(target.id)
+		) {
+			gallery_obj.parallax_selected = [target.id];
 			this.updateHiddenElements();
 		}
 	}
+	
+	saveOriginalPanelStyles() {
+		var panels = this.element.querySelectorAll(
+			".parallax-item-content-panel",
+		);
+		for (let i = 0; i < panels.length; i++) {
+			if (!panels[i].dataset.originalStyle) {
+				panels[i].dataset.originalStyle =
+					panels[i].getAttribute("style") || "";
+			}
+		}
+	}
+	
+	restorePanelStyle(arg0_panel) {
+		if (
+			arg0_panel &&
+			arg0_panel.dataset.originalStyle !== undefined
+		) {
+			arg0_panel.setAttribute(
+				"style",
+				arg0_panel.dataset.originalStyle,
+			);
+		}
+	}
+	
 };
 
 function initHomepageGallery() {
