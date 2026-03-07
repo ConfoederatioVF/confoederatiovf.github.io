@@ -6,6 +6,7 @@
 
 /* -- Declare global constants -- */
 html, head, body {
+  display: block;
   margin: 0px;
   overflow-x: hidden;
 }
