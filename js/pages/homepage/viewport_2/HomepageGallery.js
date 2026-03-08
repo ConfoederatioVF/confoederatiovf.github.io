@@ -155,103 +155,7 @@ window.HomepageGallery = class extends window.WebComponent {
 			this.magnify(all_art_preview_imgs[i].querySelector("img"), 3);
 	}
 	
-	isMagnifierMaximised(arg0_element_id) {
-		return (this.element.querySelectorAll(`.${arg0_element_id}-panel.maximised .image-magnifier-glass`).length !== 0);
-	}
-	
-	magnify (arg0_element, arg1_zoom) {
-		let local_el = arg0_element;
-		let zoom = arg1_zoom;
-		
-		let element_id = local_el.id;
-		this.zoom_states[element_id] = zoom;
-		let local_magnifier = document.createElement("DIV");
-		local_magnifier.setAttribute("class", "image-magnifier-glass");
-		local_magnifier.style.backgroundImage = `url('${local_el.src}')`;
-		local_magnifier.style.backgroundRepeat = "no-repeat";
-		local_el.parentElement.insertBefore(local_magnifier, local_el);
-		local_el.addEventListener("mousemove", (e) =>
-			this.moveMagnifier(e, local_el, local_magnifier),
-		);
-		local_el.addEventListener("touchmove", (e) =>
-			this.moveMagnifier(e, local_el, local_magnifier),
-		);
-		local_el.addEventListener("wheel", (e) => {
-			let current_zoom = this.zoom_states[element_id];
-			current_zoom += e.deltaY * -0.0025;
-			current_zoom = Math.min(Math.max(1.25, current_zoom), 10);
-			this.zoom_states[element_id] = current_zoom;
-			e.preventDefault();
-		});
-		setInterval(() => {
-			let is_hovered =
-				this.element.querySelector(`#${element_id}:hover`) !== null;
-			let active_preview =
-				this.active_previews[element_id.replace(/-/gm, "_")] !== false;
-			local_magnifier.style.opacity = is_hovered && active_preview ? 1 : 0;
-		}, 100);
-	}
-	
-	moveMagnifier (e, arg0_element, arg1_magnifier) {
-		var local_el = arg0_element;
-		var magnifier = arg1_magnifier;
-		var element_id = local_el.id;
-		var local_bounds = local_el.getBoundingClientRect();
-		var position = this.getCursorPosition(e, local_el);
-		var zoom = this.zoom_states[element_id];
-		var h = magnifier.offsetHeight;
-		var w = magnifier.offsetWidth;
-		var offset_x, offset_y;
-		
-		if (this.isMagnifierMaximised(element_id)) {
-			var container = local_el.parentElement;
-			var container_bounds = container.getBoundingClientRect();
-			offset_x = position.x - w / 2 + container_bounds.left;
-			offset_y = position.y - h / 2 + container_bounds.top;
-		} else {
-			// Account for the image's position relative to
-			// the magnifier's actual offset parent
-			var offset_parent = magnifier.offsetParent;
-			if (offset_parent) {
-				var parent_bounds = offset_parent.getBoundingClientRect();
-				offset_x =
-					position.x - w / 2 + local_bounds.left - parent_bounds.left;
-				offset_y =
-					position.y - h / 2 + local_bounds.top - parent_bounds.top;
-			} else {
-				offset_x = position.x - w / 2;
-				offset_y = position.y - h / 2;
-			}
-		}
-		
-		magnifier.style.left = `${offset_x}px`;
-		magnifier.style.top = `${offset_y}px`;
-		var bg_x =
-			(position.x / local_bounds.width) * (local_el.width * zoom - w);
-		var bg_y =
-			(position.y / local_bounds.height) * (local_el.height * zoom - h);
-		magnifier.style.backgroundPosition = `-${bg_x}px -${bg_y}px`;
-		magnifier.style.backgroundSize = `${local_el.width * zoom}px ${local_el.height * zoom}px`;
-	}
-	
-	togglePreview (arg0_element_id) {
-		let element_id = arg0_element_id;
-		let img_el = this.element.querySelector("#" + arg0_element_id.replace(/_/gm, "-"));
-		let local_el = this.element.querySelector(`#${element_id}-preview-btn`);
-		let key = element_id.replace(/-/gm, "_");
-		
-		if (local_el.classList.contains("active")) {
-			local_el.classList.remove("active");
-			img_el.classList.add("cursor-shown");
-			this.active_previews[key] = false;
-		} else {
-			local_el.classList.add("active");
-			img_el.classList.remove("cursor-shown");
-			this.active_previews[key] = true;
-		}
-	}
-	
-	addBookmarkItem(arg0_element_id, arg1_no_animation) {
+	addBookmarkItem (arg0_element_id, arg1_no_animation) {
 		var local_id = arg0_element_id;
 		var no_animation = arg1_no_animation;
 		var gallery_obj = this.gallery;
@@ -383,7 +287,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		);
 	}
 	
-	bookmarkInteraction(arg0_element_id) {
+	bookmarkInteraction (arg0_element_id) {
 		var gallery_obj = this.gallery;
 		!gallery_obj.bookmark_items.includes(arg0_element_id) &&
 		!this.element.querySelector(`#preview-${arg0_element_id}`)
@@ -391,7 +295,7 @@ window.HomepageGallery = class extends window.WebComponent {
 			: this.removeBookmarkItem(arg0_element_id);
 	}
 	
-	clearBookmarkDots() {
+	clearBookmarkDots () {
 		var all_bookmark_dots = this.element.querySelectorAll(
 			".parallax-bookmark-dot",
 		);
@@ -402,7 +306,7 @@ window.HomepageGallery = class extends window.WebComponent {
 			);
 	}
 	
-	closeContentPanel(arg0_element_id) {
+	closeContentPanel (arg0_element_id) {
 		var local_el = this.element.querySelector(
 			`#${arg0_element_id}-content-panel`,
 		);
@@ -417,7 +321,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		}
 	}
 	
-	createPanel(arg0_tile_id, arg1_options) {
+	createPanel (arg0_tile_id, arg1_options) {
 		var tile_id = arg0_tile_id;
 		var options = arg1_options ? arg1_options : {};
 		var gallery_obj = this.gallery;
@@ -485,13 +389,13 @@ window.HomepageGallery = class extends window.WebComponent {
 				gallery_obj.parallax_pinned_items.push(tile_id);
 	}
 	
-	getCursorPosition(e, arg0_image) {
+	getCursorPosition (e, arg0_image) {
 		e = e ? e : window.event;
 		var img_bounds = arg0_image.getBoundingClientRect();
 		return { x: e.clientX - img_bounds.left, y: e.clientY - img_bounds.top };
 	}
 	
-	getDescendants(arg0_element_id) {
+	getDescendants (arg0_element_id) {
 		var gallery_obj = this.gallery;
 		var descendants = [arg0_element_id];
 		var current_iterations = 0;
@@ -510,35 +414,14 @@ window.HomepageGallery = class extends window.WebComponent {
 		return descendants.filter((d) => d !== arg0_element_id);
 	}
 	
-	getMaximisedContentPanel() {
+	getMaximisedContentPanel () {
 		var maximised = this.element.querySelector(
 			".parallax-item-content-panel.shown.maximised",
 		);
 		return maximised ? maximised.id.replace("-content-panel", "") : undefined;
 	}
 	
-	hideAllContentPanels() {
-		var shown = this.element.querySelectorAll(".parallax-item-content-panel.shown");
-		for (let i = 0; i < shown.length; i++)
-			shown[i].setAttribute(
-				"class",
-				shown[i].getAttribute("class").replace(" shown", ""),
-			);
-	}
-	
-	hideBookmarkUI() {
-		var gallery_obj = this.gallery;
-		gallery_obj.bookmark_minimise_btn.setAttribute(
-			"class",
-			gallery_obj.bookmark_minimise_btn.getAttribute("class") + " minimised",
-		);
-		gallery_obj.bookmark_container.setAttribute(
-			"class",
-			gallery_obj.bookmark_container.getAttribute("class") + " minimised",
-		);
-	}
-	
-	getParent(arg0_element_id) {
+	getParent (arg0_element_id) {
 		var gallery_obj = this.gallery;
 		var keys = Object.keys(gallery_obj.parallax_settings);
 		var parents = [];
@@ -550,7 +433,28 @@ window.HomepageGallery = class extends window.WebComponent {
 		return [...new Set(parents)];
 	}
 	
-	initGallery() {
+	hideAllContentPanels () {
+		var shown = this.element.querySelectorAll(".parallax-item-content-panel.shown");
+		for (let i = 0; i < shown.length; i++)
+			shown[i].setAttribute(
+				"class",
+				shown[i].getAttribute("class").replace(" shown", ""),
+			);
+	}
+	
+	hideBookmarkUI () {
+		var gallery_obj = this.gallery;
+		gallery_obj.bookmark_minimise_btn.setAttribute(
+			"class",
+			gallery_obj.bookmark_minimise_btn.getAttribute("class") + " minimised",
+		);
+		gallery_obj.bookmark_container.setAttribute(
+			"class",
+			gallery_obj.bookmark_container.getAttribute("class") + " minimised",
+		);
+	}
+	
+	initGallery () {
 		var gallery_obj = this.gallery;
 		var hide_elements = [];
 		var parallax_elements =
@@ -586,7 +490,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		this.saveOriginalPanelStyles();
 	}
 	
-	initGalleryDesktopEventHandlers() {
+	initGalleryDesktopEventHandlers () {
 		var gallery_obj = this.gallery;
 		gallery_obj.parallax_body.addEventListener("mousemove", (e) => {
 			var half_width = gallery_obj.parallax_body.clientWidth / 2,
@@ -620,40 +524,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		);
 	}
 	
-	updateParallaxScrollValues() {
-		var gallery_obj = this.gallery;
-		var track = document.getElementById("gallery-section");
-		if (!track) return;
-		var rect = track.getBoundingClientRect();
-		var scrollable_dist = rect.height - window.innerHeight;
-		var vertical_offset =
-			rect.top <= 0 ? Math.min(Math.abs(rect.top), scrollable_dist) : 0;
-		var siblings = gallery_obj.parallax_body.children;
-		for (let i = 0; i < siblings.length; i++) {
-			let child = siblings[i];
-			
-			let translate_px = vertical_offset;
-			
-			if (child.id === "project-parallax-bookmark-container") {
-				translate_px = vertical_offset - window.innerHeight / 2;
-			} else {
-				
-			}
-			child.style.transform = `translateY(${translate_px}px)`;
-		}
-		if (rect.top <= 0 && rect.bottom >= window.innerHeight) {
-			var progress = Math.abs(rect.top) / scrollable_dist;
-			gallery_obj.parallax_scroll_x = progress * gallery_obj.gallery_width * -1;
-			
-			// Apply both X and Y to the underlay
-			gallery_obj.parallax_container.style.transform = `translateX(${gallery_obj.parallax_scroll_x}vh)`;
-			
-			if (gallery_obj.parallax_scroll_indicator)
-				gallery_obj.parallax_scroll_indicator.style.width = `${progress * 100}vw`;
-		}
-	}
-	
-	initGalleryMobileEventHandlers() {
+	initGalleryMobileEventHandlers () {
 		var gallery_obj = this.gallery;
 		
 		gallery_obj.parallax_body.addEventListener(
@@ -671,7 +542,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		);
 	}
 	
-	initGalleryTiles() {
+	initGalleryTiles () {
 		var source =
 			window.config && window.config.homepage && window.config.homepage.gallery
 				? window.config.homepage.gallery.tiles
@@ -685,7 +556,7 @@ window.HomepageGallery = class extends window.WebComponent {
 			}
 	}
 	
-	initGalleryUI() {
+	initGalleryUI () {
 		var gallery_obj = this.gallery;
 		
 		gallery_obj.bookmark_minimise_btn.onclick = () => {
@@ -757,7 +628,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		this.initGallery();
 	}
 	
-	initParallaxElement(arg0_element_id) {
+	initParallaxElement (arg0_element_id) {
 		var gallery_obj = this.gallery;
 		if (!gallery_obj.parallax_settings[arg0_element_id])
 			gallery_obj.parallax_settings[arg0_element_id] = {};
@@ -814,7 +685,245 @@ window.HomepageGallery = class extends window.WebComponent {
 		}
 	}
 	
-	pinItem(arg0_element_id) {
+	isMagnifierMaximised (arg0_element_id) {
+		return (this.element.querySelectorAll(`.${arg0_element_id}-panel.maximised .image-magnifier-glass`).length !== 0);
+	}
+	
+	magnify (arg0_element, arg1_zoom) {
+		let local_el = arg0_element;
+		let zoom = arg1_zoom;
+		
+		let element_id = local_el.id;
+		this.zoom_states[element_id] = zoom;
+		let local_magnifier = document.createElement("DIV");
+		local_magnifier.setAttribute("class", "image-magnifier-glass");
+		local_magnifier.style.backgroundImage = `url('${local_el.src}')`;
+		local_magnifier.style.backgroundRepeat = "no-repeat";
+		local_el.parentElement.insertBefore(local_magnifier, local_el);
+		local_el.addEventListener("mousemove", (e) =>
+			this.moveMagnifier(e, local_el, local_magnifier),
+		);
+		local_el.addEventListener("touchmove", (e) =>
+			this.moveMagnifier(e, local_el, local_magnifier),
+		);
+		local_el.addEventListener("wheel", (e) => {
+			let current_zoom = this.zoom_states[element_id];
+			current_zoom += e.deltaY * -0.0025;
+			current_zoom = Math.min(Math.max(1.25, current_zoom), 10);
+			this.zoom_states[element_id] = current_zoom;
+			e.preventDefault();
+		});
+		setInterval(() => {
+			let is_hovered =
+				this.element.querySelector(`#${element_id}:hover`) !== null;
+			let active_preview =
+				this.active_previews[element_id.replace(/-/gm, "_")] !== false;
+			local_magnifier.style.opacity = is_hovered && active_preview ? 1 : 0;
+		}, 100);
+	}
+	
+	maximiseContentPanel (arg0_element_id) {
+		var panel = this.element.querySelector(
+			`#${arg0_element_id}-content-panel`,
+		);
+		if (!panel) return;
+		
+		// 1. Capture current visual position
+		var rect = panel.getBoundingClientRect();
+		
+		// 2. Freeze the panel in place
+		panel.style.transition = "none";
+		panel.style.position = "fixed";
+		panel.style.top = `${rect.top}px`;
+		panel.style.left = `${rect.left}px`;
+		panel.style.width = `${rect.width}px`;
+		panel.style.height = `${rect.height}px`;
+		panel.style.margin = "0";
+		
+		// 3. Stop the container from moving
+		this.gallery.content_panel_update_paused = true;
+		//this.gallery.content_panel_container.style.transform = "none";
+		//this.gallery.content_panel_scroll_container.style.transform =
+		"none";
+		
+		// 4. Trigger transition to maximised state
+		requestAnimationFrame(() => {
+			panel.style.transition = "";
+			panel.classList.add("maximised");
+			
+			// Restore original inline style underneath — the .maximised
+			// class handles positioning from here
+			setTimeout(() => {
+				this.restorePanelStyle(panel);
+			}, 50);
+		});
+		
+		this.gallery.parallax_scroll_indicator.style.opacity = 0;
+	}
+	
+	minimiseContentPanel (arg0_element_id, arg1_instant) {
+		var panel = this.element.querySelector(
+			`#${arg0_element_id}-content-panel`,
+		);
+		if (!panel) return;
+		
+		// If the panel isn't actually maximised, just restore and bail
+		if (!panel.classList.contains("maximised")) {
+			this.restorePanelStyle(panel);
+			return;
+		}
+		
+		if (arg1_instant) {
+			panel.classList.remove("maximised");
+			this.gallery.content_panel_update_paused = false;
+			this.restorePanelStyle(panel);
+			return;
+		}
+		
+		// 1. Capture maximised position
+		var max_rect = panel.getBoundingClientRect();
+		
+		// 2. Remove .maximised and restore original positioning
+		panel.classList.remove("maximised");
+		this.restorePanelStyle(panel);
+		
+		// 3. Resume parallax so scroll container is correct
+		this.gallery.content_panel_update_paused = false;
+		this.updateContentPanelContainer();
+		
+		// 4. Measure the natural target position
+		var nat_rect = panel.getBoundingClientRect();
+		
+		// 5. Offset panel back to maximised position via transform
+		var dx = max_rect.left - nat_rect.left;
+		var dy = max_rect.top - nat_rect.top;
+		
+		panel.style.transition = "none";
+		panel.style.transform = `translate(${dx}px, ${dy}px)`;
+		panel.style.width = `${max_rect.width}px`;
+		panel.style.height = `${max_rect.height}px`;
+		
+		// 6. Animate transform away
+		requestAnimationFrame(() => {
+			panel.style.transition = "";
+			
+			setTimeout(() => {
+				panel.style.transform = "";
+				panel.style.width = "";
+				panel.style.height = "";
+			}, 50);
+			
+			// 7. Final cleanup — restore clean original style
+			setTimeout(() => {
+				this.restorePanelStyle(panel);
+				this.gallery.parallax_scroll_indicator.style.opacity = 1;
+			}, 550);
+		});
+	}
+	
+	moveMagnifier (e, arg0_element, arg1_magnifier) {
+		var local_el = arg0_element;
+		var magnifier = arg1_magnifier;
+		var element_id = local_el.id;
+		var local_bounds = local_el.getBoundingClientRect();
+		var position = this.getCursorPosition(e, local_el);
+		var zoom = this.zoom_states[element_id];
+		var h = magnifier.offsetHeight;
+		var w = magnifier.offsetWidth;
+		var offset_x, offset_y;
+		
+		if (this.isMagnifierMaximised(element_id)) {
+			var container = local_el.parentElement;
+			var container_bounds = container.getBoundingClientRect();
+			offset_x = position.x - w / 2 + container_bounds.left;
+			offset_y = position.y - h / 2 + container_bounds.top;
+		} else {
+			// Account for the image's position relative to
+			// the magnifier's actual offset parent
+			var offset_parent = magnifier.offsetParent;
+			if (offset_parent) {
+				var parent_bounds = offset_parent.getBoundingClientRect();
+				offset_x =
+					position.x - w / 2 + local_bounds.left - parent_bounds.left;
+				offset_y =
+					position.y - h / 2 + local_bounds.top - parent_bounds.top;
+			} else {
+				offset_x = position.x - w / 2;
+				offset_y = position.y - h / 2;
+			}
+		}
+		
+		magnifier.style.left = `${offset_x}px`;
+		magnifier.style.top = `${offset_y}px`;
+		var bg_x =
+			(position.x / local_bounds.width) * (local_el.width * zoom - w);
+		var bg_y =
+			(position.y / local_bounds.height) * (local_el.height * zoom - h);
+		magnifier.style.backgroundPosition = `-${bg_x}px -${bg_y}px`;
+		magnifier.style.backgroundSize = `${local_el.width * zoom}px ${local_el.height * zoom}px`;
+	}
+	
+	onParallaxHover (e) {
+		var gallery_obj = this.gallery;
+		var target = e.target.closest(".parallax-item");
+		
+		// Reset hover-time on every tile that isn't the current target
+		var all_tiles = this.element.querySelectorAll(".parallax-item");
+		for (let i = 0; i < all_tiles.length; i++) {
+			if (!target || all_tiles[i].id !== target.id) {
+				all_tiles[i].setAttribute("hover-time", 0);
+			}
+		}
+		
+		if (!target) return;
+		
+		var hover_time =
+			parseInt(target.getAttribute("hover-time") || 0) + 16;
+		target.setAttribute("hover-time", hover_time);
+		
+		if (
+			hover_time >= 500 &&
+			!gallery_obj.parallax_selected.includes(target.id)
+		) {
+			gallery_obj.parallax_selected = [target.id];
+			this.updateHiddenElements();
+		}
+	}
+	
+	updateParallaxScrollValues () {
+		var gallery_obj = this.gallery;
+		var track = document.getElementById("gallery-section");
+		if (!track) return;
+		var rect = track.getBoundingClientRect();
+		var scrollable_dist = rect.height - window.innerHeight;
+		var vertical_offset =
+			rect.top <= 0 ? Math.min(Math.abs(rect.top), scrollable_dist) : 0;
+		var siblings = gallery_obj.parallax_body.children;
+		for (let i = 0; i < siblings.length; i++) {
+			let child = siblings[i];
+			
+			let translate_px = vertical_offset;
+			
+			if (child.id === "project-parallax-bookmark-container") {
+				translate_px = vertical_offset - window.innerHeight / 2;
+			} else {
+				
+			}
+			child.style.transform = `translateY(${translate_px}px)`;
+		}
+		if (rect.top <= 0 && rect.bottom >= window.innerHeight) {
+			var progress = Math.abs(rect.top) / scrollable_dist;
+			gallery_obj.parallax_scroll_x = progress * gallery_obj.gallery_width * -1;
+			
+			// Apply both X and Y to the underlay
+			gallery_obj.parallax_container.style.transform = `translateX(${gallery_obj.parallax_scroll_x}vh)`;
+			
+			if (gallery_obj.parallax_scroll_indicator)
+				gallery_obj.parallax_scroll_indicator.style.width = `${progress * 100}vw`;
+		}
+	}
+	
+	pinItem (arg0_element_id) {
 		var gallery_obj = this.gallery;
 		var local_element = this.element.querySelector(`#${arg0_element_id}`);
 		try {
@@ -833,7 +942,24 @@ window.HomepageGallery = class extends window.WebComponent {
 		} catch (e) {}
 	}
 	
-	selectBookmarkItem(arg0_element_id, arg1_automatic_selection, arg2_no_scroll) {
+	removeBookmarkItem (arg0_element_id) {
+		var gallery_obj = this.gallery;
+		var bookmark_btn = this.element.querySelector(`#bookmark-btn-${arg0_element_id}`);
+		var local_index = gallery_obj.bookmark_items.indexOf(arg0_element_id);
+		if (bookmark_btn) bookmark_btn.setAttribute("class", bookmark_btn.getAttribute("class").replace("bookmark-filled", "bookmark-empty"));
+		gallery_obj.bookmark_items = gallery_obj.bookmark_items.filter((i) => i !== arg0_element_id);
+		gallery_obj.closing_bookmark = true;
+		setTimeout(() => (gallery_obj.closing_bookmark = false), 100);
+		var preview_el = this.element.querySelector(`#preview-${arg0_element_id}`);
+		if (preview_el) preview_el.remove();
+		this.element.querySelector(`#btn-bookmark-preview-${arg0_element_id}`)?.remove();
+		if (gallery_obj.bookmark_items.length == 0) {
+			gallery_obj.no_bookmark_label.classList.remove("hidden");
+			gallery_obj.bookmark_container.classList.add("no-bookmarks");
+		}
+	}
+	
+	selectBookmarkItem (arg0_element_id, arg1_automatic_selection, arg2_no_scroll) {
 		var actual_id = arg0_element_id.replace("preview-", "");
 		var gallery_obj = this.gallery;
 		var parallax_element = this.element.querySelector(`#${actual_id}`);
@@ -905,24 +1031,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		}
 	}
 	
-	removeBookmarkItem(arg0_element_id) {
-		var gallery_obj = this.gallery;
-		var bookmark_btn = this.element.querySelector(`#bookmark-btn-${arg0_element_id}`);
-		var local_index = gallery_obj.bookmark_items.indexOf(arg0_element_id);
-		if (bookmark_btn) bookmark_btn.setAttribute("class", bookmark_btn.getAttribute("class").replace("bookmark-filled", "bookmark-empty"));
-		gallery_obj.bookmark_items = gallery_obj.bookmark_items.filter((i) => i !== arg0_element_id);
-		gallery_obj.closing_bookmark = true;
-		setTimeout(() => (gallery_obj.closing_bookmark = false), 100);
-		var preview_el = this.element.querySelector(`#preview-${arg0_element_id}`);
-		if (preview_el) preview_el.remove();
-		this.element.querySelector(`#btn-bookmark-preview-${arg0_element_id}`)?.remove();
-		if (gallery_obj.bookmark_items.length == 0) {
-			gallery_obj.no_bookmark_label.classList.remove("hidden");
-			gallery_obj.bookmark_container.classList.add("no-bookmarks");
-		}
-	}
-	
-	selectParallaxItem(arg0_element_id) {
+	selectParallaxItem (arg0_element_id) {
 		var gallery_obj = this.gallery;
 		
 		if (gallery_obj.parallax_selected.includes(arg0_element_id)) {
@@ -936,12 +1045,12 @@ window.HomepageGallery = class extends window.WebComponent {
 		this.updateHiddenElements();
 	}
 	
-	showBookmarkUI() {
+	showBookmarkUI () {
 		this.gallery.bookmark_minimise_btn.classList.remove("minimised");
 		this.gallery.bookmark_container.classList.remove("minimised");
 	}
 	
-	toggleContentPanel(arg0_element_id) {
+	toggleContentPanel (arg0_element_id) {
 		var local_el = this.element.querySelector(`#${arg0_element_id}-content-panel`);
 		if (!local_el) return;
 		var is_shown = local_el.classList.contains("shown");
@@ -949,106 +1058,24 @@ window.HomepageGallery = class extends window.WebComponent {
 		if (!is_shown) local_el.classList.add("shown");
 	}
 	
-	maximiseContentPanel(arg0_element_id) {
-		var panel = this.element.querySelector(
-			`#${arg0_element_id}-content-panel`,
-		);
-		if (!panel) return;
+	togglePreview (arg0_element_id) {
+		let element_id = arg0_element_id;
+		let img_el = this.element.querySelector("#" + arg0_element_id.replace(/_/gm, "-"));
+		let local_el = this.element.querySelector(`#${element_id}-preview-btn`);
+		let key = element_id.replace(/-/gm, "_");
 		
-		// 1. Capture current visual position
-		var rect = panel.getBoundingClientRect();
-		
-		// 2. Freeze the panel in place
-		panel.style.transition = "none";
-		panel.style.position = "fixed";
-		panel.style.top = `${rect.top}px`;
-		panel.style.left = `${rect.left}px`;
-		panel.style.width = `${rect.width}px`;
-		panel.style.height = `${rect.height}px`;
-		panel.style.margin = "0";
-		
-		// 3. Stop the container from moving
-		this.gallery.content_panel_update_paused = true;
-		//this.gallery.content_panel_container.style.transform = "none";
-		//this.gallery.content_panel_scroll_container.style.transform =
-			"none";
-		
-		// 4. Trigger transition to maximised state
-		requestAnimationFrame(() => {
-			panel.style.transition = "";
-			panel.classList.add("maximised");
-			
-			// Restore original inline style underneath — the .maximised
-			// class handles positioning from here
-			setTimeout(() => {
-				this.restorePanelStyle(panel);
-			}, 50);
-		});
-		
-		this.gallery.parallax_scroll_indicator.style.opacity = 0;
+		if (local_el.classList.contains("active")) {
+			local_el.classList.remove("active");
+			img_el.classList.add("cursor-shown");
+			this.active_previews[key] = false;
+		} else {
+			local_el.classList.add("active");
+			img_el.classList.remove("cursor-shown");
+			this.active_previews[key] = true;
+		}
 	}
 	
-	minimiseContentPanel(arg0_element_id, arg1_instant) {
-		var panel = this.element.querySelector(
-			`#${arg0_element_id}-content-panel`,
-		);
-		if (!panel) return;
-		
-		// If the panel isn't actually maximised, just restore and bail
-		if (!panel.classList.contains("maximised")) {
-			this.restorePanelStyle(panel);
-			return;
-		}
-		
-		if (arg1_instant) {
-			panel.classList.remove("maximised");
-			this.gallery.content_panel_update_paused = false;
-			this.restorePanelStyle(panel);
-			return;
-		}
-		
-		// 1. Capture maximised position
-		var max_rect = panel.getBoundingClientRect();
-		
-		// 2. Remove .maximised and restore original positioning
-		panel.classList.remove("maximised");
-		this.restorePanelStyle(panel);
-		
-		// 3. Resume parallax so scroll container is correct
-		this.gallery.content_panel_update_paused = false;
-		this.updateContentPanelContainer();
-		
-		// 4. Measure the natural target position
-		var nat_rect = panel.getBoundingClientRect();
-		
-		// 5. Offset panel back to maximised position via transform
-		var dx = max_rect.left - nat_rect.left;
-		var dy = max_rect.top - nat_rect.top;
-		
-		panel.style.transition = "none";
-		panel.style.transform = `translate(${dx}px, ${dy}px)`;
-		panel.style.width = `${max_rect.width}px`;
-		panel.style.height = `${max_rect.height}px`;
-		
-		// 6. Animate transform away
-		requestAnimationFrame(() => {
-			panel.style.transition = "";
-			
-			setTimeout(() => {
-				panel.style.transform = "";
-				panel.style.width = "";
-				panel.style.height = "";
-			}, 50);
-			
-			// 7. Final cleanup — restore clean original style
-			setTimeout(() => {
-				this.restorePanelStyle(panel);
-				this.gallery.parallax_scroll_indicator.style.opacity = 1;
-			}, 550);
-		});
-	}
-	
-	updateContentPanelContainer() {
+	updateContentPanelContainer () {
 		var gallery_obj = this.gallery;
 		if (!gallery_obj.content_panel_update_paused) {
 			// Find the main parallax layer to extract its current dynamic Y offset
@@ -1074,7 +1101,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		}
 	}
 	
-	updateHiddenElements() {
+	updateHiddenElements () {
 		var gallery_obj = this.gallery;
 		var all_dom = this.element.querySelectorAll(".parallax-item");
 		var visible = [];
@@ -1119,46 +1146,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		});
 	}
 	
-	onParallaxHover(e) {
-		var gallery_obj = this.gallery;
-		var target = e.target.closest(".parallax-item");
-		
-		// Reset hover-time on every tile that isn't the current target
-		var all_tiles = this.element.querySelectorAll(".parallax-item");
-		for (let i = 0; i < all_tiles.length; i++) {
-			if (!target || all_tiles[i].id !== target.id) {
-				all_tiles[i].setAttribute("hover-time", 0);
-			}
-		}
-		
-		if (!target) return;
-		
-		var hover_time =
-			parseInt(target.getAttribute("hover-time") || 0) + 16;
-		target.setAttribute("hover-time", hover_time);
-		
-		if (
-			hover_time >= 500 &&
-			!gallery_obj.parallax_selected.includes(target.id)
-		) {
-			gallery_obj.parallax_selected = [target.id];
-			this.updateHiddenElements();
-		}
-	}
-	
-	saveOriginalPanelStyles() {
-		var panels = this.element.querySelectorAll(
-			".parallax-item-content-panel",
-		);
-		for (let i = 0; i < panels.length; i++) {
-			if (!panels[i].dataset.originalStyle) {
-				panels[i].dataset.originalStyle =
-					panels[i].getAttribute("style") || "";
-			}
-		}
-	}
-	
-	restorePanelStyle(arg0_panel) {
+	restorePanelStyle (arg0_panel) {
 		if (
 			arg0_panel &&
 			arg0_panel.dataset.originalStyle !== undefined
@@ -1167,6 +1155,18 @@ window.HomepageGallery = class extends window.WebComponent {
 				"style",
 				arg0_panel.dataset.originalStyle,
 			);
+		}
+	}
+	
+	saveOriginalPanelStyles () {
+		var panels = this.element.querySelectorAll(
+			".parallax-item-content-panel",
+		);
+		for (let i = 0; i < panels.length; i++) {
+			if (!panels[i].dataset.originalStyle) {
+				panels[i].dataset.originalStyle =
+					panels[i].getAttribute("style") || "";
+			}
 		}
 	}
 	
