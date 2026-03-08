@@ -1,5 +1,6 @@
 /* -- Set max height for body -- */
-html { 
+html {
+  font-size: 1.25vh; /* -- Sets rem -- */
   scrollbar-width: none;
 }
 

@@ -23,8 +23,6 @@ function initEventHandlers () {
 		fixMobileVh();
 		viewport_one.homepageBannerTitleAdjustPosition();
 		viewport_one.triumphAndTragedyOnScroll();
-		viewport_two.updateParallaxScrollValues();
-		viewport_two.updateContentPanelContainer();
 		
 		//Parallax scrolling for other labels
 		homepageAboutOnScroll();
