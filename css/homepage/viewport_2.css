@@ -57,7 +57,9 @@ section#scene {
 .parallax-content-container {
   transform: translateY(-25dvh);
 }
-
+.parallax-panel-scroll-container:has(.parallax-item-content-panel.shown.maximised) {
+  transform: none !important;
+}
 
 
 /* -- Parallax content panel styling -- */
