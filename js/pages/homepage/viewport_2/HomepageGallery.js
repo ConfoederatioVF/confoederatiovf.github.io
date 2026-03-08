@@ -172,6 +172,10 @@ window.HomepageGallery = class extends window.WebComponent {
 				this.updateParallaxScrollValues();
 				this.updateContentPanelContainer();
 			}, { passive: true });
+			window.visualViewport.addEventListener("scroll", (e) => {
+				this.updateParallaxScrollValues();
+				this.updateContentPanelContainer();
+			});
 		}
 	}
 	
