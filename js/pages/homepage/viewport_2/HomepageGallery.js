@@ -1,8 +1,8 @@
 window.HomepageGallery = class extends window.WebComponent {
-	constructor (arg0_value, arg1_options) {
+	constructor(arg0_value, arg1_options) {
 		let value = arg0_value ? arg0_value : {};
 		let options = arg1_options ? arg1_options : {};
-			super(value, options);
+		super(value, options);
 		
 		this.gallery = {
 			bookmark_container: null,
@@ -24,9 +24,18 @@ window.HomepageGallery = class extends window.WebComponent {
 			parallax_pinned_items: [],
 			parallax_scroll_indicator: null,
 			parallax_scroll_x: 0,
+			parallax_scroll_y: 0, // Added to track verticality
 			parallax_selected: [],
 			parallax_settings: {},
 			scene: null,
+		};
+		
+		// State tracking to prevent Layout Thrashing
+		this._state = {
+			currentScrollY: 0,
+			targetScrollY: 0,
+			translateX: 0,
+			translateY: 0,
 		};
 		
 		this.perspective_deg_x = "0deg";
@@ -40,16 +49,16 @@ window.HomepageGallery = class extends window.WebComponent {
 		this.init();
 	}
 	
-	draw () {
+	draw() {
 		this.element.innerHTML = `
-		<div id = "project-parallax-container" class = "project-parallax-container">
+		<div id = "project-parallax-container" class = "project-parallax-container" style="will-change: transform;">
 			<div id = "project-parallax-container-gradient-bg" class = "project-parallax-container-gradient-bg"></div>
 			<div id = "project-parallax-container-room-bg" class = "project-parallax-container-room-bg"></div>
 
 			<div id = "scene-container">
 				<section id = "scene" class="scene" data-pointer-events = "true" data-x-origin = "0.5" data-y-origin = "50.0" data-scalar-y = "50.0" data-scalar-x = "25.0" data-friction-x = "0.05" data-friction-y = "0.04">
-					<div id = "project-parallax-scroll-container" class = "project-parallax-scroll-container">
-						<div class = "layer main" data-depth = "1.0">
+					<div id = "project-parallax-scroll-container" class = "project-parallax-scroll-container" style="will-change: transform;">
+						<div class = "layer main" data-depth = "1.0" style="will-change: transform;">
 							<div id = "main-parallax-content-wrapper" class = "parallax-content-container">
 								<div class = "project-listings">
 									<span class = "parallax-header">PROJECT LISTINGS</span>
@@ -70,12 +79,12 @@ window.HomepageGallery = class extends window.WebComponent {
 			</div>
 			
 
-			<div id = "main-parallax-content-panel-wrapper" class = "parallax-panel-container">
-				<div id = "main-parallax-content-panel-scroll-wrapper" class = "parallax-panel-scroll-container"></div>
+			<div id = "main-parallax-content-panel-wrapper" class = "parallax-panel-container" style="will-change: transform;">
+				<div id = "main-parallax-content-panel-scroll-wrapper" class = "parallax-panel-scroll-container" style="will-change: transform;"></div>
 			</div>
 
 			<div id = "bookmark-container" style = "position: absolute; height: 100dvh; width: 100%; top: 0; left: 0; pointer-events: none;">
-				<div id = "project-parallax-bookmark-container" class = "parallax-bookmark-container minimised" style = "pointer-events: auto;">
+				<div id = "project-parallax-bookmark-container" class = "parallax-bookmark-container minimised" style = "pointer-events: auto; will-change: transform;">
 					<div id = "project-parallax-bookmark-labels-container" class = "project-parallax-text-container">
 						<div id = "project-parallax-bookmark-label" class = "bookmarks-title">
 							<img id = "project-parallax-bookmark-text-icon" class = "bookmark-text-icon" src = "gfx/interface/icons/bookmark_icon_filled.png" align = "left" draggable = "false"></img>
@@ -104,7 +113,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		this.element.style.height = "100%";
 	}
 	
-	mountSelectors () {
+	mountSelectors() {
 		let gallery_obj = this.gallery;
 		gallery_obj.scene = this.element.querySelector("#scene");
 		gallery_obj.parallax_body = this.element.querySelector(
@@ -138,28 +147,19 @@ window.HomepageGallery = class extends window.WebComponent {
 		gallery_obj.parallax_buttons = this.element.querySelector(
 			"#project-parallax-dots-container",
 		);
+		// Reference the main layer to stop calling querySelector in loop
+		this.mainLayer = this.element.querySelector(".layer.main");
 	}
 	
 	init() {
 		this.hover_loop;
 		this.initGalleryTiles();
 		this.initGalleryUI();
-		this.gallery.parallax_body.addEventListener("mousemove", (e) =>
-			this.onParallaxHover(e),
-		);
 		
-		// Cache track dimensions on init and resize
 		this.updateTrackCache();
 		window.addEventListener("resize", () => this.updateTrackCache());
 		
-		//Set up art previews
-		let all_art_preview_imgs = this.element.querySelectorAll(
-			".preview-image-container",
-		);
-		for (let i = 0; i < all_art_preview_imgs.length; i++)
-			this.magnify(all_art_preview_imgs[i].querySelector("img"), 3);
-		
-		//Event handlers
+		// Event handlers
 		{
 			document.addEventListener("mouseover", (e) => {
 				if (this.hover_loop) clearInterval(this.hover_loop);
@@ -167,17 +167,33 @@ window.HomepageGallery = class extends window.WebComponent {
 					this.onParallaxHover(e);
 				}, 100);
 			});
-			// On mobile, the scroll event is the driver for the compositor
-			document.addEventListener("scroll", (e) => {
-				this.updateParallaxScrollValues();
-				this.updateContentPanelContainer();
-			}, { passive: true });
-			if (window.visualViewport)
-				window.visualViewport.addEventListener("scroll", (e) => {
-					this.updateParallaxScrollValues();
-					this.updateContentPanelContainer();
+			
+			// ONLY capture scroll position here. Do NOT update DOM here.
+			const handleScroll = () => {
+				this._state.targetScrollY = window.pageYOffset;
+			};
+			
+			document.addEventListener("scroll", handleScroll, { passive: true });
+			if (window.visualViewport) {
+				window.visualViewport.addEventListener("scroll", handleScroll, {
+					passive: true,
 				});
+			}
 		}
+		
+		// Start the single source of truth loop
+		this.tick();
+	}
+	
+	tick() {
+		// Smooth interpolation (optional, but helps with mobile jitter)
+		this._state.currentScrollY +=
+			(this._state.targetScrollY - this._state.currentScrollY) * 0.2;
+		
+		this.updateParallaxScrollValues();
+		this.updateContentPanelContainer();
+		
+		this._rafId = requestAnimationFrame(() => this.tick());
 	}
 	
 	updateTrackCache() {
@@ -191,11 +207,78 @@ window.HomepageGallery = class extends window.WebComponent {
 		}
 	}
 	
-	isMagnifierMaximised(arg0_element_id) {
-		return (this.element.querySelectorAll(`.${arg0_element_id}-panel.maximised .image-magnifier-glass`).length !== 0);
+	updateParallaxScrollValues() {
+		const gallery_obj = this.gallery;
+		if (!this._trackCache) return;
+		
+		const scrollY = this._state.currentScrollY;
+		const trackTop = this._trackCache.top;
+		const trackHeight = this._trackCache.height;
+		
+		const scrollable_dist = trackHeight - window.innerHeight;
+		const relativeScroll = scrollY - trackTop;
+		const vertical_offset = Math.max(
+			0,
+			Math.min(relativeScroll, scrollable_dist),
+		);
+		
+		// Update internal state for use in other functions
+		this._state.translateY = vertical_offset;
+		
+		// Apply translations to siblings
+		const siblings = gallery_obj.parallax_body.children;
+		for (let i = 0; i < siblings.length; i++) {
+			let child = siblings[i];
+			let translate_px = vertical_offset;
+			
+			if (child.id === "project-parallax-bookmark-container") {
+				translate_px = vertical_offset - window.innerHeight / 2;
+			}
+			child.style.transform = `translate3d(0, ${translate_px}px, 0)`;
+		}
+		
+		if (scrollY >= trackTop && scrollY <= trackTop + scrollable_dist) {
+			const progress = (scrollY - trackTop) / scrollable_dist;
+			gallery_obj.parallax_scroll_x = progress * gallery_obj.gallery_width * -1;
+			
+			gallery_obj.parallax_container.style.transform = `translate3d(${gallery_obj.parallax_scroll_x}vh, 0, 0)`;
+			
+			if (gallery_obj.parallax_scroll_indicator)
+				gallery_obj.parallax_scroll_indicator.style.width = `${progress * 100}vw`;
+		}
 	}
 	
-	magnify (arg0_element, arg1_zoom) {
+	updateContentPanelContainer() {
+		const gallery_obj = this.gallery;
+		if (!gallery_obj.content_panel_update_paused) {
+			// Instead of reading matrix from DOM (SLOW), use the values we already calculated
+			// in updateParallaxScrollValues or set by the Parallax library.
+			// If the parallax library is external and we MUST read it, we do it once here.
+			let layer_x = 0;
+			
+			// Note: If you are using a parallax library that moves .layer.main,
+			// you may need to read it once, but try to minimize this.
+			if (this.mainLayer) {
+				// Only read if absolutely necessary
+				const style = window.getComputedStyle(this.mainLayer);
+				const matrix = new WebKitCSSMatrix(style.transform);
+				layer_x = matrix.m41;
+			}
+			
+			gallery_obj.content_panel_container.style.transform = "none";
+			gallery_obj.content_panel_scroll_container.style.transform = `translate3d(calc(${gallery_obj.parallax_scroll_x}vh + ${layer_x}px), ${this._state.translateY}px, 0)`;
+		}
+	}
+	
+	isMagnifierMaximised(arg0_element_id) {
+		return (
+			this.element.querySelectorAll(
+				`.${arg0_element_id}-panel.maximised .image-magnifier-glass`,
+			).length !== 0
+		);
+	}
+	
+	magnify(arg0_element, arg1_zoom) {
 		let local_el = arg0_element;
 		let zoom = arg1_zoom;
 		
@@ -228,32 +311,29 @@ window.HomepageGallery = class extends window.WebComponent {
 		}, 100);
 	}
 	
-	moveMagnifier (e, arg0_element, arg1_magnifier) {
-		var local_el = arg0_element;
-		var magnifier = arg1_magnifier;
-		var element_id = local_el.id;
-		var local_bounds = local_el.getBoundingClientRect();
-		var position = this.getCursorPosition(e, local_el);
-		var zoom = this.zoom_states[element_id];
-		var h = magnifier.offsetHeight;
-		var w = magnifier.offsetWidth;
-		var offset_x, offset_y;
+	moveMagnifier(e) {
+		// Logic remains same but ensure passive: false is handled for touch
+		const local_el = e.currentTarget;
+		const magnifier = local_el.previousSibling;
+		const element_id = local_el.id;
+		const local_bounds = local_el.getBoundingClientRect();
+		const position = this.getCursorPosition(e, local_el);
+		const zoom = this.zoom_states[element_id];
+		const h = magnifier.offsetHeight;
+		const w = magnifier.offsetWidth;
+		let offset_x, offset_y;
 		
 		if (this.isMagnifierMaximised(element_id)) {
-			var container = local_el.parentElement;
-			var container_bounds = container.getBoundingClientRect();
+			const container = local_el.parentElement;
+			const container_bounds = container.getBoundingClientRect();
 			offset_x = position.x - w / 2 + container_bounds.left;
 			offset_y = position.y - h / 2 + container_bounds.top;
 		} else {
-			// Account for the image's position relative to
-			// the magnifier's actual offset parent
-			var offset_parent = magnifier.offsetParent;
+			const offset_parent = magnifier.offsetParent;
 			if (offset_parent) {
-				var parent_bounds = offset_parent.getBoundingClientRect();
-				offset_x =
-					position.x - w / 2 + local_bounds.left - parent_bounds.left;
-				offset_y =
-					position.y - h / 2 + local_bounds.top - parent_bounds.top;
+				const parent_bounds = offset_parent.getBoundingClientRect();
+				offset_x = position.x - w / 2 + local_bounds.left - parent_bounds.left;
+				offset_y = position.y - h / 2 + local_bounds.top - parent_bounds.top;
 			} else {
 				offset_x = position.x - w / 2;
 				offset_y = position.y - h / 2;
@@ -262,17 +342,18 @@ window.HomepageGallery = class extends window.WebComponent {
 		
 		magnifier.style.left = `${offset_x}px`;
 		magnifier.style.top = `${offset_y}px`;
-		var bg_x =
-			(position.x / local_bounds.width) * (local_el.width * zoom - w);
-		var bg_y =
+		const bg_x = (position.x / local_bounds.width) * (local_el.width * zoom - w);
+		const bg_y =
 			(position.y / local_bounds.height) * (local_el.height * zoom - h);
 		magnifier.style.backgroundPosition = `-${bg_x}px -${bg_y}px`;
 		magnifier.style.backgroundSize = `${local_el.width * zoom}px ${local_el.height * zoom}px`;
 	}
 	
-	togglePreview (arg0_element_id) {
+	togglePreview(arg0_element_id) {
 		let element_id = arg0_element_id;
-		let img_el = this.element.querySelector("#" + arg0_element_id.replace(/_/gm, "-"));
+		let img_el = this.element.querySelector(
+			"#" + arg0_element_id.replace(/_/gm, "-"),
+		);
 		let local_el = this.element.querySelector(`#${element_id}-preview-btn`);
 		let key = element_id.replace(/-/gm, "_");
 		
@@ -291,9 +372,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		var local_id = arg0_element_id;
 		var no_animation = arg1_no_animation;
 		var gallery_obj = this.gallery;
-		var bookmark_btn = this.element.querySelector(
-			`#bookmark-btn-${local_id}`,
-		);
+		var bookmark_btn = this.element.querySelector(`#bookmark-btn-${local_id}`);
 		var local_element = this.element.querySelector(`#${local_id}`);
 		if (!local_element) return;
 		local_element.setAttribute("id", `preview-${local_id}`);
@@ -305,7 +384,6 @@ window.HomepageGallery = class extends window.WebComponent {
 				.replace("bookmark-empty", "bookmark-filled"),
 			);
 		}
-		// FIX: Use insertAdjacentHTML instead of innerHTML +=
 		gallery_obj.bookmark_preview_container.insertAdjacentHTML(
 			"beforeend",
 			local_element.outerHTML,
@@ -313,26 +391,21 @@ window.HomepageGallery = class extends window.WebComponent {
 		if (!gallery_obj.bookmark_items.includes(local_id))
 			gallery_obj.bookmark_items.push(local_id);
 		local_element.setAttribute("id", local_id);
-		var all_bookmarks = this.element.querySelectorAll(
-			".parallax-item-preview",
-		);
+		var all_bookmarks = this.element.querySelectorAll(".parallax-item-preview");
 		var bookmark_el = this.element.querySelector(`#preview-${local_id}`);
 		bookmark_el.setAttribute(
 			"class",
 			bookmark_el
 			.getAttribute("class")
-			.replace("parallax-item", "parallax-item-preview") +
-			" show-animation",
+			.replace("parallax-item", "parallax-item-preview") + " show-animation",
 		);
-		bookmark_el.onclick = () =>
-			this.selectBookmarkItem(`preview-${local_id}`);
+		bookmark_el.onclick = () => this.selectBookmarkItem(`preview-${local_id}`);
 		for (let i = 0; i < all_bookmarks.length; i++) {
 			all_bookmarks[i].setAttribute(
 				"style",
 				`left: calc(50% - 12vh - ${i * 12}vh); z-index: ${all_bookmarks.length - 1 - i};`,
 			);
 		}
-		// FIX: Use insertAdjacentHTML instead of innerHTML +=
 		bookmark_el.insertAdjacentHTML(
 			"beforeend",
 			`<div id="btn-close-bookmark-${local_id}" class="parallax-icon close-btn"></div>`,
@@ -346,9 +419,7 @@ window.HomepageGallery = class extends window.WebComponent {
 			`left: calc(50% - 12vh - ${all_bookmarks.length * 12}vh); z-index: -1;`,
 		);
 		setTimeout(() => {
-			var new_bookmark_el = this.element.querySelector(
-				`#${bookmark_el.id}`,
-			);
+			var new_bookmark_el = this.element.querySelector(`#${bookmark_el.id}`);
 			if (new_bookmark_el)
 				new_bookmark_el.setAttribute(
 					"class",
@@ -357,9 +428,7 @@ window.HomepageGallery = class extends window.WebComponent {
 					.replace(" show-animation", ""),
 				);
 		}, 1000);
-		var new_bookmarks = this.element.querySelectorAll(
-			".parallax-item-preview",
-		);
+		var new_bookmarks = this.element.querySelectorAll(".parallax-item-preview");
 		for (let i = 0; i < new_bookmarks.length; i++) {
 			var dot_id = `btn-bookmark-${new_bookmarks[i].id}`;
 			var bookmark_dot_el = this.element.querySelector(`#${dot_id}`);
@@ -381,9 +450,7 @@ window.HomepageGallery = class extends window.WebComponent {
 					for (var j = 0; j < all_animated.length; j++)
 						all_animated[j].setAttribute(
 							"class",
-							all_animated[j]
-							.getAttribute("class")
-							.replace(" fade-in", ""),
+							all_animated[j].getAttribute("class").replace(" fade-in", ""),
 						);
 				}, 1000);
 			}
@@ -403,9 +470,7 @@ window.HomepageGallery = class extends window.WebComponent {
 			this.selectBookmarkItem(gallery_obj.bookmark_selected, true, true);
 		} catch (e) {}
 		if (
-			!gallery_obj.bookmark_no_label
-			.getAttribute("class")
-			.includes(" hidden")
+			!gallery_obj.bookmark_no_label.getAttribute("class").includes(" hidden")
 		)
 			gallery_obj.bookmark_no_label.setAttribute(
 				"class",
@@ -413,9 +478,7 @@ window.HomepageGallery = class extends window.WebComponent {
 			);
 		gallery_obj.bookmark_container.setAttribute(
 			"class",
-			gallery_obj.bookmark_container
-			.getAttribute("class")
-			.replace(" no-bookmarks", ""),
+			gallery_obj.bookmark_container.getAttribute("class").replace(" no-bookmarks", ""),
 		);
 	}
 	
@@ -445,7 +508,6 @@ window.HomepageGallery = class extends window.WebComponent {
 		var gallery_obj = this.gallery;
 		if (local_el) {
 			local_el.classList.remove("shown");
-			// Only run minimise logic if the panel was actually maximised
 			if (local_el.classList.contains("maximised")) {
 				this.minimiseContentPanel(arg0_element_id, true);
 			}
@@ -495,7 +557,7 @@ window.HomepageGallery = class extends window.WebComponent {
 				<span class = "${font_size_dict[options.font_size]} ${options.font_position}" style = "font-weight: ${options.font_weight}" >${options.name}</span>
 			</div>
 		`;
-		parallax_tile_container_el.innerHTML += tile_element;
+		parallax_tile_container_el.insertAdjacentHTML("beforeend", tile_element);
 		if (options.content) {
 			var panel_element = `
 				<div id = "${tile_id}-content-panel" class = "parallax-item-content-panel ${options.animation}-panel" style = "top: calc(${options.y}vh - 40dvh + ${size_vh_dict[options.size]}vh/2); left: calc(23vw + ${options.x}vh + ${size_vh_dict[options.size]}vh + 8vh + var(--parallax-offset-x) + var(--content-panel-offset-x));">
@@ -506,7 +568,7 @@ window.HomepageGallery = class extends window.WebComponent {
 					</div>
 				</div>
 			`;
-			parallax_panel_container_el.innerHTML += panel_element;
+			parallax_panel_container_el.insertAdjacentHTML("beforeend", panel_element);
 		}
 		var new_tile_obj = {};
 		if (options.animation) new_tile_obj.animation = options.animation;
@@ -554,7 +616,9 @@ window.HomepageGallery = class extends window.WebComponent {
 	}
 	
 	hideAllContentPanels() {
-		var shown = this.element.querySelectorAll(".parallax-item-content-panel.shown");
+		var shown = this.element.querySelectorAll(
+			".parallax-item-content-panel.shown",
+		);
 		for (let i = 0; i < shown.length; i++)
 			shown[i].setAttribute(
 				"class",
@@ -589,36 +653,26 @@ window.HomepageGallery = class extends window.WebComponent {
 	initGallery() {
 		var gallery_obj = this.gallery;
 		var hide_elements = [];
-		var parallax_elements =
-			this.element.querySelectorAll(".parallax-item");
+		var parallax_elements = this.element.querySelectorAll(".parallax-item");
 		for (let i = 0; i < parallax_elements.length; i++) {
 			this.initParallaxElement(parallax_elements[i].id);
 			if (
 				this.getParent(parallax_elements[i].id).length > 0 &&
-				!gallery_obj.parallax_pinned_items.includes(
-					parallax_elements[i].id,
-				)
+				!gallery_obj.parallax_pinned_items.includes(parallax_elements[i].id)
 			)
 				hide_elements.push(parallax_elements[i].id);
 		}
 		hide_elements = [...new Set(hide_elements)];
 		for (let i = 0; i < hide_elements.length; i++) {
-			var local_el = this.element.querySelector(
-				`#${hide_elements[i]}`,
-			);
+			var local_el = this.element.querySelector(`#${hide_elements[i]}`);
 			local_el.classList.add("hidden");
-			var local_obj =
-				gallery_obj.parallax_settings[local_el.id];
+			var local_obj = gallery_obj.parallax_settings[local_el.id];
 			if (local_obj && local_obj.animation)
-				local_el.setAttribute(
-					"animation",
-					`${local_obj.animation}`,
-				);
+				local_el.setAttribute("animation", `${local_obj.animation}`);
 		}
 		for (let i = 0; i < gallery_obj.bookmark_items.length; i++)
 			this.addBookmarkItem(gallery_obj.bookmark_items[i], true);
 		
-		// Save all panel styles ONCE after everything is built
 		this.saveOriginalPanelStyles();
 	}
 	
@@ -634,12 +688,13 @@ window.HomepageGallery = class extends window.WebComponent {
 				mouse_y /= 32;
 			}
 			var max_deg = 1.25;
-			this.perspective_deg_x = (mouse_y / half_height) * max_deg * -1 + max_deg / 2 + "deg";
+			this.perspective_deg_x =
+				(mouse_y / half_height) * max_deg * -1 + max_deg / 2 + "deg";
 			this.perspective_deg_y = (mouse_x / half_width) * max_deg * -1 + 2 + "deg";
 			this.perspective_string = `rotateX(${this.perspective_deg_x}) rotateY(${this.perspective_deg_y})`;
 			gallery_obj.scene.style.transform = `perspective(20em) ${this.perspective_string}`;
 		});
-		window.addEventListener("scroll", () => this.updateParallaxScrollValues());
+		
 		gallery_obj.parallax_body.addEventListener(
 			"wheel",
 			(e) => {
@@ -653,59 +708,6 @@ window.HomepageGallery = class extends window.WebComponent {
 				}
 			},
 			{ passive: false },
-		);
-	}
-	
-	updateParallaxScrollValues () {
-		var gallery_obj = this.gallery;
-		if (!this._trackCache) return;
-		
-		var scrollY = window.pageYOffset;
-		var trackTop = this._trackCache.top;
-		var trackHeight = this._trackCache.height;
-		
-		var scrollable_dist = trackHeight - window.innerHeight;
-		var relativeScroll = scrollY - trackTop;
-		var vertical_offset = Math.max(0, Math.min(relativeScroll, scrollable_dist));
-		
-		var siblings = gallery_obj.parallax_body.children;
-		for (let i = 0; i < siblings.length; i++) {
-			let child = siblings[i];
-			let translate_px = vertical_offset;
-			
-			if (child.id === "project-parallax-bookmark-container") {
-				translate_px = vertical_offset - window.innerHeight / 2;
-			}
-			// Use 3D transforms to ensure hardware acceleration
-			child.style.transform = `translate3d(0, ${translate_px}px, 0)`;
-		}
-		
-		if (scrollY >= trackTop && scrollY <= trackTop + scrollable_dist) {
-			var progress = (scrollY - trackTop) / scrollable_dist;
-			gallery_obj.parallax_scroll_x = progress * gallery_obj.gallery_width * -1;
-			
-			gallery_obj.parallax_container.style.transform = `translate3d(${gallery_obj.parallax_scroll_x}vh, 0, 0)`;
-			
-			if (gallery_obj.parallax_scroll_indicator)
-				gallery_obj.parallax_scroll_indicator.style.width = `${progress * 100}vw`;
-		}
-	}
-	
-	initGalleryMobileEventHandlers() {
-		var gallery_obj = this.gallery;
-		
-		gallery_obj.parallax_body.addEventListener(
-			"touchmove",
-			(e) => {
-				if (
-					this.element.querySelectorAll(".maximised.shown").length !==
-					0
-				) {
-					if (!e.target.closest(".parallax-item-content-panel"))
-						e.preventDefault();
-				}
-			},
-			{ passive: false }
 		);
 	}
 	
@@ -736,7 +738,7 @@ window.HomepageGallery = class extends window.WebComponent {
 			let all_panels = this.element.querySelectorAll(".content-wrapper");
 			for (let i = 0; i < all_panels.length; i++) {
 				let title = all_panels[i].querySelector(
-					".parallax-item-content-panel-title"
+					".parallax-item-content-panel-title",
 				);
 				if (!title) continue;
 				let id = all_panels[i].id
@@ -748,15 +750,12 @@ window.HomepageGallery = class extends window.WebComponent {
       `;
 				this.element.querySelector(`#${id}-close-btn`).onclick = () =>
 					this.closeContentPanel(id);
-				this.element.querySelector(`#${id}-maximise-btn`).onclick =
-					() => {
-						let panel = this.element.querySelector(
-							`#${id}-content-panel`
-						);
-						panel.classList.contains("maximised")
-							? this.minimiseContentPanel(id)
-							: this.maximiseContentPanel(id);
-					};
+				this.element.querySelector(`#${id}-maximise-btn`).onclick = () => {
+					let panel = this.element.querySelector(`#${id}-content-panel`);
+					panel.classList.contains("maximised")
+						? this.minimiseContentPanel(id)
+						: this.maximiseContentPanel(id);
+				};
 			}
 		}, 500);
 		
@@ -765,31 +764,19 @@ window.HomepageGallery = class extends window.WebComponent {
 		setInterval(() => {
 			for (let i = 0; i < gallery_obj.parallax_selected.length; i++) {
 				var item_obj =
-					gallery_obj.parallax_settings[
-						gallery_obj.parallax_selected[i]
-						];
+					gallery_obj.parallax_settings[gallery_obj.parallax_selected[i]];
 				if (item_obj && item_obj.dependencies) {
 					item_obj.dependencies.forEach((dep_id) => {
 						var el = this.element.querySelector(`#${dep_id}`);
 						if (el && el.classList.contains("hidden")) {
 							el.classList.remove("hidden");
 							var dep_obj = gallery_obj.parallax_settings[dep_id];
-							if (dep_obj && dep_obj.show_function)
-								dep_obj.show_function();
+							if (dep_obj && dep_obj.show_function) dep_obj.show_function();
 						}
 					});
 				}
 			}
 		}, 100);
-		
-		const tick = () => {
-			// Still call updates on tick to handle the 1-2 frames 
-			// after touch end where velocity scrolling happens
-			this.updateParallaxScrollValues();
-			this.updateContentPanelContainer();
-			this._rafId = requestAnimationFrame(tick);
-		};
-		this._rafId = requestAnimationFrame(tick);
 		
 		this.initGallery();
 	}
@@ -803,11 +790,15 @@ window.HomepageGallery = class extends window.WebComponent {
 		local_obj.id = local_obj.id || arg0_element_id;
 		local_obj.hide_function = () => {
 			local_obj.animation_queue.push(local_obj.animation);
-			local_obj.animation_queue = [...new Set(local_obj.animation_queue.reverse())].reverse();
+			local_obj.animation_queue = [
+				...new Set(local_obj.animation_queue.reverse()),
+			].reverse();
 		};
 		local_obj.show_function = () => {
 			local_obj.animation_queue.push(`${local_obj.animation}-shown`);
-			local_obj.animation_queue = [...new Set(local_obj.animation_queue.reverse())].reverse();
+			local_obj.animation_queue = [
+				...new Set(local_obj.animation_queue.reverse()),
+			].reverse();
 		};
 		var dependency_amount = this.getDescendants(local_obj.id).length;
 		local_obj.logic = setInterval(() => {
@@ -815,7 +806,8 @@ window.HomepageGallery = class extends window.WebComponent {
 			var descendants = this.getDescendants(local_obj.id);
 			for (let i = 0; i < descendants.length; i++) {
 				var d_obj = gallery_obj.parallax_settings[descendants[i]];
-				if (d_obj && d_obj.animation_queue.length > 0) all_children_finished = false;
+				if (d_obj && d_obj.animation_queue.length > 0)
+					all_children_finished = false;
 			}
 			if (all_children_finished && local_obj.animation_queue.length > 0) {
 				try {
@@ -823,7 +815,9 @@ window.HomepageGallery = class extends window.WebComponent {
 					var anim = local_obj.animation_queue[0];
 					el.setAttribute("animation", anim);
 					setTimeout(() => {
-						anim.includes("-shown") ? el.classList.remove("hidden") : el.classList.add("hidden");
+						anim.includes("-shown")
+							? el.classList.remove("hidden")
+							: el.classList.add("hidden");
 						local_obj.animation_queue.shift();
 					}, 750);
 				} catch (e) {}
@@ -836,10 +830,13 @@ window.HomepageGallery = class extends window.WebComponent {
 			this.selectParallaxItem(local_el.id);
 		};
 		if (local_obj.animation && !local_obj.is_base_node) {
-			local_el.innerHTML += `
+			local_el.insertAdjacentHTML(
+				"beforeend",
+				`
 				<div class = "parallax-icon pin ${gallery_obj.parallax_pinned_items.includes(local_el.id) ? "pin-filled" : "pin-empty"}"></div>
 				<div id = "bookmark-btn-${local_el.id}" class = "parallax-icon bookmark bookmark-empty"></div>
-			`;
+			`,
+			);
 			local_el.querySelector(".pin").onclick = (e) => {
 				e.stopPropagation();
 				this.pinItem(local_el.id);
@@ -857,9 +854,10 @@ window.HomepageGallery = class extends window.WebComponent {
 		try {
 			var pin_btn = local_element.querySelector(".pin");
 			gallery_obj.parallax_pinned_items.includes(arg0_element_id)
-				? (gallery_obj.parallax_pinned_items = gallery_obj.parallax_pinned_items.filter(
-					(i) => i !== arg0_element_id,
-				))
+				? (gallery_obj.parallax_pinned_items =
+					gallery_obj.parallax_pinned_items.filter(
+						(i) => i !== arg0_element_id,
+					))
 				: gallery_obj.parallax_pinned_items.push(arg0_element_id);
 			pin_btn.setAttribute(
 				"class",
@@ -884,9 +882,7 @@ window.HomepageGallery = class extends window.WebComponent {
 			if (local_el) local_el.classList.add("filled");
 			gallery_obj.bookmark_selected = arg0_element_id;
 			gallery_obj.bookmark_preview_container.style.left = `${local_index * -12}vh`;
-			var all_bookmarks = this.element.querySelectorAll(
-				".parallax-item-preview",
-			);
+			var all_bookmarks = this.element.querySelectorAll(".parallax-item-preview");
 			for (let i = 0; i < all_bookmarks.length; i++) {
 				all_bookmarks[i].setAttribute(
 					"style",
@@ -894,32 +890,23 @@ window.HomepageGallery = class extends window.WebComponent {
 				);
 				all_bookmarks[i].classList.remove("selected");
 			}
-			var local_bookmark = this.element.querySelector(
-				`#${arg0_element_id}`,
-			);
+			var local_bookmark = this.element.querySelector(`#${arg0_element_id}`);
 			if (local_bookmark) {
 				local_bookmark.style.zIndex = 99;
 				local_bookmark.classList.add("selected");
 			}
 			
 			if (!arg2_no_scroll && parallax_element) {
-				// Instead of setting parallax_scroll_x directly,
-				// compute the required vertical scroll position and
-				// scroll the window so updateParallaxScrollValues
-				// naturally arrives at the correct X offset.
 				var track = document.getElementById("gallery-section");
 				if (track) {
 					var track_rect = track.getBoundingClientRect();
 					var scrollable_dist = track_rect.height - window.innerHeight;
 					var vh = window.innerHeight / 100;
-					var pan_x =
-						parseInt(getComputedStyle(parallax_element).left) / vh;
+					var pan_x = parseInt(getComputedStyle(parallax_element).left) / vh;
 					var desired_scroll_x =
 						pan_x * -1 +
-						(window.innerWidth / 100) * 50 / vh -
+						((window.innerWidth / 100) * 50) / vh -
 						parseInt(getComputedStyle(parallax_element).width) / vh / 2;
-					// Reverse the formula: parallax_scroll_x = progress * gallery_width * -1
-					// So progress = parallax_scroll_x / (gallery_width * -1)
 					var progress = desired_scroll_x / (gallery_obj.gallery_width * -1);
 					progress = Math.max(0, Math.min(1, progress));
 					var target_scroll_top =
@@ -933,10 +920,7 @@ window.HomepageGallery = class extends window.WebComponent {
 			}
 			
 			if (parallax_element) {
-				parallax_element.setAttribute(
-					"animation",
-					actual_id + "-shown",
-				);
+				parallax_element.setAttribute("animation", actual_id + "-shown");
 				parallax_element.classList.remove("hidden");
 			}
 		}
@@ -944,15 +928,26 @@ window.HomepageGallery = class extends window.WebComponent {
 	
 	removeBookmarkItem(arg0_element_id) {
 		var gallery_obj = this.gallery;
-		var bookmark_btn = this.element.querySelector(`#bookmark-btn-${arg0_element_id}`);
-		var local_index = gallery_obj.bookmark_items.indexOf(arg0_element_id);
-		if (bookmark_btn) bookmark_btn.setAttribute("class", bookmark_btn.getAttribute("class").replace("bookmark-filled", "bookmark-empty"));
-		gallery_obj.bookmark_items = gallery_obj.bookmark_items.filter((i) => i !== arg0_element_id);
+		var bookmark_btn = this.element.querySelector(
+			`#bookmark-btn-${arg0_element_id}`,
+		);
+		if (bookmark_btn)
+			bookmark_btn.setAttribute(
+				"class",
+				bookmark_btn
+				.getAttribute("class")
+				.replace("bookmark-filled", "bookmark-empty"),
+			);
+		gallery_obj.bookmark_items = gallery_obj.bookmark_items.filter(
+			(i) => i !== arg0_element_id,
+		);
 		gallery_obj.closing_bookmark = true;
 		setTimeout(() => (gallery_obj.closing_bookmark = false), 100);
 		var preview_el = this.element.querySelector(`#preview-${arg0_element_id}`);
 		if (preview_el) preview_el.remove();
-		this.element.querySelector(`#btn-bookmark-preview-${arg0_element_id}`)?.remove();
+		this.element
+		.querySelector(`#btn-bookmark-preview-${arg0_element_id}`)
+		?.remove();
 		if (gallery_obj.bookmark_items.length == 0) {
 			gallery_obj.no_bookmark_label.classList.remove("hidden");
 			gallery_obj.bookmark_container.classList.add("no-bookmarks");
@@ -961,15 +956,11 @@ window.HomepageGallery = class extends window.WebComponent {
 	
 	selectParallaxItem(arg0_element_id) {
 		var gallery_obj = this.gallery;
-		
 		if (gallery_obj.parallax_selected.includes(arg0_element_id)) {
-			// Clicking the already-selected tile deselects everything
 			gallery_obj.parallax_selected = [];
 		} else {
-			// Replace selection entirely
 			gallery_obj.parallax_selected = [arg0_element_id];
 		}
-		
 		this.updateHiddenElements();
 	}
 	
@@ -979,7 +970,9 @@ window.HomepageGallery = class extends window.WebComponent {
 	}
 	
 	toggleContentPanel(arg0_element_id) {
-		var local_el = this.element.querySelector(`#${arg0_element_id}-content-panel`);
+		var local_el = this.element.querySelector(
+			`#${arg0_element_id}-content-panel`,
+		);
 		if (!local_el) return;
 		var is_shown = local_el.classList.contains("shown");
 		this.hideAllContentPanels();
@@ -987,15 +980,10 @@ window.HomepageGallery = class extends window.WebComponent {
 	}
 	
 	maximiseContentPanel(arg0_element_id) {
-		var panel = this.element.querySelector(
-			`#${arg0_element_id}-content-panel`,
-		);
+		var panel = this.element.querySelector(`#${arg0_element_id}-content-panel`);
 		if (!panel) return;
 		
-		// 1. Capture current visual position
 		var rect = panel.getBoundingClientRect();
-		
-		// 2. Freeze the panel in place
 		panel.style.transition = "none";
 		panel.style.position = "fixed";
 		panel.style.top = `${rect.top}px`;
@@ -1004,19 +992,13 @@ window.HomepageGallery = class extends window.WebComponent {
 		panel.style.height = `${rect.height}px`;
 		panel.style.margin = "0";
 		
-		// 3. Stop the container from moving
 		this.gallery.content_panel_update_paused = true;
 		this.gallery.content_panel_container.style.transform = "none";
-		this.gallery.content_panel_scroll_container.style.transform =
-			"none";
+		this.gallery.content_panel_scroll_container.style.transform = "none";
 		
-		// 4. Trigger transition to maximised state
 		requestAnimationFrame(() => {
 			panel.style.transition = "";
 			panel.classList.add("maximised");
-			
-			// Restore original inline style underneath — the .maximised
-			// class handles positioning from here
 			setTimeout(() => {
 				this.restorePanelStyle(panel);
 			}, 50);
@@ -1026,12 +1008,9 @@ window.HomepageGallery = class extends window.WebComponent {
 	}
 	
 	minimiseContentPanel(arg0_element_id, arg1_instant) {
-		var panel = this.element.querySelector(
-			`#${arg0_element_id}-content-panel`,
-		);
+		var panel = this.element.querySelector(`#${arg0_element_id}-content-panel`);
 		if (!panel) return;
 		
-		// If the panel isn't actually maximised, just restore and bail
 		if (!panel.classList.contains("maximised")) {
 			this.restorePanelStyle(panel);
 			return;
@@ -1044,21 +1023,13 @@ window.HomepageGallery = class extends window.WebComponent {
 			return;
 		}
 		
-		// 1. Capture maximised position
 		var max_rect = panel.getBoundingClientRect();
-		
-		// 2. Remove .maximised and restore original positioning
 		panel.classList.remove("maximised");
 		this.restorePanelStyle(panel);
 		
-		// 3. Resume parallax so scroll container is correct
 		this.gallery.content_panel_update_paused = false;
-		this.updateContentPanelContainer();
 		
-		// 4. Measure the natural target position
 		var nat_rect = panel.getBoundingClientRect();
-		
-		// 5. Offset panel back to maximised position via transform
 		var dx = max_rect.left - nat_rect.left;
 		var dy = max_rect.top - nat_rect.top;
 		
@@ -1067,17 +1038,13 @@ window.HomepageGallery = class extends window.WebComponent {
 		panel.style.width = `${max_rect.width}px`;
 		panel.style.height = `${max_rect.height}px`;
 		
-		// 6. Animate transform away
 		requestAnimationFrame(() => {
 			panel.style.transition = "";
-			
 			setTimeout(() => {
 				panel.style.transform = "";
 				panel.style.width = "";
 				panel.style.height = "";
 			}, 50);
-			
-			// 7. Final cleanup — restore clean original style
 			setTimeout(() => {
 				this.restorePanelStyle(panel);
 				this.gallery.parallax_scroll_indicator.style.opacity = 1;
@@ -1085,34 +1052,11 @@ window.HomepageGallery = class extends window.WebComponent {
 		});
 	}
 	
-	updateContentPanelContainer () {
-		var gallery_obj = this.gallery;
-		if (!gallery_obj.content_panel_update_paused) {
-			let main_layer = this.element.querySelector(".layer.main");
-			let translate_x = 0;
-			let translate_y = 0;
-			
-			if (main_layer) {
-				// Optimization: Only read matrix if we haven't already calculated offsets
-				// This keeps the movement synced with the Parallax engine
-				let style = window.getComputedStyle(main_layer);
-				let matrix = new WebKitCSSMatrix(style.transform);
-				translate_x = matrix.m41;
-				translate_y = matrix.m42;
-			}
-			
-			gallery_obj.content_panel_container.style.transform = "none";
-			gallery_obj.content_panel_scroll_container.style.transform =
-				`translate3d(calc(${gallery_obj.parallax_scroll_x}vh + ${translate_x}px), ${translate_y}px, 0)`;
-		}
-	}
-	
 	updateHiddenElements() {
 		var gallery_obj = this.gallery;
 		var all_dom = this.element.querySelectorAll(".parallax-item");
 		var visible = [];
 		
-		// Selected items and their direct dependencies
 		gallery_obj.parallax_selected.forEach((id) => {
 			visible.push(id);
 			gallery_obj.parallax_settings[id]?.dependencies?.forEach((d) =>
@@ -1120,14 +1064,11 @@ window.HomepageGallery = class extends window.WebComponent {
 			);
 		});
 		
-		// Root nodes (no parent) always visible
 		Object.keys(gallery_obj.parallax_settings).forEach((k) => {
 			if (this.getParent(k).length == 0) visible.push(k);
 		});
 		
-		// Pinned items always visible
 		gallery_obj.parallax_pinned_items.forEach((id) => visible.push(id));
-		
 		visible = [...new Set(visible)];
 		
 		all_dom.forEach((el) => {
@@ -1137,13 +1078,11 @@ window.HomepageGallery = class extends window.WebComponent {
 			if (is_exempt) return;
 			
 			if (visible.includes(el.id)) {
-				// Should be visible — show if currently hidden
 				if (el.classList.contains("hidden")) {
 					var obj = gallery_obj.parallax_settings[el.id];
 					if (obj && obj.show_function) obj.show_function();
 				}
 			} else {
-				// Should be hidden — retract if currently visible
 				if (!el.classList.contains("hidden")) {
 					var obj = gallery_obj.parallax_settings[el.id];
 					if (obj && obj.hide_function) obj.hide_function();
@@ -1155,21 +1094,15 @@ window.HomepageGallery = class extends window.WebComponent {
 	onParallaxHover(e) {
 		var gallery_obj = this.gallery;
 		var target = e.target.closest(".parallax-item");
-		
-		// Reset hover-time on every tile that isn't the current target
 		var all_tiles = this.element.querySelectorAll(".parallax-item");
 		for (let i = 0; i < all_tiles.length; i++) {
 			if (!target || all_tiles[i].id !== target.id) {
 				all_tiles[i].setAttribute("hover-time", 0);
 			}
 		}
-		
 		if (!target) return;
-		
-		var hover_time =
-			parseInt(target.getAttribute("hover-time") || 0) + 16;
+		var hover_time = parseInt(target.getAttribute("hover-time") || 0) + 16;
 		target.setAttribute("hover-time", hover_time);
-		
 		if (
 			hover_time >= 500 &&
 			!gallery_obj.parallax_selected.includes(target.id)
@@ -1180,29 +1113,19 @@ window.HomepageGallery = class extends window.WebComponent {
 	}
 	
 	saveOriginalPanelStyles() {
-		var panels = this.element.querySelectorAll(
-			".parallax-item-content-panel",
-		);
+		var panels = this.element.querySelectorAll(".parallax-item-content-panel");
 		for (let i = 0; i < panels.length; i++) {
 			if (!panels[i].dataset.originalStyle) {
-				panels[i].dataset.originalStyle =
-					panels[i].getAttribute("style") || "";
+				panels[i].dataset.originalStyle = panels[i].getAttribute("style") || "";
 			}
 		}
 	}
 	
 	restorePanelStyle(arg0_panel) {
-		if (
-			arg0_panel &&
-			arg0_panel.dataset.originalStyle !== undefined
-		) {
-			arg0_panel.setAttribute(
-				"style",
-				arg0_panel.dataset.originalStyle,
-			);
+		if (arg0_panel && arg0_panel.dataset.originalStyle !== undefined) {
+			arg0_panel.setAttribute("style", arg0_panel.dataset.originalStyle);
 		}
 	}
-	
 };
 
 function initHomepageGallery() {
