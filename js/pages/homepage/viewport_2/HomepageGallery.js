@@ -74,8 +74,8 @@ window.HomepageGallery = class extends window.WebComponent {
 				<div id = "main-parallax-content-panel-scroll-wrapper" class = "parallax-panel-scroll-container"></div>
 			</div>
 
-			<div id = "bookmark-container" style = "position: absolute; height: 100dvh; width: 100%; top: 0; left: 0;">
-				<div id = "project-parallax-bookmark-container" class = "parallax-bookmark-container minimised">
+			<div id = "bookmark-container" style = "position: absolute; height: 100dvh; width: 100%; top: 0; left: 0; pointer-events: none;">
+				<div id = "project-parallax-bookmark-container" class = "parallax-bookmark-container minimised" style = "pointer-events: auto;">
 					<div id = "project-parallax-bookmark-labels-container" class = "project-parallax-text-container">
 						<div id = "project-parallax-bookmark-label" class = "bookmarks-title">
 							<img id = "project-parallax-bookmark-text-icon" class = "bookmark-text-icon" src = "gfx/interface/icons/bookmark_icon_filled.png" align = "left" draggable = "false"></img>

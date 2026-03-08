@@ -478,11 +478,11 @@ a {
   color: white;
 }
 .parallax-item-preview > .parallax-major-project-text {
-  font-size: 3dvh;
+  font-size: 3dvh !important;
 
-  margin-left: 3.5vw;
-  right: 2dvh;
-  bottom: 2dvh;
+  margin-left: 3.5vw !important;
+  right: 2dvh !important;
+  bottom: 2dvh !important;
 }
 
 /* -- Disable leftover buttons -- */
