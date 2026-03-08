@@ -46,49 +46,54 @@ window.HomepageGallery = class extends window.WebComponent {
 			<div id = "project-parallax-container-gradient-bg" class = "project-parallax-container-gradient-bg"></div>
 			<div id = "project-parallax-container-room-bg" class = "project-parallax-container-room-bg"></div>
 
-			<section id = "scene" class="scene" data-pointer-events = "true" data-x-origin = "0.5" data-y-origin = "50.0" data-scalar-y = "50.0" data-scalar-x = "25.0" data-friction-x = "0.05" data-friction-y = "0.04">
-				<div id = "project-parallax-scroll-container" class = "project-parallax-scroll-container">
-					<div class = "layer main" data-depth = "1.0">
-						<div id = "main-parallax-content-wrapper" class = "parallax-content-container">
-							<div class = "project-listings">
-								<span class = "parallax-header">PROJECT LISTINGS</span>
-								<br><br>
-								<hr class = "parallax-line">
-							</div>
-							<div class = "ctd-header"><span class = "parallax-subheader">Technical (CTD).</span></div>
-							<div class = "crd-header"><span class = "parallax-subheader">Research (CRD).</span></div>
-							<div class = "cad-header"><span class = "parallax-subheader">Artistic (CAD).</span></div>
-							<div class = "preserves-header">
-								<span class = "parallax-subheader">Preservés</span><br>
-								<div class = "parallax-header small">des Confoederatio</div>
+			<div id = "scene-container">
+				<section id = "scene" class="scene" data-pointer-events = "true" data-x-origin = "0.5" data-y-origin = "50.0" data-scalar-y = "50.0" data-scalar-x = "25.0" data-friction-x = "0.05" data-friction-y = "0.04">
+					<div id = "project-parallax-scroll-container" class = "project-parallax-scroll-container">
+						<div class = "layer main" data-depth = "1.0">
+							<div id = "main-parallax-content-wrapper" class = "parallax-content-container">
+								<div class = "project-listings">
+									<span class = "parallax-header">PROJECT LISTINGS</span>
+									<br><br>
+									<hr class = "parallax-line">
+								</div>
+								<div class = "ctd-header"><span class = "parallax-subheader">Technical (CTD).</span></div>
+								<div class = "crd-header"><span class = "parallax-subheader">Research (CRD).</span></div>
+								<div class = "cad-header"><span class = "parallax-subheader">Artistic (CAD).</span></div>
+								<div class = "preserves-header">
+									<span class = "parallax-subheader">Preservés</span><br>
+									<div class = "parallax-header small">des Confoederatio</div>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-			</section>
+				</section>
+			</div>
+			
 
 			<div id = "main-parallax-content-panel-wrapper" class = "parallax-panel-container">
 				<div id = "main-parallax-content-panel-scroll-wrapper" class = "parallax-panel-scroll-container"></div>
 			</div>
 
-			<div id = "project-parallax-bookmark-container" class = "parallax-bookmark-container minimised">
-				<div id = "project-parallax-bookmark-labels-container" class = "project-parallax-text-container">
-					<div id = "project-parallax-bookmark-label" class = "bookmarks-title">
-						<img id = "project-parallax-bookmark-text-icon" class = "bookmark-text-icon" src = "gfx/interface/icons/bookmark_icon_filled.png" align = "left" draggable = "false"></img>
-						<span id = "project-parallax-bookmark-label-text" class = "project-parallax-bookmark-label-text">Bookmarks</span>
-						<img id = "project-parallax-bookmark-minimise-icon" class = "bookmark-minimise-icon minimised" src = "gfx/interface/icons/chevron_down.png" align = "right" draggable = "false">
+			<div id = "bookmark-container" style = "position: absolute; height: 100dvh; width: 100%; top: 0; left: 0;">
+				<div id = "project-parallax-bookmark-container" class = "parallax-bookmark-container minimised">
+					<div id = "project-parallax-bookmark-labels-container" class = "project-parallax-text-container">
+						<div id = "project-parallax-bookmark-label" class = "bookmarks-title">
+							<img id = "project-parallax-bookmark-text-icon" class = "bookmark-text-icon" src = "gfx/interface/icons/bookmark_icon_filled.png" align = "left" draggable = "false"></img>
+							<span id = "project-parallax-bookmark-label-text" class = "project-parallax-bookmark-label-text">Bookmarks</span>
+							<img id = "project-parallax-bookmark-minimise-icon" class = "bookmark-minimise-icon minimised" src = "gfx/interface/icons/chevron_down.png" align = "right" draggable = "false">
+						</div>
 					</div>
+					<div id = "project-parallax-no-bookmark-label" class = "project-parallax-no-bookmark-label-text">
+						<center>
+							You don't have any bookmarks currently!<br>
+							Add some bookmarks to your collection by pressing on the
+							<img id = "project-parallax-no-bookmark-label-image-icon" class = "no-bookmark-label-image-icon" src = "gfx/interface/icons/bookmark_icon_empty.png" draggable = "false"></img>
+							icon.
+						</center>
+					</div>
+					<div id = "project-parallax-preview-container" class = "project-parallax-preview-container"></div>
+					<div id = "project-parallax-dots-container" class = "project-parallax-dots-container"></div>
 				</div>
-				<div id = "project-parallax-no-bookmark-label" class = "project-parallax-no-bookmark-label-text">
-					<center>
-						You don't have any bookmarks currently!<br>
-						Add some bookmarks to your collection by pressing on the
-						<img id = "project-parallax-no-bookmark-label-image-icon" class = "no-bookmark-label-image-icon" src = "gfx/interface/icons/bookmark_icon_empty.png" draggable = "false"></img>
-						icon.
-					</center>
-				</div>
-				<div id = "project-parallax-preview-container" class = "project-parallax-preview-container"></div>
-				<div id = "project-parallax-dots-container" class = "project-parallax-dots-container"></div>
 			</div>
 
 			<div id = "project-parallax-scroll-indicator" class = "project-parallax-scroll-indicator">
@@ -626,18 +631,15 @@ window.HomepageGallery = class extends window.WebComponent {
 		var siblings = gallery_obj.parallax_body.children;
 		for (let i = 0; i < siblings.length; i++) {
 			let child = siblings[i];
+			
+			let translate_px = vertical_offset;
+			
 			if (child.id === "project-parallax-bookmark-container") {
-				child.style.top = vertical_offset + window.innerHeight / 2 + "px";
-			} else if (child.id === "project-parallax-scroll-indicator") {
-				child.style.top = vertical_offset + window.innerHeight - 5 + "px";
-			} else if (child.id === "main-parallax-content-panel-wrapper") {
-				// Vertical sync with scene
-				child.style.top = vertical_offset + "px";
-			} else if (child.id === "scene") {
-				child.style.top = vertical_offset + "px";
+				translate_px = vertical_offset - window.innerHeight / 2;
 			} else {
-				child.style.top = vertical_offset + "px";
+				
 			}
+			child.style.transform = `translateY(${translate_px}px)`;
 		}
 		if (rect.top <= 0 && rect.bottom >= window.innerHeight) {
 			var progress = Math.abs(rect.top) / scrollable_dist;
