@@ -2,6 +2,9 @@
 #gallery-section { 
     height: calc(400vh*4); 
 } 
+@media (pointer: coarse) {
+  #gallery-section { height: calc(400vh*40); }
+}
 /* -- [TEMP] -- */
 .project-parallax-container {
   position: sticky;
