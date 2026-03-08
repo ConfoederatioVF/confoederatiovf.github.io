@@ -447,7 +447,6 @@ window.HomepageGallery = class extends window.WebComponent {
 		);
 		if (options.background_image)
 			background_style = ` style = "background-image: url(${options.background_image}); opacity: ${options.background_opacity};"`;
-		
 		var tile_element = `
 			<div id = "${tile_id}" class = "parallax-item ${size_dict[options.size]} ${options.colour}" style = "position: absolute; top: calc(${options.y}vh + var(--parallax-offset-y)); left: calc(23vw + ${options.x}vh + var(--parallax-offset-x));">
 				<div class = "parallax-item-colour-bg"></div>
@@ -455,9 +454,7 @@ window.HomepageGallery = class extends window.WebComponent {
 				<span class = "${font_size_dict[options.font_size]} ${options.font_position}" style = "font-weight: ${options.font_weight}" >${options.name}</span>
 			</div>
 		`;
-		// FIX: Use insertAdjacentHTML so we don't destroy event listeners of previous tiles
-		parallax_tile_container_el.insertAdjacentHTML("beforeend", tile_element);
-		
+		parallax_tile_container_el.innerHTML += tile_element;
 		if (options.content) {
 			var panel_element = `
 				<div id = "${tile_id}-content-panel" class = "parallax-item-content-panel ${options.animation}-panel" style = "top: calc(${options.y}vh - 40dvh + ${size_vh_dict[options.size]}vh/2); left: calc(23vw + ${options.x}vh + ${size_vh_dict[options.size]}vh + 8vh + var(--parallax-offset-x) + var(--content-panel-offset-x));">
@@ -468,7 +465,7 @@ window.HomepageGallery = class extends window.WebComponent {
 					</div>
 				</div>
 			`;
-			parallax_panel_container_el.insertAdjacentHTML("beforeend", panel_element);
+			parallax_panel_container_el.innerHTML += panel_element;
 		}
 		var new_tile_obj = {};
 		if (options.animation) new_tile_obj.animation = options.animation;
@@ -620,33 +617,34 @@ window.HomepageGallery = class extends window.WebComponent {
 	
 	updateParallaxScrollValues() {
 		var gallery_obj = this.gallery;
-		if (!this._cache.track) return;
-		
-		const scrollTop = window.pageYOffset;
-		const relativeScroll = scrollTop - this._cache.top;
-		const scrollable_dist = this._cache.scrollable;
-		
-		// Use Transform instead of Top to prevent jank
-		// The container is already position: sticky, so we only need to move the inner scene
-		const vertical_offset = Math.max(0, Math.min(relativeScroll, scrollable_dist));
-		
-		// Move UI elements using translate3d for hardware acceleration
-		gallery_obj.bookmark_container.style.transform = `translate3d(0, ${vertical_offset}px, 0)`;
-		if (gallery_obj.parallax_scroll_indicator) {
-			const indicator = gallery_obj.parallax_scroll_indicator.parentElement;
-			indicator.style.transform = `translate3d(0, ${vertical_offset}px, 0)`;
+		var track = document.getElementById("gallery-section");
+		if (!track) return;
+		var rect = track.getBoundingClientRect();
+		var scrollable_dist = rect.height - window.innerHeight;
+		var vertical_offset =
+			rect.top <= 0 ? Math.min(Math.abs(rect.top), scrollable_dist) : 0;
+		var siblings = gallery_obj.parallax_body.children;
+		for (let i = 0; i < siblings.length; i++) {
+			let child = siblings[i];
+			if (child.id === "project-parallax-bookmark-container") {
+				child.style.top = vertical_offset + window.innerHeight / 2 + "px";
+			} else if (child.id === "project-parallax-scroll-indicator") {
+				child.style.top = vertical_offset + window.innerHeight - 5 + "px";
+			} else if (child.id === "main-parallax-content-panel-wrapper") {
+				// Vertical sync with scene
+				child.style.top = vertical_offset + "px";
+			} else if (child.id === "scene") {
+				child.style.top = vertical_offset + "px";
+			} else {
+				child.style.top = vertical_offset + "px";
+			}
 		}
-		
-		// Only sync containers if not maximised
-		if (!gallery_obj.content_panel_update_paused) {
-			gallery_obj.content_panel_container.style.transform = `translate3d(0, ${vertical_offset}px, 0)`;
-			gallery_obj.scene.style.transform = `translate3d(0, ${vertical_offset}px, 0) perspective(20em) ${this.perspective_string}`;
-		}
-		
-		if (relativeScroll >= 0 && relativeScroll <= scrollable_dist) {
-			var progress = relativeScroll / scrollable_dist;
+		if (rect.top <= 0 && rect.bottom >= window.innerHeight) {
+			var progress = Math.abs(rect.top) / scrollable_dist;
 			gallery_obj.parallax_scroll_x = progress * gallery_obj.gallery_width * -1;
-			gallery_obj.parallax_container.style.transform = `translate3d(${gallery_obj.parallax_scroll_x}vh, 0, 0)`;
+			
+			// Apply both X and Y to the underlay
+			gallery_obj.parallax_container.style.transform = `translateX(${gallery_obj.parallax_scroll_x}vh)`;
 			
 			if (gallery_obj.parallax_scroll_indicator)
 				gallery_obj.parallax_scroll_indicator.style.width = `${progress * 100}vw`;
@@ -694,56 +692,59 @@ window.HomepageGallery = class extends window.WebComponent {
 				: this.showBookmarkUI();
 		};
 		
-		// Helper to inject buttons and attach events without overwriting HTML
-		const setupPanelUI = () => {
+		setTimeout(() => {
 			let all_panels = this.element.querySelectorAll(".content-wrapper");
-			all_panels.forEach((panel) => {
-				let title = panel.querySelector(".parallax-item-content-panel-title");
-				if (!title || title.querySelector(".content-panel-close-btn")) return;
-				
-				let id = panel.id.replace("-content-wrapper", "");
-				let panelId = id.replace("-content-panel", "");
-				
-				const closeBtn = document.createElement("img");
-				closeBtn.id = `${panelId}-close-btn`;
-				closeBtn.className = "content-panel-close-btn";
-				closeBtn.src = "gfx/interface/icons/close_btn.png";
-				closeBtn.onclick = (e) => { e.stopPropagation(); this.closeContentPanel(panelId); };
-				
-				const maxBtn = document.createElement("img");
-				maxBtn.id = `${panelId}-maximise-btn`;
-				maxBtn.className = "content-panel-maximise-btn";
-				maxBtn.src = "gfx/interface/icons/maximise_icon.png";
-				maxBtn.onclick = (e) => {
-					e.stopPropagation();
-					let pEl = this.element.querySelector(`#${panelId}-content-panel`);
-					pEl.classList.contains("maximised") ? this.minimiseContentPanel(panelId) : this.maximiseContentPanel(panelId);
-				};
-				
-				title.appendChild(closeBtn);
-				title.appendChild(maxBtn);
-			});
-		};
-		
-		// Run setup immediately after tiles are initialized
-		setTimeout(setupPanelUI, 100);
+			for (let i = 0; i < all_panels.length; i++) {
+				let title = all_panels[i].querySelector(
+					".parallax-item-content-panel-title"
+				);
+				if (!title) continue;
+				let id = all_panels[i].id
+				.replace("-content-panel", "")
+				.replace("-content-wrapper", "");
+				title.innerHTML = `${title.textContent}
+        <img id="${id}-close-btn" class="content-panel-close-btn" src="gfx/interface/icons/close_btn.png" draggable="false">
+        <img id="${id}-maximise-btn" class="content-panel-maximise-btn" src="gfx/interface/icons/maximise_icon.png" draggable="false">
+      `;
+				this.element.querySelector(`#${id}-close-btn`).onclick = () =>
+					this.closeContentPanel(id);
+				this.element.querySelector(`#${id}-maximise-btn`).onclick =
+					() => {
+						let panel = this.element.querySelector(
+							`#${id}-content-panel`
+						);
+						panel.classList.contains("maximised")
+							? this.minimiseContentPanel(id)
+							: this.maximiseContentPanel(id);
+					};
+			}
+		}, 500);
 		
 		this.initGalleryDesktopEventHandlers();
 		
-		// Cache dimensions to prevent layout thrashing
-		this._cache = { track: null, scrollable: 0, top: 0 };
-		const updateCache = () => {
-			const track = document.getElementById("gallery-section");
-			if (track) {
-				const rect = track.getBoundingClientRect();
-				this._cache.track = track;
-				this._cache.top = rect.top + window.pageYOffset;
-				this._cache.scrollable = track.offsetHeight - window.innerHeight;
+		// Dependency visibility check — 100ms is fine, this is not
+		// per-frame work
+		setInterval(() => {
+			for (let i = 0; i < gallery_obj.parallax_selected.length; i++) {
+				var item_obj =
+					gallery_obj.parallax_settings[
+						gallery_obj.parallax_selected[i]
+						];
+				if (item_obj && item_obj.dependencies) {
+					item_obj.dependencies.forEach((dep_id) => {
+						var el = this.element.querySelector(`#${dep_id}`);
+						if (el && el.classList.contains("hidden")) {
+							el.classList.remove("hidden");
+							var dep_obj = gallery_obj.parallax_settings[dep_id];
+							if (dep_obj && dep_obj.show_function)
+								dep_obj.show_function();
+						}
+					});
+				}
 			}
-		};
-		window.addEventListener("resize", updateCache);
-		updateCache();
+		}, 100);
 		
+		// USE requestAnimationFrame INSTEAD OF setInterval(16)
 		const tick = () => {
 			this.updateParallaxScrollValues();
 			this.updateContentPanelContainer();
@@ -1048,20 +1049,26 @@ window.HomepageGallery = class extends window.WebComponent {
 	updateContentPanelContainer() {
 		var gallery_obj = this.gallery;
 		if (!gallery_obj.content_panel_update_paused) {
+			// Find the main parallax layer to extract its current dynamic Y offset
 			let main_layer = this.element.querySelector(".layer.main");
 			let translate_x = 0;
 			let translate_y = 0;
 			
 			if (main_layer) {
+				// Extract the current translateY/translate3d value applied by the parallax engine
 				let style = window.getComputedStyle(main_layer);
 				let matrix = new WebKitCSSMatrix(style.transform);
-				translate_x = matrix.m41;
-				translate_y = matrix.m42;
+				translate_x = matrix.m41; //m41 represents the X translation in the matrix
+				translate_y = matrix.m42; // m42 represents the Y translation in the matrix
 			}
 			
-			// Composite the horizontal scroll with the parallax layer's internal drift
+			gallery_obj.content_panel_container.style.transform = "none";
+			
+			// Sync the content panel scroll wrapper with:
+			// 1. Horizontal Scroll (gallery_obj.parallax_scroll_x in vh)
+			// 2. Vertical Parallax displacement (translate_y in pixels)
 			gallery_obj.content_panel_scroll_container.style.transform =
-				`translate3d(calc(${gallery_obj.parallax_scroll_x}vh + ${translate_x}px), ${translate_y}px, 0)`;
+				`translateX(calc(${gallery_obj.parallax_scroll_x}vh + ${translate_x}px)) translateY(${translate_y}px)`;
 		}
 	}
 	
