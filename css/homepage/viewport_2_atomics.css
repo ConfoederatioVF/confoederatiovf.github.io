@@ -1,0 +1,272 @@
+/* -- gallery_headers.css -- */
+/* -- Parallax header positioning -- */
+.project-listings {
+    position: absolute;
+    top: calc(5dvh + var(--parallax-offset-y));
+    left: calc(5vw + var(--parallax-offset-x));
+}
+.ctd-header {
+    position: absolute;
+    top: calc(20dvh + var(--parallax-offset-y));
+    left: calc(7vw + var(--parallax-offset-x));
+    width: max-content;
+}
+.crd-header {
+    position: absolute;
+    top: calc(20dvh + var(--parallax-offset-y));
+    left: calc(23vw + 188dvh + var(--parallax-offset-x));
+    width: max-content;
+}
+.cad-header {
+    position: absolute;
+    top: calc(20dvh + var(--parallax-offset-y));
+    left: calc(23vw + 336dvh + var(--parallax-offset-x));
+    width: max-content;
+}
+.preserves-header {
+    position: absolute;
+    top: calc(20dvh + var(--parallax-offset-y));
+    left: calc(23vw + 468dvh + var(--parallax-offset-x));
+    width: max-content;
+}
+.parallax-header.small {
+    font-size: 3dvh;
+    margin-top: 1.5dvh;
+}
+
+
+/* -- Parallax header elements -- */
+.parallax-header {
+    color: white;
+    font-family: "Barlow";
+    font-size: 7dvh;
+    font-weight: 100;
+
+    text-transform: uppercase;
+    text-shadow: 0dvh 0.2dvh 0.2dvh rgba(0, 0, 0, 0.7);
+}
+.parallax-subheader {
+    color: white;
+    font-family: "Barlow";
+    font-size: 5dvh;
+    font-weight: 700;
+}
+.parallax-subheader-barlow {
+    color: white;
+    font-family: "Barlow";
+    font-size: 4dvh;
+    font-weight: 100;
+    text-transform: uppercase;
+}
+.parallax-line {
+    position: absolute;
+    background: transparent;
+    border: 0px solid white;
+    border-bottom: 0.2dvh solid white;
+    width: 5vw;
+    left: 0.1vw;
+}
+
+/* -- Parallax items -- */
+.parallax-item-bg, .parallax-item-colour-bg {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+
+    transition: all 0.5s ease;
+}
+.parallax-item {
+    transition: background-color 0.5s ease, padding 0.5s ease, transform 0.5s ease;
+}
+.parallax-item-bg {
+    background-size: cover;
+    background-repeat: no-repeat;
+    opacity: 0.2;
+}
+.parallax-item.large-square {
+    height: 32dvh;
+    width: 32dvh;
+    box-shadow: 0px 0px 4dvh rgba(0, 0, 0, 0.7);
+}
+.parallax-item.sublarge-square {
+    height: 28dvh;
+    width: 28dvh;
+}
+.parallax-item.medium-square {
+    height: 24dvh;
+    width: 24dvh;
+}
+.parallax-item.submedium-square {
+    height: 18dvh;
+    width: 18dvh;
+}
+.parallax-item.small-square {
+    height: 16dvh;
+    width: 16dvh;
+}
+.parallax-item.tiny-square {
+    height: 12dvh;
+    width: 12dvh;
+}
+.parallax-item .parallax-group-text, .parallax-item-preview .parallax-group-text {
+    color: white;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 6dvh;
+    font-weight: 700;
+    text-align: right;
+
+    position: absolute;
+    margin-left: 4dvh;
+    right: 3dvh;
+    bottom: 2dvh;
+}
+.parallax-item-preview .parallax-group-text {
+    font-size: 4dvh;
+}
+.parallax-item .parallax-major-project-text, .parallax-item-preview .parallax-major-project-text {
+    color: white;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 4dvh;
+    font-weight: 100;
+    text-align: right;
+
+    position: absolute;
+    margin-left: 4dvh;
+    right: 3dvh;
+    bottom: 2dvh;
+}
+.parallax-item .parallax-minor-project-text, .parallax-item-preview .parallax-minor-project-text {
+    color: white;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 2dvh;
+    font-weight: 100;
+    text-align: right;
+
+    position: absolute;
+    margin-left: 4dvh;
+    right: 2dvh;
+    bottom: 2dvh;
+}
+
+/* -- Parallax item text positioning -- */
+.parallax-item .centre, .parallax-item-preview .centre {
+    top: 0px;
+    left: 0px;
+    margin: 0px !important;
+    right: auto;
+    bottom: auto;
+    height: 100%;
+    width: 100%;
+
+    display: inline-flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+.parallax-item .top-left, .parallax-item-preview .top-left {
+    top: 2dvh;
+    left: 2dvh;
+    right: auto;
+    bottom: auto;
+
+    margin-left: 0dvh !important;
+    margin-right: 2dvh;
+    text-align: left;
+}
+.parallax-item .bottom-left, .parallax-item-preview .bottom-left {
+    top: auto;
+    left: 2dvh;
+    right: auto;
+    bottom: 2dvh;
+
+    margin-left: 0dvh;
+    margin-right: 2dvh;
+    text-align: left;
+}
+.parallax-item .bottom-right, .parallax-item-preview .bottom-right {
+    bottom: 1.5dvh;
+    left: auto;
+    right: 2.5dvh;
+    top: auto;
+}
+
+/* -- Parallax colours -- */
+.blue > .parallax-item-colour-bg {
+    background-color: rgba(75, 127, 170, 0.5);
+}
+.blurple > .parallax-item-colour-bg {
+    background-color: rgba(114, 137, 218, 0.8);
+}
+.bright-yellow > .parallax-item-colour-bg {
+    background-color: rgba(240, 219, 80, 0.6);
+}
+.copper > .parallax-item-colour-bg {
+    background-color: rgba(157, 95, 70, 0.8);
+}
+.cream-white > .parallax-item-colour-bg {
+    background-color: rgba(225, 220, 210, 0.8);
+}
+.dark-blurple > .parallax-item-colour-bg {
+    background-color: rgba(78, 93, 148, 0.5);
+}
+.dark-grey > .parallax-item-colour-bg {
+    background-color: rgba(32, 32, 32, 0.5);
+}
+.forest-green > .parallax-item-colour-bg {
+    background-color: rgba(100, 130, 101, 0.8);
+}
+.gold > .parallax-item-colour-bg {
+    background-color: rgba(206, 155, 35, 0.6);
+}
+.light-blue > .parallax-item-colour-bg {
+    background-color: rgba(172, 210, 230, 0.5);
+}
+.light-grey > .parallax-item-colour-bg {
+    background-color: rgba(210, 210, 210, 0.5);
+}
+.light-purple > .parallax-item-colour-bg {
+    background-color: rgba(195, 150, 180, 0.6);
+}
+.midnight-blue > .parallax-item-colour-bg {
+    background-color: rgba(42, 66, 113, 0.4);
+}
+.orange > .parallax-item-colour-bg {
+    background-color: rgba(224, 170, 100, 0.4);
+}
+.mauve > .parallax-item-colour-bg {
+    background-color: rgba(125, 83, 111, 0.6);
+}
+.red > .parallax-item-colour-bg {
+    background-color: rgba(160, 45, 40, 0.8);
+}
+.sepia > .parallax-item-colour-bg {
+    background-color: rgba(185, 160, 134, 0.6);
+}
+.salmon > .parallax-item-colour-bg {
+    background-color: rgba(240, 120, 120, 0.7);
+}
+.transparent-sepia > .parallax-item-colour-bg {
+    background-color: rgba(185, 160, 134, 0.5);
+}
+.yellow > .parallax-item-colour-bg {
+    background-color: rgba(220, 210, 145, 0.5);
+}
+
+/* -- Status indicators -- */
+.parallax-item-complete {
+    color: rgb(60, 110, 70);
+}
+.parallax-item-complete-ongoing {
+    color: rgb(80, 150, 95);
+}
+.parallax-item-beta-ongoing {
+    color: rgb(165, 195, 170);
+}
+.parallax-item-alpha-ongoing {
+    color: rgb(220, 220, 145);
+}
+.parallax-item-in-planning {
+    color: rgb(220, 150, 50);
+}

@@ -1,0 +1,625 @@
+/* -- Parallax positioning and backgrounds -- */
+#gallery-section { 
+    height: calc(400vh*4); 
+} 
+/* -- [TEMP] -- */
+.project-parallax-container {
+  position: sticky;
+  top: 100dvh;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  box-shadow: -2dvh 0 5dvh rgba(0, 0, 0, 0.7),
+              -2dvh 0 5dvh rgba(0, 0, 0, 0.7);
+  z-index: 2;
+}
+.project-parallax-container > * { will-change: top, transform; transition: none !important; }
+section#scene { 
+    height: 100dvh; 
+}
+
+/* -- NOT IN WORK -- */
+.project-parallax-container-gradient-bg {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 15, 15, 1.0);
+  background: -webkit-linear-gradient(top left, rgba(38, 54, 76, 1.0), rgba(5, 5, 5, 1.0));
+  background: -moz-linear-gradient(top left, rgba(38, 54, 76, 1.0), rgba(5, 5, 5, 1.0));
+  background: linear-gradient(to bottom right, rgba(38, 54, 76, 1.0), rgba(5, 5, 5, 1.0));
+	filter: brightness(0.7);
+}
+.project-parallax-container-room-bg {
+	position: absolute;
+	top: 0;
+    left: 0;
+	width: 100dvw;
+	height: 100dvh;
+	background-image: url("../../gfx/interface/chernobyl_abandoned_room_bg.jpg");
+	background-attachment: fixed;
+	background-repeat: no-repeat;
+	background-size: cover;
+
+	filter: brightness(0.1);
+	opacity: 0.2;
+}
+.project-parallax-scroll-container.slow-scroll, .parallax-panel-scroll-container.slow-scroll {
+  transition: all 1s ease;
+}
+.project-parallax-scroll-container.fast-scroll {
+	transition: all 0.25s ease;
+}
+.parallax-panel-scroll-container {
+	/*transition: all 0.5s ease;*/
+}
+.parallax-content-container {
+  transform: translateY(-25dvh);
+}
+
+
+
+/* -- Parallax content panel styling -- */
+.parallax-item-content-panel {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.95);
+	box-shadow: 0px 0px 4dvh rgba(0, 0, 0, 1);
+  opacity: 0;
+  pointer-events: none;
+
+  color: white;
+  font-family: var(--website-tertiary-font), sans-serif;
+  font-size: 1rem;
+  height: 0;
+  width: calc(clamp(20rem, 25rem, 50dvw));
+
+  transition: all 0.5s ease;
+  z-index: 3;
+}
+.parallax-item-content-panel.shown {
+  height: clamp(20rem, 40dvh, 40dvh);
+  padding-bottom: 0.5dvh;
+
+  opacity: 1;
+  pointer-events: all;
+}
+
+.parallax-item-content-panel > .content-wrapper {
+  margin: 1.5dvh;
+  margin-right: 0;
+  max-height: calc(99% - 3dvh);
+  overflow: auto;
+}
+.parallax-item-content-panel.maximised > .content-wrapper {
+  max-height: calc(100% - 20dvh - 8px);
+}
+.parallax-item-content-panel > .content-wrapper > .text-wrapper {
+    margin-right: 2rem;
+    max-width: 40rem;
+}
+.parallax-item-content-panel.maximised > .content-wrapper > .text-wrapper {
+    margin: 0 auto;
+}
+
+    /* -- Inside element styling -- */
+.parallax-item-content-panel-title {
+  color: white;
+  font-family: var(--website-primary-font), sans-serif;
+  font-size: 3dvh;
+  font-weight: 700;
+    margin-bottom: 1rem;
+  margin-right: 1.5dvh;
+
+  text-transform: uppercase;
+}
+.parallax-item-content-panel-divider {
+  background-color: white;
+  margin-top: 1.5dvh;
+  margin-bottom: 1.5dvh;
+  margin-right: 85%;
+}
+.parallax-item-content-panel-divider.added-margin {
+  margin-left: 0dvh;
+  margin-top: 2dvh;
+}
+.parallax-item-development-date {
+  margin-bottom: 0.5dvh;
+  margin-left: 0.5dvh;
+  font-size: 1.5dvh;
+}
+.parallax-item-content-panel-status-indicator.primary {
+  font-weight: 400;
+}
+.parallax-item-content-panel-status-indicator.secondary {
+  font-weight: 300;
+}
+.parallax-item-content-panel-status-indicator.tertiary {
+  font-weight: 200;
+}
+.parallax-item-content-panel-status-indicator.suspended {
+  font-weight: 100;
+}
+.parallax-item-content-panel-body-text {
+  margin-top: 1rem;
+
+  font-size: 1.25rem;
+  font-weight: 100;
+}
+
+/* -- Buttons -- */
+.parallax-item-content-panel:not(.maximised) .content-panel-close-btn:hover, .parallax-item-content-panel:not(.maximised) .content-panel-maximise-btn:hover, .parallax-item-content-panel:not(.maximised) .content-panel-preview-btn:hover, .content-panel-preview-btn.active {
+  box-shadow: 0px 0px 2dvh rgba(0, 0, 0, 0.35);
+  filter: invert(0.95);
+
+  cursor: pointer;
+}
+.content-panel-close-btn {
+  position: absolute;
+  top: 0dvh;
+  right: -5.5dvh;
+  height: 3dvh;
+  width: 3dvh;
+
+  background-color: rgb(15, 15, 15);
+  box-shadow: 0px 0px 2dvh rgba(0, 0, 0, 0.35);
+  padding: 1dvh;
+
+  transition: all 0.5s ease;
+}
+.content-panel-maximise-btn {
+  position: absolute;
+  top: 5.5dvh;
+  right: -5.5dvh;
+  height: 3dvh;
+  width: 3dvh;
+
+  background-color: rgb(15, 15, 15);
+  padding: 1dvh;
+
+  transition: all 0.5s ease;
+}
+.content-panel-preview-btn {
+  position: absolute;
+  top: 11dvh;
+  right: -5.5dvh;
+  height: 3dvh;
+  width: 3dvh;
+
+  background-color: rgb(15, 15, 15);
+  padding: 1dvh;
+
+  transition: all 0.5s ease;
+}
+
+/* -- Bookmark and pin icons -- */
+.parallax-icon {
+  position: absolute;
+  height: 20%;
+  width: 20%;
+  border-radius: 50%;
+
+  top: 3.5%;
+  transition: all 0.5s ease;
+}
+.parallax-item:not(:hover) .parallax-icon {
+  opacity: 0;
+  pointer-events: none;
+}
+.parallax-item:hover .parallax-icon {
+  opacity: 1;
+  pointer-events: auto;
+}
+.parallax-icon:hover {
+  border-radius: 50%;
+
+  background-color: rgba(235, 235, 235, 0.3);
+}
+.parallax-item .bookmark {
+  background-size: 50% 50%;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+
+  right: 21%;
+}
+.parallax-item .pin, .parallax-item-preview .close-btn {
+  background-size: 50% 50%;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+
+  right: 3.5%;
+}
+.parallax-item .bookmark-empty {
+  background-image: url("../../gfx/interface/icons/bookmark_icon_empty.png");
+}
+.parallax-item .bookmark-filled {
+  background-image: url("../../gfx/interface/icons/bookmark_icon_filled.png");
+}
+.parallax-item .pin-empty {
+  background-image: url("../../gfx/interface/icons/pin_icon_empty.png");
+}
+.parallax-item .pin-filled {
+  background-image: url("../../gfx/interface/icons/pin_icon_filled.png");
+}
+.parallax-item-preview .close-btn {
+  background-image: url("../../gfx/interface/icons/close_no_bounds.png");
+}
+.parallax-item-preview:not(.selected) .close-btn {
+  opacity: 0;
+  pointer-events: none;
+}
+.parallax-item-preview:hover:not(.selected) .close-btn {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.project-parallax-scroll-indicator {
+  position: absolute;
+  top: 99.5dvh;
+  left: 0px;
+
+  height: 0.5dvh;
+  width: 100%;
+  z-index: 1;
+}
+.project-parallax-scroll-fill-indicator {
+  background-color: white;
+  opacity: 0.5;
+
+  height: 100%;
+  width: 0px;
+
+  transition: opacity 1s ease, width 1s ease;
+}
+
+/* -- Temporary, this can be fixed later [WIP] -- */
+a {
+	text-decoration: none;
+	color: white;
+}
+#scene {
+	position: relative;
+	overflow: visible;
+	/* Tripartite project division */
+	height: 100%;
+	width: 100%;
+}
+
+/* -- gallery_bookmarks.css -- */
+/* -- Parallax gallery bookmark styling -- */
+.parallax-bookmark-container {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  height: 50vh;
+
+  z-index: 1;
+
+  background: linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 1) 0%,
+          rgba(0, 0, 0, 0.5) 60%,
+          rgba(0, 0, 0, 0) 100%
+  );
+
+  transition: all 0.5s ease, top 0s ease !important;
+  pointer-events: none;
+}
+.parallax-bookmark-container.no-bookmarks {
+  background: linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.7) 0%,
+          rgba(0, 0, 0, 0.4) 40%,
+          rgba(0, 0, 0, 0) 60%
+  );
+}
+.parallax-bookmark-container.minimised > .project-parallax-preview-container > .parallax-item-preview {
+  pointer-events: none;
+}
+.project-parallax-dots-container {
+  position: absolute;
+  top: 90%;
+  height: 10%;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+
+  pointer-events: all;
+}
+.project-parallax-preview-wrapper {
+  position: absolute;
+  top: 0%;
+  height: 90%;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  overflow: visible;
+}
+
+/* -- Bookmark interface -- */
+.project-parallax-text-container {
+  display: flex;
+  position: absolute;
+  top: 20%;
+  left: 0px;
+  height: 10%;
+  width: 100%;
+
+  justify-content: center;
+  transition: all 0.5s ease;
+}
+.no-bookmarks .project-parallax-text-container {
+  top: 60%;
+}
+.project-parallax-preview-container {
+  display: flex;
+  position: absolute;
+  top: 35%;
+  left: 0px;
+  height: 40%;
+  width: 100%;
+}
+.parallax-bookmark-dot {
+  width: 2dvh;
+  height: 2dvh;
+
+  border-radius: 50%;
+  border: 0.1dvh solid white;
+  margin-left: 2dvh;
+
+  transition: all 1s ease;
+}
+.parallax-bookmark-dot.fade-in {
+  animation: bookmark-dot-fade-in 1s forwards;
+}
+.parallax-bookmark-dot.fade-out {
+  animation: bookmark-dot-fade-out 0.5s forwards;
+  pointer-events: none;
+}
+.parallax-bookmark-dot.filled {
+  background-color: white;
+}
+.parallax-bookmark-dot:first-child {
+  margin-left: 0px;
+}
+.project-parallax-preview-container {
+  transition: all 0.5s ease;
+}
+
+.bookmarks-title {
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  font-family: "Barlow";
+  font-size: 3dvh;
+  font-weight: 100;
+  text-transform: uppercase;
+
+  padding: 0.5dvh;
+  padding-left: 1vw;
+  padding-right: 1vw;
+
+  pointer-events: all;
+  vertical-align: middle;
+}
+.project-parallax-bookmark-label-text {
+  margin-left: 0.5vw;
+}
+.bookmark-text-icon, .bookmark-minimise-icon {
+  position: relative;
+  top: 10%;
+  height: 3dvh;
+  width: 3dvh;
+}
+.bookmark-minimise-icon {
+  margin-left: 0.75vw;
+  transition: all 0.5s ease;
+}
+
+/* -- No bookmarks label -- */
+.project-parallax-no-bookmark-label-text {
+  display: flex;
+  position: absolute;
+  top: 75%;
+  left: 10%;
+  height: 20%;
+  max-height: 20%;
+  width: 80%;
+
+  color: white;
+  font-family: "Barlow";
+  font-size: 2.5dvh;
+  font-weight: 100;
+
+  justify-content: center;
+  margin: 0.5dvh;
+  transition: all 0.5s ease;
+}
+.project-parallax-no-bookmark-label-text.hidden {
+  opacity: 0;
+}
+.no-bookmark-label-image-icon {
+  height: 2dvh;
+  width: 2dvh;
+}
+
+/* -- Actual item preview -- */
+.parallax-item-preview {
+  position: relative;
+  top: 0px;
+  left: auto;
+  min-width: 24dvh;
+  min-height: 24dvh;
+
+  box-shadow: 0px 0px 4dvh 0px rgba(0, 0, 0, 0.8);
+
+  transform: perspective(20dvh) rotateY(-4deg);
+  pointer-events: all;
+
+  transition: all 0.5s ease, z-index 1ms linear !important;
+}
+.parallax-item-preview .parallax-item-colour-bg:after {
+  position: absolute;
+
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+
+  background-color: rgb(0, 0, 0);
+  opacity: 1;
+
+  content: "";
+  z-index: -1;
+}
+.parallax-item-preview > span {
+  position: absolute;
+  color: white;
+}
+.parallax-item-preview > .parallax-major-project-text {
+  font-size: 3dvh;
+
+  margin-left: 3.5vw;
+  right: 2dvh;
+  bottom: 2dvh;
+}
+
+/* -- Disable leftover buttons -- */
+.parallax-item-preview > .bookmark, .parallax-item-preview > .pin {
+  pointer-events: none;
+}
+
+/* -- Content Panels -- */
+/* -- gallery_panels.css -- */
+.parallax-panel-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+
+  pointer-events: none;
+}
+.parallax-item-content-panel {
+  pointer-events: all;
+}
+.parallax-item-content-panel:not(.shown) {
+  pointer-events: none;
+}
+
+/* -- Artistic image styling -- */
+.preview-image-container {
+  overflow: hidden;
+}
+.preview-image {
+  margin-top: 5%;
+  margin-bottom: 5%;
+  width: 100%;
+
+  transition: all 2s ease;
+}
+.preview-image:not(.cursor-shown) {
+  cursor: none;
+}
+.image-magnifier-glass {
+  position: absolute;
+  border: 0.1dvh solid white;
+
+  height: 12dvh;
+  width: 16dvh;
+  pointer-events: none;
+
+  transition: opacity 0.5s ease, width 2s ease, height 2s ease;
+}
+.parallax-item-content-panel.maximised .preview-image-container {
+  width: 80dvh;
+}
+.parallax-item-content-panel.maximised .image-magnifier-glass {
+  height: 24dvh;
+  width: 36dvh;
+}
+
+/* -- Maximised content panel CSS -- */
+.parallax-item-content-panel.being-minimised {
+  transition: all 1s ease;
+}
+.parallax-item-content-panel.maximised {
+  position: fixed;
+  top: 0 !important;
+  left: 0 !important;
+
+  height: 100dvh;
+  width: 100vw;
+
+  transition: all 2s ease;
+}
+.parallax-item-content-panel.maximised:not(.shown) {
+  pointer-events: none;
+}
+.parallax-item-content-panel.maximised:not(.shown) > .content-wrapper {
+  left: 0px;
+  margin-top: 50%;
+  max-height: 0dvh;
+  opacity: 0;
+  transition: all 1s ease !important;
+}
+.parallax-item-content-panel.instant-minimisation {
+  height: 0 !important;
+  transition: all 0.5s ease !important;
+}
+
+/* -- Maximisation formatting -- */
+.parallax-item-content-panel.maximised > .content-wrapper {
+  height: calc(100dvh - 20dvh);
+  width: 70%;
+  margin-left: calc(15% + 1.5dvh);
+  margin-right: 25%;
+  margin-top: 10dvh;
+}
+.parallax-item-content-panel.maximised > .content-wrapper, .parallax-item-content-panel.being-minimised > .content-wrapper {
+  transition: all 2s ease;
+}
+
+/* -- Maximised buttons -- */
+.parallax-item-content-panel.shown.maximised .content-panel-close-btn {
+  top: 9.5dvh;
+  right: 15vw;
+
+  border-radius: 50%;
+  transform: rotateZ(180deg) scaleX(-1);
+}
+.parallax-item-content-panel.shown.maximised .content-panel-maximise-btn {
+  top: 9.5dvh;
+  right: calc(15vw + 5.5dvh);
+
+  border-radius: 50%;
+  transform: rotateZ(180deg) scaleX(-1);
+}
+.parallax-item-content-panel.shown.maximised .content-panel-preview-btn {
+  top: 9.5dvh;
+  right: calc(15vw + 11dvh);
+
+  border-radius: 50%;
+  transform: rotateZ(360deg) scaleX(-1);
+}
+.parallax-item-content-panel.maximised .content-panel-close-btn {
+  background-color: rgba(0, 0, 0, 0);
+  transition: all 1.25s ease 0.25s;
+}
+.parallax-item-content-panel.maximised .content-panel-maximise-btn {
+  background-color: rgba(0, 0, 0, 0);
+  transition: all 1.25s ease;
+}
+.parallax-item-content-panel.maximised .content-panel-preview-btn:not(.active) {
+  background-color: rgba(0, 0, 0, 0);
+  transition: all 1.25s ease;
+}
+
+.parallax-item-content-panel.shown.maximised .content-panel-close-btn:hover, .parallax-item-content-panel.shown.maximised .content-panel-maximise-btn:hover, .parallax-item-content-panel.shown.maximised .content-panel-preview-btn:not(.active):hover {
+  cursor: pointer;
+  border-radius: 50%;
+
+  background-color: rgba(235, 235, 235, 0.4);
+  transition-delay: 1ms;
+}

@@ -625,7 +625,7 @@ window.HomepageGallery = class extends window.WebComponent {
 			rect.top <= 0 ? Math.min(Math.abs(rect.top), scrollable_dist) : 0;
 		var siblings = gallery_obj.parallax_body.children;
 		for (let i = 0; i < siblings.length; i++) {
-			var child = siblings[i];
+			let child = siblings[i];
 			if (child.id === "project-parallax-bookmark-container") {
 				child.style.top = vertical_offset + window.innerHeight / 2 + "px";
 			} else if (child.id === "project-parallax-scroll-indicator") {
