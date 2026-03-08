@@ -969,8 +969,8 @@ window.HomepageGallery = class extends window.WebComponent {
 		
 		// 3. Stop the container from moving
 		this.gallery.content_panel_update_paused = true;
-		this.gallery.content_panel_container.style.transform = "none";
-		this.gallery.content_panel_scroll_container.style.transform =
+		//this.gallery.content_panel_container.style.transform = "none";
+		//this.gallery.content_panel_scroll_container.style.transform =
 			"none";
 		
 		// 4. Trigger transition to maximised state
@@ -1064,7 +1064,7 @@ window.HomepageGallery = class extends window.WebComponent {
 				translate_y = matrix.m42; // m42 represents the Y translation in the matrix
 			}
 			
-			gallery_obj.content_panel_container.style.transform = "none";
+			//gallery_obj.content_panel_container.style.transform = "none";
 			
 			// Sync the content panel scroll wrapper with:
 			// 1. Horizontal Scroll (gallery_obj.parallax_scroll_x in vh)
