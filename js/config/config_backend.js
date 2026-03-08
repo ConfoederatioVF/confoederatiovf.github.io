@@ -2,10 +2,6 @@ window.config = {}; //[WIP] - Config
 config.homepage = {
   js_files: [
     //Head files
-    "js/UF/ABRS/ABRS.js",
-    "js/UF/actions/caching_actions.js",
-    "js/UF/actions/timelines_actions.js",
-    "js/UF/ai/basic_ai.js",
     "js/UF/animation/basic_animation.js",
     "js/UF/arrays/basic_arrays.js",
     "js/UF/arrays/conversion_arrays.js",
