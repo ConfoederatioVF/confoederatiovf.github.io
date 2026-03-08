@@ -163,10 +163,10 @@ window.HomepageGallery = class extends window.WebComponent {
 					this.onParallaxHover(e);
 				}, 100);
 			});
-			// REMOVED calls to update methods here. 
-			// Updates are now handled solo by the requestAnimationFrame tick 
-			// in initGalleryUI to prevent "double-updating" jitter on mobile.
-			document.addEventListener("scroll", (e) => {});
+			document.addEventListener("scroll", (e) => {
+				this.updateParallaxScrollValues();
+				this.updateContentPanelContainer();
+			});
 		}
 	}
 	
@@ -618,11 +618,7 @@ window.HomepageGallery = class extends window.WebComponent {
 			this.perspective_string = `rotateX(${this.perspective_deg_x}) rotateY(${this.perspective_deg_y})`;
 			gallery_obj.scene.style.transform = `perspective(20em) ${this.perspective_string}`;
 		});
-		
-		// Removed redundant update call from window scroll listener 
-		// to ensure the rAF tick remains the single source of truth.
-		window.addEventListener("scroll", () => {});
-		
+		window.addEventListener("scroll", () => this.updateParallaxScrollValues());
 		gallery_obj.parallax_body.addEventListener(
 			"wheel",
 			(e) => {
@@ -650,21 +646,22 @@ window.HomepageGallery = class extends window.WebComponent {
 		var siblings = gallery_obj.parallax_body.children;
 		for (let i = 0; i < siblings.length; i++) {
 			let child = siblings[i];
+			
 			let translate_px = vertical_offset;
 			
 			if (child.id === "project-parallax-bookmark-container") {
 				translate_px = vertical_offset - window.innerHeight / 2;
+			} else {
+				
 			}
-			
-			// Using translate3d to trigger hardware acceleration for mobile smoothness
-			child.style.transform = `translate3d(0, ${translate_px}px, 0)`;
+			child.style.transform = `translateY(${translate_px}px)`;
 		}
 		if (rect.top <= 0 && rect.bottom >= window.innerHeight) {
 			var progress = Math.abs(rect.top) / scrollable_dist;
 			gallery_obj.parallax_scroll_x = progress * gallery_obj.gallery_width * -1;
 			
-			// Apply both X and Y to the underlay using translate3d
-			gallery_obj.parallax_container.style.transform = `translate3d(${gallery_obj.parallax_scroll_x}vh, 0, 0)`;
+			// Apply both X and Y to the underlay
+			gallery_obj.parallax_container.style.transform = `translateX(${gallery_obj.parallax_scroll_x}vh)`;
 			
 			if (gallery_obj.parallax_scroll_indicator)
 				gallery_obj.parallax_scroll_indicator.style.width = `${progress * 100}vw`;
@@ -1069,22 +1066,26 @@ window.HomepageGallery = class extends window.WebComponent {
 	updateContentPanelContainer() {
 		var gallery_obj = this.gallery;
 		if (!gallery_obj.content_panel_update_paused) {
+			// Find the main parallax layer to extract its current dynamic Y offset
 			let main_layer = this.element.querySelector(".layer.main");
 			let translate_x = 0;
 			let translate_y = 0;
 			
 			if (main_layer) {
+				// Extract the current translateY/translate3d value applied by the parallax engine
 				let style = window.getComputedStyle(main_layer);
 				let matrix = new WebKitCSSMatrix(style.transform);
-				translate_x = matrix.m41;
-				translate_y = matrix.m42;
+				translate_x = matrix.m41; //m41 represents the X translation in the matrix
+				translate_y = matrix.m42; // m42 represents the Y translation in the matrix
 			}
 			
 			gallery_obj.content_panel_container.style.transform = "none";
 			
-			// Sync using translate3d for GPU optimization
+			// Sync the content panel scroll wrapper with:
+			// 1. Horizontal Scroll (gallery_obj.parallax_scroll_x in vh)
+			// 2. Vertical Parallax displacement (translate_y in pixels)
 			gallery_obj.content_panel_scroll_container.style.transform =
-				`translate3d(calc(${gallery_obj.parallax_scroll_x}vh + ${translate_x}px), ${translate_y}px, 0)`;
+				`translateX(calc(${gallery_obj.parallax_scroll_x}vh + ${translate_x}px)) translateY(${translate_y}px)`;
 		}
 	}
 	
