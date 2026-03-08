@@ -141,6 +141,7 @@ window.HomepageGallery = class extends window.WebComponent {
 	}
 	
 	init () {
+		this.hover_loop;
 		this.initGalleryTiles();
 		this.initGalleryUI();
 		this.gallery.parallax_body.addEventListener("mousemove", (e) =>
@@ -153,6 +154,20 @@ window.HomepageGallery = class extends window.WebComponent {
 		);
 		for (let i = 0; i < all_art_preview_imgs.length; i++)
 			this.magnify(all_art_preview_imgs[i].querySelector("img"), 3);
+		
+		//Event handlers
+		{
+			document.addEventListener("mouseover", (e) => {
+				if (this.hover_loop) clearInterval(this.hover_loop);
+				this.hover_loop = setInterval(() => {
+					this.onParallaxHover(e);
+				}, 100);
+			});
+			document.addEventListener("scroll", (e) => {
+				this.updateParallaxScrollValues();
+				this.updateContentPanelContainer();
+			});
+		}
 	}
 	
 	isMagnifierMaximised(arg0_element_id) {
@@ -620,7 +635,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		);
 	}
 	
-	updateParallaxScrollValues() {
+	updateParallaxScrollValues () {
 		var gallery_obj = this.gallery;
 		var track = document.getElementById("gallery-section");
 		if (!track) return;
