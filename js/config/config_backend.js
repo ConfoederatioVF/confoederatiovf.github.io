@@ -75,9 +75,6 @@ config.homepage = {
     "ministrat/core/ui/ministrat_topbar.js",
     "ministrat/core/ui/ministrat_ui_draw_loop.js",
     
-    //Event handling
-    "js/pages/homepage/event_handlers.js",
-    
     //Config files
     "js/config/homepage/defines/common_defines.js",
     "js/config/homepage/gallery_tiles/gallery_tiles.js",
