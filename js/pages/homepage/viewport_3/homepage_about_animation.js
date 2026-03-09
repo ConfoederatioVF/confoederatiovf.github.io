@@ -17,6 +17,9 @@
         direction: "right",
         distance: 250
       });
+      document.getElementById("main-map").onclick = (e) => {
+        ministratMainMapClickHandler(e);
+      };
 
       /*
       //16vh offset
