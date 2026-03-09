@@ -569,27 +569,43 @@ window.HomepageGallery = class extends window.WebComponent {
 			let all_panels = this.element.querySelectorAll(".content-wrapper");
 			for (let i = 0; i < all_panels.length; i++) {
 				let title = all_panels[i].querySelector(
-					".parallax-item-content-panel-title"
+					".parallax-item-content-panel-title",
 				);
 				if (!title) continue;
 				let id = all_panels[i].id
 				.replace("-content-panel", "")
 				.replace("-content-wrapper", "");
+				
+				// Check if this specific panel contains a magnification-capable image
+				let has_magnifier =
+					all_panels[i].querySelector(".preview-image-container") !==
+					null;
+				let magnifier_btn_html = has_magnifier
+					? `<img id="${id}-preview-btn" class="content-panel-preview-btn active" src="gfx/interface/icons/preview_icon.png" draggable="false">`
+					: "";
+				
 				title.innerHTML = `${title.textContent}
-        <img id="${id}-close-btn" class="content-panel-close-btn" src="gfx/interface/icons/close_btn.png" draggable="false">
-        <img id="${id}-maximise-btn" class="content-panel-maximise-btn" src="gfx/interface/icons/maximise_icon.png" draggable="false">
-      `;
+					<img id="${id}-close-btn" class="content-panel-close-btn" src="gfx/interface/icons/close_btn.png" draggable="false">
+					<img id="${id}-maximise-btn" class="content-panel-maximise-btn" src="gfx/interface/icons/maximise_icon.png" draggable="false">
+					${magnifier_btn_html}
+				`;
+				
 				this.element.querySelector(`#${id}-close-btn`).onclick = () =>
 					this.closeContentPanel(id);
 				this.element.querySelector(`#${id}-maximise-btn`).onclick =
 					() => {
 						let panel = this.element.querySelector(
-							`#${id}-content-panel`
+							`#${id}-content-panel`,
 						);
 						panel.classList.contains("maximised")
 							? this.minimiseContentPanel(id)
 							: this.maximiseContentPanel(id);
 					};
+				
+				if (has_magnifier) {
+					this.element.querySelector(`#${id}-preview-btn`).onclick =
+						() => this.togglePreview(id);
+				}
 			}
 		}, 500);
 		
