@@ -293,7 +293,7 @@ a {
 .parallax-bookmark-container {
   position: absolute;
   top: 50%;
-  width: 100%;
+  width: 100;
   height: 50vh;
 
   z-index: 1;

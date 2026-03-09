@@ -33,12 +33,19 @@
             font-weight: 100;
             text-transform: uppercase;
 
+            > line {
+                height: 100%;
+                width: 1px;
+                background-color: rgba(255, 255, 255, 0.3);
+                display: block;
+            }
+
             > li {
                 display: flex;
                 align-items: center;
                 height: 100%;
-                padding: 0 1rem;
-                position: relative; /* Anchor for level 1 dropdown */
+                padding: 0 var(--item-padding);
+                position: relative;
 
                 > a {
                     position: relative;
@@ -62,11 +69,36 @@
                 }
             }
 
+            /* Hover Logic */
             > li:hover > a {
                 font-weight: 700;
                 &::after {
                     transform: scaleX(1);
                     transform-origin: bottom left;
+                }
+            }
+
+            /* --- ALIGNMENT LOGIC --- */
+
+            /* Item to the LEFT of the line */
+            > li:has(+ line) {
+                padding-right: calc(var(--item-padding) + var(--item-margin));
+
+                /* Dropdown aligns its RIGHT edge to the line */
+                > ul {
+                    left: auto;
+                    right: 0;
+                }
+            }
+
+            /* Item to the RIGHT of the line */
+            > line + li {
+                padding-left: calc(var(--item-padding) + var(--item-margin));
+
+                /* Dropdown aligns its LEFT edge to the line */
+                > ul {
+                    left: 0;
+                    right: auto;
                 }
             }
         }
@@ -79,10 +111,9 @@
             background-color: var(--bg-dropdown);
             backdrop-filter: blur(10px);
             color: var(--text-dropdown);
-            left: 100%;
             list-style: none;
             margin: 0;
-            padding: 0; /* REMOVED padding to fix alignment */
+            padding: 0;
             opacity: 0;
             max-height: 0;
             overflow: hidden;
@@ -91,21 +122,18 @@
             font-weight: 500;
             width: max-content;
             z-index: 100;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            min-width: 20rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         /* LEVEL 1: Directly under the navbar */
         > ul > li > ul {
             top: 100%;
-            left: 0;
-            min-width: 100%;
-            transform: translateY(10px); /* Small offset for animation */
+            transform: translateY(10px);
         }
 
         /* LEVEL 2+: Flyouts to the side */
         ul li ul li ul {
-            top: 0; /* This makes it flush with the top of the parent LI */
+            top: 0;
             left: 100%;
             transform: translateX(10px);
         }
@@ -118,93 +146,81 @@
             transform: translate(0, 0);
         }
 
-        /* Two-column layout */
-        ul li ul.two-col {
-            grid-template-columns: repeat(2, max-content);
-            column-gap: 1rem;
-        }
-
-        /* Individual List Items in Dropdowns */
+        /* Submenu Item Styling */
         ul li ul li {
             padding: var(--item-padding);
-            position: relative; /* CRITICAL: Anchor for next level flyout */
+            position: relative;
             display: block;
+            min-width: 10rem;
             width: 100%;
             box-sizing: border-box;
 
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.03);
+            }
+
             a {
                 color: var(--text-dropdown);
-                text-decoration: none;
-                position: relative;
-                white-space: nowrap;
                 display: inline-block;
+                position: relative;
+                text-decoration: none;
                 transition: letter-spacing 0.3s ease;
+                white-space: nowrap;
+
+                &::after {
+                    content: "";
+                    position: absolute;
+                    width: 100%;
+                    height: 1px;
+                    bottom: -2px;
+                    left: 0;
+                    background-color: black;
+                    transform: scaleX(0);
+                    transform-origin: bottom left;
+                    transition: transform 0.2s ease-out;
+                }
             }
 
             a:hover {
+                cursor: pointer;
                 letter-spacing: 1px;
                 &::after {
                     transform: scaleX(1);
                 }
             }
-
-            a::after {
-                content: "";
-                position: absolute;
-                width: 100%;
-                height: 1px;
-                bottom: -2px;
-                left: 0;
-                background-color: black;
-                transform: scaleX(0);
-                transform-origin: bottom left;
-                transition: transform 0.2s ease-out;
-            }
         }
 
-        /* Highlight parent LI when child is hovered */
-        ul li ul li:hover {
-            background-color: rgba(0,0,0,0.03);
+        /* Two-column layout class */
+        ul li ul.two-col {
+            grid-template-columns: repeat(2, max-content);
+            column-gap: 1rem;
         }
 
-        /* Branding/Logo */
         .logo {
             height: 3rem;
             width: 3rem;
             margin: var(--item-margin);
         }
-
-        /* Vertical Divider */
-        line {
-            height: 100%;
-            width: 1px;
-            background-color: rgba(255, 255, 255, 0.3);
-            margin: 0 0.5rem;
-        }
-        > li:has(+ line) {
-            padding-right: calc(var(--item-padding) + var(--item-margin));
-        }
-        > line + li {
-            padding-left: calc(var(--item-padding) + var(--item-margin));
-            > ul { padding-left: calc(var(--item-margin)*0.5); }
-        }
-
-        > li:has(+ line) a::after, > line + li a::after {
-            left: calc(var(--item-margin)*0.5);
-            width: calc(100% - var(--item-margin));
+        .logo:hover {
+            content: url("gfx/interface/logos/confoederatio_logo.gif");
         }
     }
 </style>
 
 <ic-navbar>
-  <img src="gfx/interface/logos/confoederatio_icon.png" class="logo" draggable="false">
+  <img src = "gfx/interface/logos/confoederatio_icon.png" class = "logo" draggable = "false">
   <ul>
     <li><a>Datasets</a></li>
-    <li><a>Tools</a></li>
+    <li>
+      <a>Tools</a>
+      <ul>
+        <li><a>Test</a></li>
+      </ul>
+    </li>
     <line></line>
     <li>
       <a>Documentation</a>
-      <ul class="two-col">
+      <ul>
         <li><a>Confoederatio Docs</a></li>
         <li>
           <a>Vercengen &raquo;</a>
