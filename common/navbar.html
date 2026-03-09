@@ -1,192 +1,229 @@
 <style>
-  ic-navbar {
-      --height: 4rem;
-      --item-margin: 0.5rem;
-      --item-padding: 1rem;
-      
-      display: flex;
-      position: fixed;
-      
-      left: 0;
-      height: var(--height);
-      top: 0;
-      width: 100dvw;
-      
-      background-color: rgba(0, 0, 0, 0.15);
-      backdrop-filter: blur(5px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-      color: white;
-      font-family: var(--website-primary-font), "Barlow", sans-serif;
-      z-index: 99;
-      
-      .logo {
-          display: inline;
-          
-          height: 3rem;
-          width: 3rem;
-          
-          margin: var(--item-margin);
-      }
-      .logo:hover {
-          content: url("gfx/interface/logos/confoederatio_logo.gif");
-      }
-      
-      > ul {
-          font-family: var(--website-primary-font), "Barlow", sans-serif;
-          font-size: 1.5rem;
-          font-weight: 100;
-          text-transform: uppercase;
-          
-          > li {
-              align-items: center;
-              display: flex;
-              height: 100%;
-              padding-left: 1rem;
-              padding-right: 1rem;
-              
-              > a { transition: all 0.5s ease; }
-              > ul { top: 100% }
-          }
-          > li > a::after {
-              content: "";
-              position: absolute;
-              width: 100%;
-              height: 1px;
-              bottom: 0;
-              left: 0;
-              background-color: white;
-              transform: scaleX(0);
-              transform-origin: bottom right;
-              transition: transform 0.2s ease-out;
-          }
-          > li:hover {
-            cursor: pointer;
-              
-            > a {
+    ic-navbar {
+        --height: 4rem;
+        --item-margin: 0.5rem;
+        --item-padding: 1rem;
+        --bg-dropdown: rgba(255, 255, 255, 0.95);
+        --text-dropdown: rgba(0, 0, 0, 0.85);
+
+        display: flex;
+        align-items: center;
+        position: fixed;
+        left: 0;
+        height: var(--height);
+        top: 0;
+        width: 100dvw;
+        background-color: rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(5px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+        color: white;
+        font-family: var(--website-primary-font), "Barlow", sans-serif;
+        z-index: 99;
+
+        /* Top Level Menu */
+        > ul {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            height: 100%;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            font-size: 1.5rem;
+            font-weight: 100;
+            text-transform: uppercase;
+
+            > li {
+                display: flex;
+                align-items: center;
+                height: 100%;
+                padding: 0 1rem;
+                position: relative; /* Anchor for level 1 dropdown */
+
+                > a {
+                    position: relative;
+                    transition: all 0.5s ease;
+                    text-decoration: none;
+                    color: inherit;
+                    cursor: pointer;
+                }
+
+                > a::after {
+                    content: "";
+                    position: absolute;
+                    width: 100%;
+                    height: 1px;
+                    bottom: -2px;
+                    left: 0;
+                    background-color: white;
+                    transform: scaleX(0);
+                    transform-origin: bottom right;
+                    transition: transform 0.2s ease-out;
+                }
+            }
+
+            > li:hover > a {
                 font-weight: 700;
+                &::after {
+                    transform: scaleX(1);
+                    transform-origin: bottom left;
+                }
             }
-            > a::after {
-                transform: scaleX(1);
+        }
+
+        /* General Dropdown Container */
+        ul li ul {
+            position: absolute;
+            display: grid;
+            grid-template-columns: max-content;
+            background-color: var(--bg-dropdown);
+            backdrop-filter: blur(10px);
+            color: var(--text-dropdown);
+            left: 100%;
+            list-style: none;
+            margin: 0;
+            padding: 0; /* REMOVED padding to fix alignment */
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            text-transform: none;
+            font-weight: 500;
+            width: max-content;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            min-width: 20rem;
+        }
+
+        /* LEVEL 1: Directly under the navbar */
+        > ul > li > ul {
+            top: 100%;
+            left: 0;
+            min-width: 100%;
+            transform: translateY(10px); /* Small offset for animation */
+        }
+
+        /* LEVEL 2+: Flyouts to the side */
+        ul li ul li ul {
+            top: 0; /* This makes it flush with the top of the parent LI */
+            left: 100%;
+            transform: translateX(10px);
+        }
+
+        /* Show on Hover */
+        ul li:hover > ul {
+            opacity: 1;
+            max-height: 1000px;
+            overflow: visible;
+            transform: translate(0, 0);
+        }
+
+        /* Two-column layout */
+        ul li ul.two-col {
+            grid-template-columns: repeat(2, max-content);
+            column-gap: 1rem;
+        }
+
+        /* Individual List Items in Dropdowns */
+        ul li ul li {
+            padding: var(--item-padding);
+            position: relative; /* CRITICAL: Anchor for next level flyout */
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+
+            a {
+                color: var(--text-dropdown);
+                text-decoration: none;
+                position: relative;
+                white-space: nowrap;
+                display: inline-block;
+                transition: letter-spacing 0.3s ease;
+            }
+
+            a:hover {
+                letter-spacing: 1px;
+                &::after {
+                    transform: scaleX(1);
+                }
+            }
+
+            a::after {
+                content: "";
+                position: absolute;
+                width: 100%;
+                height: 1px;
+                bottom: -2px;
+                left: 0;
+                background-color: black;
+                transform: scaleX(0);
                 transform-origin: bottom left;
+                transition: transform 0.2s ease-out;
             }
-          }
-      }
-      ul {
-          list-style: none;
-          margin: 0;
-          padding-left: 0;
+        }
 
-          li {
-              float: left;
-              position: relative;
-              
-              ul {
-                  background-color: rgba(255, 255, 255, 0.95);
-                  backdrop-filter: blur(5px);
-                  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-                  color: rgba(0, 0, 0, 0.85);
-                  flex-direction: column;
-                  min-width: 100%;
-                  left: 0;
-                  width: max-content;
-                  
-                  display: flex;
-                  opacity: 0;
-                  overflow: hidden;
-                  max-height: 0;
-                  position: absolute;
-                  transition: all 0.5s ease, opacity 0s ease;
-                  
-                  font-weight: 500;
-                  text-transform: none;
-                  
-                  li {
-                      padding-left: 1rem;
-                      padding-right: 1rem;
-                  }
-              }
-          }
-      }
+        /* Highlight parent LI when child is hovered */
+        ul li ul li:hover {
+            background-color: rgba(0,0,0,0.03);
+        }
 
-      /* -- Atomics -- */
-      line {
-          height: var(--height);
-          width: 0.5px;
-          background-color: rgba(255, 255, 255, 0.5);
-          float: left;
-          position: relative;
-      }
-      > li:has(+ line) { 
-          padding-right: calc(var(--item-padding) + var(--item-margin));
-      }
-      > line + li { 
-          padding-left: calc(var(--item-padding) + var(--item-margin));
-          > ul { padding-left: calc(var(--item-margin)*0.5); }
-      }
-      
-      > li:has(+ line) a::after, > line + li a::after {
-          left: calc(var(--item-margin)*0.5);
-          width: calc(100% - var(--item-margin));
-      }
-      
-      /* -- Submenus -- */
-      ul li ul:hover { cursor: default; }
-      ul li ul li {
-          clear: both;
-          padding: calc(var(--item-padding)*0.5);
-          padding-left: var(--item-padding);
-          padding-right: var(--item-padding);
-          width: 100%;
-          
-          a {
-              color: rgba(0, 0, 0, 0.85);
-              position: relative;
-              transition: all 0.5s ease;
-              text-wrap: nowrap;
-          }
-          a:hover {
-              cursor: pointer;
-              letter-spacing: calc(var(--item-margin)*0.1);
-          }
-          a:after {
-              content:"";
-              position: absolute;
-              width: 100%;
-              height: 1px;
-              bottom: 0;
-              left: 0;
-              border-bottom: 1px solid black;
-              transform: scaleX(0);
-              transform-origin: bottom left;
-              transition: transform 0.2s ease-out;
-          }
-          a:hover:after {
-              transform: scaleX(1);
-          }
-      }
-      
-      /* -- Onhover functionality -- */
-      ul li:hover > ul, 
-      ul li:focus-within > ul, 
-      ul li ul:hover, 
-      ul li ul:focus {
-          max-height: 100dvh;
-          opacity: 1;
-          overflow: visible;
-      }
-  }
+        /* Branding/Logo */
+        .logo {
+            height: 3rem;
+            width: 3rem;
+            margin: var(--item-margin);
+        }
+
+        /* Vertical Divider */
+        line {
+            height: 100%;
+            width: 1px;
+            background-color: rgba(255, 255, 255, 0.3);
+            margin: 0 0.5rem;
+        }
+        > li:has(+ line) {
+            padding-right: calc(var(--item-padding) + var(--item-margin));
+        }
+        > line + li {
+            padding-left: calc(var(--item-padding) + var(--item-margin));
+            > ul { padding-left: calc(var(--item-margin)*0.5); }
+        }
+
+        > li:has(+ line) a::after, > line + li a::after {
+            left: calc(var(--item-margin)*0.5);
+            width: calc(100% - var(--item-margin));
+        }
+    }
 </style>
+
 <ic-navbar>
-  <img src = "gfx/interface/logos/confoederatio_icon.png" class = "logo" draggable = "false">
+  <img src="gfx/interface/logos/confoederatio_icon.png" class="logo" draggable="false">
   <ul>
     <li><a>Datasets</a></li>
     <li><a>Tools</a></li>
     <line></line>
     <li>
       <a>Documentation</a>
-      <ul>
+      <ul class="two-col">
         <li><a>Confoederatio Docs</a></li>
-        <li><a>Vercengen</a></li>
+        <li>
+          <a>Vercengen &raquo;</a>
+          <ul>
+            <li><a>Installation</a></li>
+            <li><a>Config</a></li>
+            <li>
+              <a>Legacy &raquo;</a>
+              <ul>
+                <li><a>v1.0</a></li>
+                <li><a>v2.0</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a>API Reference</a></li>
+        <li><a>User Guides</a></li>
+        <li><a>Advanced Setup</a></li>
+        <li><a>Community Wiki</a></li>
       </ul>
     </li>
   </ul>
