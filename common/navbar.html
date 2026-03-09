@@ -88,6 +88,7 @@
                 > ul {
                     left: auto;
                     right: 0;
+                    padding-right: var(--item-margin);
                 }
             }
 
@@ -97,6 +98,7 @@
 
                 /* Dropdown aligns its LEFT edge to the line */
                 > ul {
+                    padding-left: var(--item-margin);
                     left: 0;
                     right: auto;
                 }
@@ -155,10 +157,6 @@
             width: 100%;
             box-sizing: border-box;
 
-            &:hover {
-                background-color: rgba(0, 0, 0, 0.03);
-            }
-
             a {
                 color: var(--text-dropdown);
                 display: inline-block;
@@ -189,6 +187,7 @@
                 }
             }
         }
+        ul li ul li:hover > a::after { transform: scaleX(1); }
 
         /* Two-column layout class */
         ul li ul.two-col {
@@ -210,11 +209,20 @@
 <ic-navbar>
   <img src = "gfx/interface/logos/confoederatio_icon.png" class = "logo" draggable = "false">
   <ul>
-    <li><a>Datasets</a></li>
+    <li>
+      <a>Datasets</a>
+      <ul>
+        <li><a>Eoscala</a></li>
+        <li><a>Stadestér</a></li>
+        <li><a>Velkscala</a></li>
+      </ul>
+    </li>
     <li>
       <a>Tools</a>
       <ul>
-        <li><a>Test</a></li>
+        <li><a>AnalyticalEngine</a></li>
+        <li><a>Scriptly IDE</a></li>
+        <li><a>Vercengen</a></li>
       </ul>
     </li>
     <line></line>
@@ -225,21 +233,11 @@
         <li>
           <a>Vercengen &raquo;</a>
           <ul>
-            <li><a>Installation</a></li>
-            <li><a>Config</a></li>
-            <li>
-              <a>Legacy &raquo;</a>
-              <ul>
-                <li><a>v1.0</a></li>
-                <li><a>v2.0</a></li>
-              </ul>
-            </li>
+            <li><a>GitHub</a></li>
+            <li><a>API Reference</a></li>
+            <li><a>Docs</a></li>
           </ul>
         </li>
-        <li><a>API Reference</a></li>
-        <li><a>User Guides</a></li>
-        <li><a>Advanced Setup</a></li>
-        <li><a>Community Wiki</a></li>
       </ul>
     </li>
   </ul>
