@@ -481,7 +481,7 @@ a {
   color: white;
 }
 .parallax-item-preview > .parallax-major-project-text {
-  font-size: 3dvh;
+  font-size: 3dvh !important;
 
   margin-left: 3.5vw;
   right: 2dvh;

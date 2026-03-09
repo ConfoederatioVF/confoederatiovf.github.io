@@ -17,6 +17,7 @@ window.HomepageGallery = class extends window.WebComponent {
 			content_panel_update_paused: false,
 			exempt_id_patterns: ["preview-", "btn-"],
 			gallery_width: 500,
+			hovered_id: null,
 			no_bookmark_label: null,
 			parallax_body: null,
 			parallax_buttons: null,
@@ -595,8 +596,11 @@ window.HomepageGallery = class extends window.WebComponent {
 		
 		this.initGalleryDesktopEventHandlers();
 		
-		// Dependency visibility check — 100ms is fine, this is not
-		// per-frame work
+		gallery_obj.parallax_body.addEventListener("mouseleave", () => {
+			gallery_obj.hovered_id = null;
+		});
+		
+		// Dependency visibility check
 		setInterval(() => {
 			for (let i = 0; i < gallery_obj.parallax_selected.length; i++) {
 				var item_obj =
@@ -617,10 +621,23 @@ window.HomepageGallery = class extends window.WebComponent {
 			}
 		}, 100);
 		
-		// USE requestAnimationFrame INSTEAD OF setInterval(16)
 		const tick = () => {
 			this.updateParallaxScrollValues();
 			this.updateContentPanelContainer();
+			
+			if (gallery_obj.hovered_id) {
+				var target = this.element.querySelector(`#${gallery_obj.hovered_id}`);
+				if (target) {
+					var hover_time = parseInt(target.getAttribute("hover-time") || 0) + 16;
+					target.setAttribute("hover-time", hover_time);
+					
+					if (hover_time >= 500 && !gallery_obj.parallax_selected.includes(target.id)) {
+						gallery_obj.parallax_selected = [target.id];
+						this.updateHiddenElements();
+					}
+				}
+			}
+			
 			this._rafId = requestAnimationFrame(tick);
 		};
 		this._rafId = requestAnimationFrame(tick);
@@ -867,26 +884,14 @@ window.HomepageGallery = class extends window.WebComponent {
 		var gallery_obj = this.gallery;
 		var target = e.target.closest(".parallax-item");
 		
+		gallery_obj.hovered_id = target ? target.id : null;
+		
 		// Reset hover-time on every tile that isn't the current target
 		var all_tiles = this.element.querySelectorAll(".parallax-item");
 		for (let i = 0; i < all_tiles.length; i++) {
 			if (!target || all_tiles[i].id !== target.id) {
 				all_tiles[i].setAttribute("hover-time", 0);
 			}
-		}
-		
-		if (!target) return;
-		
-		var hover_time =
-			parseInt(target.getAttribute("hover-time") || 0) + 16;
-		target.setAttribute("hover-time", hover_time);
-		
-		if (
-			hover_time >= 500 &&
-			!gallery_obj.parallax_selected.includes(target.id)
-		) {
-			gallery_obj.parallax_selected = [target.id];
-			this.updateHiddenElements();
 		}
 	}
 	
