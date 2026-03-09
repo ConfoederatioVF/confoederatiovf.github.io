@@ -3,9 +3,6 @@
   function loadMinistratScrollHandler () {
     ministrat.scroll_handler_loop = setInterval(function(){
       if (ministrat.main.game_open) {
-        document.getElementById("ministrat-anchor").scrollIntoView({
-          behavior: "instant"
-        });
       }
     }, 100);
     
@@ -24,9 +21,6 @@
 
     if (ministrat.main.game_open) {
       //Make sure Ministrat is non-scrollable
-      document.getElementById("ministrat-anchor").scrollIntoView({
-        behavior: "instant"
-      });
 
       return true;
     }

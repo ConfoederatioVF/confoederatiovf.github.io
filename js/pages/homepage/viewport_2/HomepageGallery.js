@@ -614,7 +614,8 @@ window.HomepageGallery = class extends window.WebComponent {
 					});
 				}
 			}
-		}, 100);
+			this._onScrollUpdate();
+		});
 		
 		// Track interval for cleanup
 		if (!this._intervals) this._intervals = [];

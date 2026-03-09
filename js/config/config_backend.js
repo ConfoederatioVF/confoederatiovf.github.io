@@ -18,6 +18,8 @@ config.homepage = {
     "js/UF/BrowserUI/WebComponent.js",
     "js/UF/class/class_basic.js",
     "js/UF/colours/basic_colours.js",
+    "js/UF/date/basic_date.js",
+    "js/UF/date/history_date.js",
     "js/UF/log/basic_log.js",
     "js/UF/numbers/basic_numbers.js",
     "js/UF/numbers/ranges_numbers.js",
@@ -74,6 +76,9 @@ config.homepage = {
     
     "ministrat/core/ui/ministrat_topbar.js",
     "ministrat/core/ui/ministrat_ui_draw_loop.js",
+    
+    //Event handling
+    "js/pages/homepage/event_handlers.js",
     
     //Config files
     "js/config/homepage/defines/common_defines.js",
