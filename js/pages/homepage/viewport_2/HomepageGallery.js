@@ -595,9 +595,8 @@ window.HomepageGallery = class extends window.WebComponent {
 		
 		this.initGalleryDesktopEventHandlers();
 		
-		// Dependency visibility check — 100ms is fine, this is not
-		// per-frame work
-		setInterval(() => {
+		// Dependency visibility check loop
+		const dependency_interval = setInterval(() => {
 			for (let i = 0; i < gallery_obj.parallax_selected.length; i++) {
 				var item_obj =
 					gallery_obj.parallax_settings[
@@ -617,13 +616,21 @@ window.HomepageGallery = class extends window.WebComponent {
 			}
 		}, 100);
 		
-		// USE requestAnimationFrame INSTEAD OF setInterval(16)
-		const tick = () => {
+		// Track interval for cleanup
+		if (!this._intervals) this._intervals = [];
+		this._intervals.push(dependency_interval);
+		
+		// Use regular scroll event instead of requestAnimationFrame
+		this._onScrollUpdate = () => {
 			this.updateParallaxScrollValues();
 			this.updateContentPanelContainer();
-			this._rafId = requestAnimationFrame(tick);
 		};
-		this._rafId = requestAnimationFrame(tick);
+		
+		window.addEventListener("scroll", this._onScrollUpdate);
+		
+		// Initial update to set positions based on current scroll
+		this.updateParallaxScrollValues();
+		this.updateContentPanelContainer();
 		
 		this.initGallery();
 	}
