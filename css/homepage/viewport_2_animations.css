@@ -8,7 +8,7 @@
     background-color: rgba(120, 120, 120);
     opacity: 1;
     z-index: 3;
-    box-shadow: 0dvh 0dvh 2dvh rgba(0, 0, 0, 0.7);
+    box-shadow: 0 0 2dvh rgba(0, 0, 0, 0.7);
 }
 .parallax-item:hover > .parallax-item-colour-bg {
     opacity: 0.5;
@@ -21,7 +21,7 @@
 [animation] {
     transition: transform 0.75s ease, opacity 0.3s ease !important;
 }
-[animation*="-shown"] {
+[animation*="-shown"]:not([id*="preview-"]) {
     opacity: 1;
     transform: translate(0dvh, 0dvh);
 }

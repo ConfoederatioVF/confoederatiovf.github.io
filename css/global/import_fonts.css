@@ -329,10 +329,10 @@
   font-weight: 300;
 }
 
-/* -- Space Grotesk -- */
+/* -- Jost  -- */
 @font-face {
-  font-family: "Space Grotesk";
-  src: url("../../gfx/fonts/space_grotesk.ttf") format("truetype");
+  font-family: "Jost";
+  src: url("../../gfx/fonts/jost.ttf") format("truetype");
   font-weight: 100 900;
 }
 

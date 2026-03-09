@@ -74,7 +74,7 @@ window.HomepageGallery = class extends window.WebComponent {
 				<div id = "main-parallax-content-panel-scroll-wrapper" class = "parallax-panel-scroll-container"></div>
 			</div>
 
-			<div id = "bookmark-container" style = "tr">
+			<div id = "bookmark-container">
 				<div id = "project-parallax-bookmark-container" class = "parallax-bookmark-container minimised">
 					<div id = "project-parallax-bookmark-labels-container" class = "project-parallax-text-container">
 						<div id = "project-parallax-bookmark-label" class = "bookmarks-title">
@@ -904,7 +904,7 @@ window.HomepageGallery = class extends window.WebComponent {
 			
 			let translate_px = vertical_offset;
 			
-			if (child.id === "project-parallax-bookmark-container") {
+			if (child.id === "bookmark-container") {
 				translate_px = vertical_offset - window.innerHeight / 2;
 			} else {
 				

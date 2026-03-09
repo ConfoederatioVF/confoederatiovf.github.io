@@ -1,6 +1,9 @@
 window.config = {}; //[WIP] - Config
 config.homepage = {
   js_files: [
+    //Icoemi
+    "icoemi/icoemi.js",
+    
     //Head files
     "js/UF/animation/basic_animation.js",
     "js/UF/arrays/basic_arrays.js",
@@ -15,9 +18,6 @@ config.homepage = {
     "js/UF/BrowserUI/WebComponent.js",
     "js/UF/class/class_basic.js",
     "js/UF/colours/basic_colours.js",
-    "js/UF/curl/basic_curl.js",
-    "js/UF/date/basic_date.js",
-    "js/UF/date/history_date.js",
     "js/UF/log/basic_log.js",
     "js/UF/numbers/basic_numbers.js",
     "js/UF/numbers/ranges_numbers.js",

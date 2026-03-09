@@ -1,0 +1,193 @@
+<style>
+  ic-navbar {
+      --height: 4rem;
+      --item-margin: 0.5rem;
+      --item-padding: 1rem;
+      
+      display: flex;
+      position: fixed;
+      
+      left: 0;
+      height: var(--height);
+      top: 0;
+      width: 100dvw;
+      
+      background-color: rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(5px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+      color: white;
+      font-family: var(--website-primary-font), "Barlow", sans-serif;
+      z-index: 99;
+      
+      .logo {
+          display: inline;
+          
+          height: 3rem;
+          width: 3rem;
+          
+          margin: var(--item-margin);
+      }
+      .logo:hover {
+          content: url("gfx/interface/logos/confoederatio_logo.gif");
+      }
+      
+      > ul {
+          font-family: var(--website-primary-font), "Barlow", sans-serif;
+          font-size: 1.5rem;
+          font-weight: 100;
+          text-transform: uppercase;
+          
+          > li {
+              align-items: center;
+              display: flex;
+              height: 100%;
+              padding-left: 1rem;
+              padding-right: 1rem;
+              
+              > a { transition: all 0.5s ease; }
+              > ul { top: 100% }
+          }
+          > li > a::after {
+              content: "";
+              position: absolute;
+              width: 100%;
+              height: 1px;
+              bottom: 0;
+              left: 0;
+              background-color: white;
+              transform: scaleX(0);
+              transform-origin: bottom right;
+              transition: transform 0.2s ease-out;
+          }
+          > li:hover {
+            cursor: pointer;
+              
+            > a {
+                font-weight: 700;
+            }
+            > a::after {
+                transform: scaleX(1);
+                transform-origin: bottom left;
+            }
+          }
+      }
+      ul {
+          list-style: none;
+          margin: 0;
+          padding-left: 0;
+
+          li {
+              float: left;
+              position: relative;
+              
+              ul {
+                  background-color: rgba(255, 255, 255, 0.95);
+                  backdrop-filter: blur(5px);
+                  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+                  color: rgba(0, 0, 0, 0.85);
+                  flex-direction: column;
+                  min-width: 100%;
+                  left: 0;
+                  width: max-content;
+                  
+                  display: flex;
+                  opacity: 0;
+                  overflow: hidden;
+                  max-height: 0;
+                  position: absolute;
+                  transition: all 0.5s ease, opacity 0s ease;
+                  
+                  font-weight: 500;
+                  text-transform: none;
+                  
+                  li {
+                      padding-left: 1rem;
+                      padding-right: 1rem;
+                  }
+              }
+          }
+      }
+
+      /* -- Atomics -- */
+      line {
+          height: var(--height);
+          width: 0.5px;
+          background-color: rgba(255, 255, 255, 0.5);
+          float: left;
+          position: relative;
+      }
+      > li:has(+ line) { 
+          padding-right: calc(var(--item-padding) + var(--item-margin));
+      }
+      > line + li { 
+          padding-left: calc(var(--item-padding) + var(--item-margin));
+          > ul { padding-left: calc(var(--item-margin)*0.5); }
+      }
+      
+      > li:has(+ line) a::after, > line + li a::after {
+          left: calc(var(--item-margin)*0.5);
+          width: calc(100% - var(--item-margin));
+      }
+      
+      /* -- Submenus -- */
+      ul li ul:hover { cursor: default; }
+      ul li ul li {
+          clear: both;
+          padding: calc(var(--item-padding)*0.5);
+          padding-left: var(--item-padding);
+          padding-right: var(--item-padding);
+          width: 100%;
+          
+          a {
+              color: rgba(0, 0, 0, 0.85);
+              position: relative;
+              transition: all 0.5s ease;
+              text-wrap: nowrap;
+          }
+          a:hover {
+              cursor: pointer;
+              letter-spacing: calc(var(--item-margin)*0.1);
+          }
+          a:after {
+              content:"";
+              position: absolute;
+              width: 100%;
+              height: 1px;
+              bottom: 0;
+              left: 0;
+              border-bottom: 1px solid black;
+              transform: scaleX(0);
+              transform-origin: bottom left;
+              transition: transform 0.2s ease-out;
+          }
+          a:hover:after {
+              transform: scaleX(1);
+          }
+      }
+      
+      /* -- Onhover functionality -- */
+      ul li:hover > ul, 
+      ul li:focus-within > ul, 
+      ul li ul:hover, 
+      ul li ul:focus {
+          max-height: 100dvh;
+          opacity: 1;
+          overflow: visible;
+      }
+  }
+</style>
+<ic-navbar>
+  <img src = "gfx/interface/logos/confoederatio_icon.png" class = "logo" draggable = "false">
+  <ul>
+    <li><a>Datasets</a></li>
+    <li><a>Tools</a></li>
+    <line></line>
+    <li>
+      <a>Documentation</a>
+      <ul>
+        <li><a>Confoederatio Docs</a></li>
+        <li><a>Vercengen</a></li>
+      </ul>
+    </li>
+  </ul>
+</ic-navbar>
