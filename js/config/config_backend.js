@@ -2,7 +2,7 @@ window.config = {}; //[WIP] - Config
 config.homepage = {
   js_files: [
     //Icoemi
-    "icoemi/icoemi.js",
+    "js/UF/icoemi/icoemi.js",
     
     //Head files
     "js/UF/animation/basic_animation.js",

@@ -77,26 +77,18 @@
                     transform-origin: bottom left;
                 }
             }
-
-            /* --- ALIGNMENT LOGIC --- */
-
-            /* Item to the LEFT of the line */
             > li:has(+ line) {
                 padding-right: calc(var(--item-padding) + var(--item-margin));
-
-                /* Dropdown aligns its RIGHT edge to the line */
+                
                 > ul {
                     left: auto;
                     right: 0;
                     padding-right: var(--item-margin);
                 }
             }
-
-            /* Item to the RIGHT of the line */
             > line + li {
                 padding-left: calc(var(--item-padding) + var(--item-margin));
-
-                /* Dropdown aligns its LEFT edge to the line */
+                
                 > ul {
                     padding-left: var(--item-margin);
                     left: 0;

@@ -103,9 +103,6 @@ section#scene {
     margin-right: 2rem;
     max-width: 40rem;
 }
-.parallax-item-content-panel.maximised > .content-wrapper > .text-wrapper {
-    margin: 0 auto;
-}
 
     /* -- Inside element styling -- */
 .parallax-item-content-panel-title {
