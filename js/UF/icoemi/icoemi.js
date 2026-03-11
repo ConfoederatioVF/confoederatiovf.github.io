@@ -2,6 +2,16 @@ if (!window.ic) window.ic = {};
 
 //Initialise functions
 {
+	/**
+	 * Animates a given set of elements relative to a scope.
+	 * 
+	 * @param {HTMLElement|string} arg0_scope_element
+	 * @param {HTMLElement[]|string[]} arg1_elements
+	 * @param {Object} [arg2_options]
+	 *  @param {string} [arg2_options.direction="top"] - Either 'bottom'/'left'/'top'/'right'.
+	 *  @param {boolean} [arg2_options.disable_fade=false] - Whether to disable fade.
+	 *  @param {number} [arg2_options.distance] - The px distance that elements should travel during transition.
+	 */
 	ic.animate = function (arg0_scope_element, arg1_elements, arg2_options) {
 		//Convert from parameters
 		let scope_el = ic.getElement(arg0_scope_element);
@@ -23,8 +33,8 @@ if (!window.ic) window.ic = {};
 				progress = Math.max(0, Math.min(1, progress));
 			
 			elements.forEach((item) => {
-				// Get settings from data attributes
-				let direction = options.direction || "top";
+				//Get settings from data attributes
+				let direction = (options.direction) ? options.direction : "top";
 				let distance = (options.distance) ? parseFloat(options.distance) : 100;
 				
 				//Calculate the remaining offset. When progress is 1, offset is 0.
@@ -52,17 +62,15 @@ if (!window.ic) window.ic = {};
 			});
 		};
 		
-		let observer = new IntersectionObserver(
-			([entry]) => {
-				if (entry.isIntersecting) {
-					window.addEventListener("scroll", updatePositions);
-					updatePositions();
-				} else {
-					window.removeEventListener("scroll", updatePositions);
-				}
-			},
-			{ threshold: 0 },
-		);
+		let observer = new IntersectionObserver(([entry]) => {
+			if (entry.isIntersecting) {
+				window.addEventListener("scroll", updatePositions);
+				updatePositions();
+			} else {
+				window.removeEventListener("scroll", updatePositions);
+			}
+		},
+		{ threshold: 0 });
 		
 		observer.observe(scope_el);
 	};
