@@ -122,6 +122,7 @@ class Ministrat_City {
     var config_cities_obj = ministrat.config.cities;
 
     //Iterate over all_config_cities_keys
+    if (!config_cities_obj) return;
     var all_config_cities_keys = Object.keys(config_cities_obj);
 
     for (var i = 0; i < all_config_cities_keys.length; i++) {
