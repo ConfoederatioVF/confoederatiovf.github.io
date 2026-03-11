@@ -9,9 +9,6 @@
       main.vh = window.innerHeight/100;
 
       //Declare local instance variables
-      var scroll_vh = window.scrollY/main.vh;
-      var banner_obj = main.banner;
-      
       ic.animate(document.getElementById("about-me-section"), "#about-me-overlay-title");
       ic.animate(document.getElementById("about-me-section"), "#about-me-overlay", {
         direction: "right",
@@ -20,21 +17,7 @@
       document.getElementById("main-map").onclick = (e) => {
         ministratMainMapClickHandler(e);
       };
-
-      /*
-      //16vh offset
-      banner_obj.about_me_overlay_title.style.transform = `translateY(${(18/200)*scroll_vh - (24 - 24*(scroll_vh/main.about.y))}vh)`;
-
-      //24vh offset
-      banner_obj.about_me_overlay_subtitle.style.opacity = (1/80)*(scroll_vh - 80);
-      banner_obj.about_me_overlay_subtitle.style.transform = `translateY(${(44.5/200)*scroll_vh}vh)`;
-      banner_obj.biography_overlay_subtitle.style.opacity = (1/80)*(scroll_vh - 80);
-      banner_obj.biography_overlay_subtitle.style.transform = `translateY(${(44.5/200)*scroll_vh}vh)`;
-
-      //20vh offset
-      banner_obj.about_body_container.style.opacity = (1/80)*(scroll_vh - 80);
-      banner_obj.about_body_container.style.transform = `translateY(${((50)/200)*scroll_vh}vh)`;
-       */
+      
     } catch (e) {
       console.log(e);
     }
