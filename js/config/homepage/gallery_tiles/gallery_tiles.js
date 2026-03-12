@@ -26,11 +26,10 @@ config.homepage.gallery.tiles = {
     
     colour: "light-grey"
   },
-  
   histmap: {
     name: "Histmap",
     animation: "histmap",
-    font_position: "top-left",
+    font_position: "centre",
     font_size: 2,
     font_weight: 300,
     size: 2,
@@ -94,7 +93,7 @@ config.homepage.gallery.tiles = {
   atlas: {
     name: "Atlas",
     animation: "atlas",
-    font_position: "centre",
+    font_position: "bottom-left",
     font_size: 1,
     font_weight: 300,
     size: 5,
@@ -272,5 +271,86 @@ config.homepage.gallery.tiles = {
     y: 34,
     
     colour: "red"
+  },
+  blacktraffic: {
+    name: "Blacktraffic",
+    animation: "blacktraffic",
+    font_position: "centre",
+    font_size: 1,
+    font_weight: 100,
+    size: 6,
+    x: 166,
+    y: 60,
+    
+    colour: "dark-grey"
+  },
+  geospatiale: {
+    name: "Geospatiale",
+    animation: "geospatiale",
+    font_position: "centre",
+    font_size: 1,
+    font_weight: 100,
+    size: 6,
+    x: 166,
+    y: 72,
+    
+    colour: "yellow"
+  },
+  universal_framework: {
+    name: "UF",
+    animation: "universal-framework",
+    font_position: "bottom-left",
+    font_size: 2,
+    font_weight: 600,
+    size: 6,
+    x: 194,
+    y: 88,
+    
+    colour: "copper"
+  },
+  forse_scriptly_ide: {
+    name: "Forse/<br>Scriptly IDE",
+    font_position: "centre",
+    font_size: 1,
+    font_weight: 100,
+    size: 6,
+    x: 182,
+    y: 88,
+    
+    colour: "light-purple"
+  },
+  
+  cad: {
+    name: "CAD",
+    font_position: "centre",
+    font_size: 3,
+    font_weight: 700,
+    size: 1,
+    x: 320,
+    y: 28,
+    
+    colour: "orange"
+  },
+  art_gallery: {
+    name: "Art Gallery",
+    font_position: "bottom-right",
+    font_size: 2,
+    font_weight: 300,
+    size: 3,
+    x: 328,
+    y: 60,
+    
+    colour: "cream-white"
+  },
+  preserves: {
+    name: "Preservés",
+    font_position: "top-left",
+    font_size: 2,
+    font_weight: 500,
+    size: 3,
+    x: 352,
+    y: 60,
+    
+    colour: "sepia"
   }
 };

@@ -3,7 +3,7 @@
 .project-listings {
     position: absolute;
     top: calc(-10dvh);
-    left: calc(5vw + var(--parallax-offset-x));
+    left: calc(10vh + var(--parallax-offset-x));
 }
 .ctd-header {
     position: absolute;

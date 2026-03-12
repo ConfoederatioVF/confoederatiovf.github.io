@@ -111,7 +111,7 @@
             opacity: 0;
             max-height: 0;
             overflow: hidden;
-            transition: opacity 0.3s ease, transform 0.3s ease;
+            transition: all 1s ease, opacity 0.2s ease;
             text-transform: none;
             font-weight: 500;
             width: max-content;
@@ -122,22 +122,18 @@
         /* LEVEL 1: Directly under the navbar */
         > ul > li > ul {
             top: 100%;
-            transform: translateY(10px);
         }
 
         /* LEVEL 2+: Flyouts to the side */
         ul li ul li ul {
             top: 0;
             left: 100%;
-            transform: translateX(10px);
         }
 
         /* Show on Hover */
         ul li:hover > ul {
             opacity: 1;
             max-height: 1000px;
-            overflow: visible;
-            transform: translate(0, 0);
         }
 
         /* Submenu Item Styling */

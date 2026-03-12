@@ -548,7 +548,7 @@ window.HomepageGallery = class extends window.WebComponent {
 				? window.config.homepage.gallery.tiles
 				: {};
 		var keys = Object.keys(source);
-		for (let i = 0; i < keys.length; i++)
+		for (let i = keys.length - 1; i >= 0; i--)
 			try {
 				this.createPanel(keys[i], source[keys[i]]);
 			} catch (e) {
