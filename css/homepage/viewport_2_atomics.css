@@ -2,7 +2,7 @@
 /* -- Parallax header positioning -- */
 .project-listings {
     position: absolute;
-    top: calc(5dvh + var(--parallax-offset-y));
+    top: calc(-10dvh);
     left: calc(5vw + var(--parallax-offset-x));
 }
 .ctd-header {
