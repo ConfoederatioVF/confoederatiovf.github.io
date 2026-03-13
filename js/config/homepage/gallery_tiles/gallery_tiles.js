@@ -2,6 +2,7 @@ config.homepage.gallery.tiles = {
   //CRD
   CRD: {
     name: "CRD",
+    
     animation: "crd",
     font_position: "centre",
     font_size: 3,
@@ -16,6 +17,7 @@ config.homepage.gallery.tiles = {
   
   datasets: {
     name: "Datasets",
+    
     animation: "datasets",
     font_position: "bottom-right",
     font_size: 2,
@@ -28,6 +30,7 @@ config.homepage.gallery.tiles = {
   },
   histmap: {
     name: "Histmap",
+    
     animation: "histmap",
     font_position: "centre",
     font_size: 2,
@@ -41,6 +44,7 @@ config.homepage.gallery.tiles = {
   
   livemap_collation: {
     name: "Livemap/Collation",
+    
     animation: "livemap-collation",
     font_position: "bottom-left",
     font_size: 2,
@@ -54,6 +58,7 @@ config.homepage.gallery.tiles = {
   
   software_and_tooling_crd: {
     name: "Software & Tooling",
+    
     animation: "crd-software-and-tooling",
     font_position: "bottom-right",
     font_size: 2,
@@ -66,6 +71,7 @@ config.homepage.gallery.tiles = {
   },
   naissance: {
     name: "Naissance<br>HGIS",
+    
     animation: "naissance",
     font_position: "centre",
     font_size: 2,
@@ -80,6 +86,7 @@ config.homepage.gallery.tiles = {
   },
   eoscala: {
     name: "Eoscala",
+    
     animation: "eoscala",
     font_position: "bottom-right",
     font_size: 1,
@@ -92,6 +99,7 @@ config.homepage.gallery.tiles = {
   },
   atlas: {
     name: "Atlas",
+    
     animation: "atlas",
     font_position: "bottom-left",
     font_size: 1,
@@ -104,6 +112,7 @@ config.homepage.gallery.tiles = {
   },
   velkscala: {
     name: "Velkscala",
+    
     animation: "velkscala",
     font_position: "centre",
     font_size: 1,
@@ -116,6 +125,7 @@ config.homepage.gallery.tiles = {
   },
   stadester: {
     name: "Stadestér",
+    
     animation: "stadester",
     font_position: "centre",
     font_size: 1,
@@ -129,6 +139,7 @@ config.homepage.gallery.tiles = {
   
   ctd: {
     name: "CTD",
+    
     animation: "ctd",
     font_position: "centre",
     font_size: 3,
@@ -141,6 +152,7 @@ config.homepage.gallery.tiles = {
   },
   ctd_games: {
     name: "CTD<br>Games",
+    
     animation: "ctd-games",
     font_position: "bottom-left",
     font_size: 2,
@@ -153,6 +165,7 @@ config.homepage.gallery.tiles = {
   },
   analytical_engine: {
     name: "Analytical Engine",
+    
     animation: "analytical-engine",
     font_position: "bottom-right",
     font_size: 1,
@@ -165,6 +178,7 @@ config.homepage.gallery.tiles = {
   },
   triumph_and_tragedy_one: {
     name: "Triumph &<br>Tragedy I",
+    
     animation: "triumph-and-tragedy-one",
     font_position: "centre",
     font_size: 1,
@@ -177,6 +191,7 @@ config.homepage.gallery.tiles = {
   },
   triumph_and_tragedy_two: {
     name: "Triumph & Tragedy II",
+    
     animation: "triumph-and-tragedy-two",
     font_position: "bottom-right",
     font_size: 2,
@@ -189,6 +204,7 @@ config.homepage.gallery.tiles = {
   },
   system_dynamics: {
     name: "System Dynamics",
+    
     animation: "system-dynamics",
     font_position: "bottom-right",
     font_size: 1,
@@ -201,6 +217,7 @@ config.homepage.gallery.tiles = {
   },
   into_modernity: {
     name: "Into Modernity",
+    
     animation: "into-modernity",
     font_position: "centre",
     font_size: 1,
@@ -213,6 +230,7 @@ config.homepage.gallery.tiles = {
   },
   proxy_cables: {
     name: "Proxy Cables",
+    
     animation: "proxy-cables",
     font_position: "top-left",
     font_size: 1,
@@ -225,6 +243,7 @@ config.homepage.gallery.tiles = {
   },
   last_man_standing: {
     name: "Last Man Standing",
+    
     animation: "last-man-standing",
     font_position: "bottom-right",
     font_size: 1,
@@ -238,6 +257,7 @@ config.homepage.gallery.tiles = {
   
   software_and_tooling_ctd: {
     name: "Software &<br>Tooling",
+    
     animation: "software-and-tooling-ctd",
     font_position: "bottom-left",
     font_size: 2,
@@ -250,6 +270,7 @@ config.homepage.gallery.tiles = {
   },
   vercengen: {
     name: "Vercengen",
+    
     animation: "vercengen",
     font_position: "centre",
     font_size: 2,
@@ -262,6 +283,7 @@ config.homepage.gallery.tiles = {
   },
   eleven_fiftynine: {
     name: "11:59",
+    
     animation: "elevan-fifty-nine",
     font_position: "centre",
     font_size: 1,
@@ -274,6 +296,7 @@ config.homepage.gallery.tiles = {
   },
   blacktraffic: {
     name: "Blacktraffic",
+    
     animation: "blacktraffic",
     font_position: "centre",
     font_size: 1,
@@ -286,6 +309,7 @@ config.homepage.gallery.tiles = {
   },
   geospatiale: {
     name: "Geospatiale",
+    
     animation: "geospatiale",
     font_position: "centre",
     font_size: 1,
@@ -298,6 +322,7 @@ config.homepage.gallery.tiles = {
   },
   universal_framework: {
     name: "UF",
+    
     animation: "universal-framework",
     font_position: "bottom-left",
     font_size: 2,
@@ -310,6 +335,8 @@ config.homepage.gallery.tiles = {
   },
   forse_scriptly_ide: {
     name: "Forse/<br>Scriptly IDE",
+    
+    animation: "forse-scriptly-ide",
     font_position: "centre",
     font_size: 1,
     font_weight: 100,
@@ -322,6 +349,8 @@ config.homepage.gallery.tiles = {
   
   cad: {
     name: "CAD",
+    
+    animation: "cad",
     font_position: "centre",
     font_size: 3,
     font_weight: 700,
@@ -333,6 +362,8 @@ config.homepage.gallery.tiles = {
   },
   art_gallery: {
     name: "Art Gallery",
+    
+    animation: "art-gallery",
     font_position: "bottom-right",
     font_size: 2,
     font_weight: 300,
@@ -344,6 +375,8 @@ config.homepage.gallery.tiles = {
   },
   preserves: {
     name: "Preservés",
+    
+    animation: "preserves",
     font_position: "top-left",
     font_size: 2,
     font_weight: 500,
@@ -352,5 +385,109 @@ config.homepage.gallery.tiles = {
     y: 60,
     
     colour: "sepia"
+  },
+  gearth_mc: {
+    name: "G-Earth/MC",
+    
+    animation: "gearth_mc",
+    font_position: "bottom-right",
+    font_size: 2,
+    font_weight: 400,
+    size: 3,
+    x: 352,
+    y: 36,
+    
+    colour: "blue"
+  },
+  physical_holdings: {
+    name: "Physical<br>Holdings",
+    
+    animation: "physical_holdings",
+    font_position: "centre",
+    font_size: 1,
+    font_weight: 300,
+    size: 5,
+    x: 384,
+    y: 76,
+    
+    colour: "yellow"
+  },
+  digital_holdings: {
+    name: "Digital Holdings",
+    
+    animation: "digital_holdings",
+    font_position: "bottom-left",
+    font_size: 1,
+    font_weight: 500,
+    size: 5,
+    x: 384,
+    y: 60,
+    
+    colour: "light-grey"
+  },
+  socials_and_web_infrastructure: {
+    name: "Socials &<br>Web Infra.",
+    
+    animation: "socials_and_web_infrastructure",
+    font_position: "bottom-right",
+    font_size: 2,
+    font_weight: 700,
+    size: 2,
+    x: 384,
+    y: 32,
+    
+    colour: "salmon"
+  },
+  personnel: {
+    name: "Personnel",
+    
+    animation: "personnel",
+    font_position: "bottom-right",
+    font_size: 2,
+    font_weight: 200,
+    size: 2,
+    x: 412,
+    y: 60,
+    
+    colour: "forest-green"
+  },
+  blogs: {
+    name: "Blogs",
+    
+    animation: "blogs",
+    font_position: "top-left",
+    font_size: 1,
+    font_weight: 600,
+    size: 6,
+    x: 412,
+    y: 48,
+    
+    colour: "dark-blurple"
+  },
+  other_projects: {
+    name: "Other Projects",
+    
+    animation: "other_projects",
+    font_position: "bottom-left",
+    font_size: 2,
+    font_weight: 200,
+    size: 3,
+    x: 446,
+    y: 32,
+    
+    colour: "gold"
+  },
+  re_verenfedern: {
+    name: "Ré Vérenfedern",
+    
+    animation: "re_verenfedern",
+    font_position: "centre",
+    font_size: 1,
+    font_weight: 200,
+    size: 5,
+    x: 355,
+    y: 17,
+    
+    colour: "light-blue"
   }
 };
