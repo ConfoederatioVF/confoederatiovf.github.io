@@ -1,121 +1,31 @@
 /* -- Tile Folding Animations -- */
-[animation="analytical-engine"] {
-  transform: translate(-28dvh, 0dvh);
-}
-[animation="ampersand-mod-creator"] {
-  transform: translate(0dvh, -16dvh);
-}
-[animation="anno"] {
-  transform: translate(-24dvh, 0dvh);
-}
-[animation="armoured-advance"] {
-  transform: translate(4dvh, -12dvh);
-}
-[animation="art-triumph-and-tragedy"] {
-  transform: translate(-12dvh, 0dvh);
-}
-[animation="boats-on-a-pond"] {
-  transform: translate(0dvh, -12dvh);
-}
-[animation="branding-logos"] {
-  transform: translate(0dvh, -24dvh);
-}
-[animation="brooklyn-bridge"] {
-  transform: translate(0dvh, -12dvh);
-}
-[animation="confoederatio"] {
-  transform: translate(0dvh, -16dvh);
-}
-[animation="confoederatio-website"] {
-  transform: translate(0dvh, -12dvh);
-}
-[animation="digital-preserves-atlases"] {
-  transform: translate(0dvh, -18dvh);
-}
-[animation="digital-preserves-maps"] {
-  transform: translate(0dvh, -18dvh);
-}
-[animation="eoscala"] {
-  transform: translate(-24dvh, 0dvh);
-}
-[animation="empires-undone"] {
-  transform: translate(-24dvh, 0dvh);
-}
-[animation="geographic-economic-papers"] {
-  transform: translate(0dvh, -16dvh);
-}
-[animation="gazetteer"] {
-  transform: translate(0dvh, -16dvh);
-}
-[animation="icons"] {
-  transform: translate(-16dvh, 0dvh);
-}
-[animation="into-modernity"] {
-  transform: translate(0dvh, -16dvh);
-}
-[animation="landscape-and-cities"] {
-  transform: translate(-28dvh, -16dvh);
-}
-[animation="last-man-standing"] {
-  transform: translate(-16dvh, 0dvh);
-}
-[animation="les-halles"] {
-  transform: translate(-8dvh, -32dvh);
-}
-[animation="london"] {
-  transform: translate(-12dvh, 0dvh);
-}
-[animation="maps"] {
-  transform: translate(0dvh, -18dvh);
-}
-[animation="military-papers"] {
-  transform: translate(-16dvh, 0dvh);
-}
-[animation="naissance"] {
-  transform: translate(0dvh, -28dvh);
-}
-[animation="physical-holdings-atlases"] {
-  transform: translate(0dvh, 18dvh);
-}
-[animation="physical-holdings-other-documents"] {
-  transform: translate(0dvh, 12dvh);
-}
-[animation="political-diplomatic-papers"] {
-  transform: translate(-16dvh, 0dvh);
-}
-[animation="project-humanity"] {
-  transform: translate(-18dvh, 0dvh);
-}
-[animation="proxy-cables"] {
-  transform: translate(-16dvh, 0dvh);
-}
-[animation="scriptly"] {
-  transform: translate(-16dvh, -12dvh);
-}
-[animation="system-dynamics"] {
-  transform: translate(0dvh, -12dvh);
-}
-[animation="the-colorado"] {
-  transform: translate(-12dvh, 0dvh);
-}
-[animation="triumph-and-tragedy-one"] {
-  transform: translate(-28dvh, -28dvh);
-}
-[animation="triumph-and-tragedy-two"] {
-  transform: translate(-32dvh, -6dvh);
-}
-[animation="universal-framework"] {
-  transform: translate(-28dvh, 0dvh);
-}
-[animation="velkscala"] {
-  transform: translate(0dvh, -28dvh);
-}
-[animation="yosemite"] {
-  transform: translate(-12dvh, 4dvh);
-}
-[animation="eleven-fifty-nine-aoc-three"] {
-  transform: translate(-18dvh, 4dvh);
-}
-[animation="eleven-fifty-nine-aoc-two"] {
-  transform: translate(-20dvh, 16dvh);
-}
+[animation="atlas"] { transform: translate(-16vh, -4vh); }
+[animation="datasets"] { transform: translate(-32vh, -4vh); }
+[animation="eoscala"] { transform: translate(-16vh, 0vh); }
+[animation="histmap"] { transform: translate(-28vh, 0vh); }
+[animation="livemap-collation"] { transform: translate(0vh, -28vh); }
+[animation="naissance"] { transform: translate(-28vh, 0vh); }
+[animation="velkscala"] { transform: translate(0vh, 16vh); }
+[animation="stadester"] { transform: translate(0vh, 12vh); }
+
+[animation="analytical-engine"] { transform: translate(-18vh, 0vh); }
+[animation="blacktraffic"] { transform: translate(12vh, 0vh); }
+[animation="geospatiale"] { transform: translate(12vh, 0vh); }
+[animation="eleven-fifty-nine"] { transform: translate(-12vh, 0vh); }
+[animation="forse-scriptly-ide"] { transform: translate(0vh, -12vh); }
+[animation="into-modernity"] { transform: translate(0vh, -16vh); }
+[animation="last-man-standing"] { transform: translate(-16vh, 0vh); }
+[animation="proxy-cables"] { transform: translate(-16vh, 0vh); }
+[animation="system-dynamics"] { transform: translate(0vh, -16vh); }
+[animation="triumph-and-tragedy-one"] { transform: translate(0vh, -18vh); }
+[animation="triumph-and-tragedy-two"] { transform: translate(-32vh, -32vh); }
+[animation="universal-framework"] { transform: translate(0vh, -12vh); }
+[animation="vercengen"] { transform: translate(0vh, -28vh); }
+
+[animation="art-gallery"] { transform: translate(0vh, -24vh); }
+[animation="blogs"] { transform: translate(-12vh, 0vh); }
+[animation="digital-holdings"] { transform: translate(-16vh, 0vh); }
+[animation="gearth-mc"] { transform: translate(-24vh, 0vh); }
+[animation="personnel"] { transform: translate(-24vh, -24vh); }
+[animation="physical-holdings"] { transform: translate(-16vh, -8vh); }
+[animation="preserves"] { transform: translate(-24vh, -24vh); }

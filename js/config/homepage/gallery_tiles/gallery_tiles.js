@@ -12,13 +12,15 @@ config.homepage.gallery.tiles = {
     x: 0,
     y: 28,
     
-    colour: "light-blue"
+    colour: "light-blue",
+    dependencies: ["datasets"]
   },
   
   datasets: {
     name: "Datasets",
     
     animation: "datasets",
+    default_pin: true,
     font_position: "bottom-right",
     font_size: 2,
     font_weight: 500,
@@ -26,12 +28,14 @@ config.homepage.gallery.tiles = {
     x: 32,
     y: 32,
     
-    colour: "light-grey"
+    colour: "light-grey",
+    dependencies: ["histmap", "livemap_collation"]
   },
   histmap: {
     name: "Histmap",
     
     animation: "histmap",
+    default_pin: true,
     font_position: "centre",
     font_size: 2,
     font_weight: 300,
@@ -39,13 +43,16 @@ config.homepage.gallery.tiles = {
     x: 64,
     y: 32,
     
-    colour: "transparent-sepia"
+    colour: "transparent-sepia",
+    dependencies: ["atlas", "eoscala", "stadester", "velkscala"]
   },
   
   livemap_collation: {
     name: "Livemap/Collation",
     
     animation: "livemap-collation",
+    default_bookmark: true,
+    default_pin: true,
     font_position: "bottom-left",
     font_size: 2,
     font_weight: 100,
@@ -63,11 +70,13 @@ config.homepage.gallery.tiles = {
     font_position: "bottom-right",
     font_size: 2,
     font_weight: 700,
+    is_base_node: true,
     size: 1,
     x: 64,
     y: 64,
     
-    colour: "copper"
+    colour: "copper",
+    dependencies: ["naissance"]
   },
   naissance: {
     name: "Naissance<br>HGIS",
@@ -144,6 +153,7 @@ config.homepage.gallery.tiles = {
     font_position: "centre",
     font_size: 3,
     font_weight: 700,
+    is_base_node: true,
     size: 1,
     x: 140,
     y: 28,
@@ -157,16 +167,19 @@ config.homepage.gallery.tiles = {
     font_position: "bottom-left",
     font_size: 2,
     font_weight: 900,
+    is_base_node: true,
     size: 3,
     x: 216,
     y: 28,
     
-    colour: "blurple"
+    colour: "blurple",
+    dependencies: ["triumph_and_tragedy_one", "analytical_engine", "triumph_and_tragedy_two"]
   },
   analytical_engine: {
     name: "Analytical Engine",
     
     animation: "analytical-engine",
+    default_pin: true,
     font_position: "bottom-right",
     font_size: 1,
     font_weight: 700,
@@ -174,7 +187,8 @@ config.homepage.gallery.tiles = {
     x: 240,
     y: 34,
     
-    colour: "dark-grey"
+    colour: "dark-grey",
+    dependencies: ["eleven_fiftynine"]
   },
   triumph_and_tragedy_one: {
     name: "Triumph &<br>Tragedy I",
@@ -187,12 +201,16 @@ config.homepage.gallery.tiles = {
     x: 222,
     y: 52,
     
-    colour: "mauve"
+    background_image: `gfx/interface/tiles/triumph_and_tragedy_icon_no_text.png`,
+    background_opacity: 0.4,
+    colour: "mauve",
+    dependencies: ["triumph_and_tragedy_two"]
   },
   triumph_and_tragedy_two: {
     name: "Triumph & Tragedy II",
     
     animation: "triumph-and-tragedy-two",
+    default_pin: true,
     font_position: "bottom-right",
     font_size: 2,
     font_weight: 700,
@@ -200,7 +218,10 @@ config.homepage.gallery.tiles = {
     x: 240,
     y: 52,
     
-    colour: "salmon"
+    dependencies: ["system_dynamics", "into_modernity", "proxy_cables", "last_man_standing"],
+    background_image: `gfx/interface/tiles/battle_of_the_leyte_gulf.png`,
+    colour: "salmon",
+    background_opacity: 0.4,
   },
   system_dynamics: {
     name: "System Dynamics",
@@ -262,6 +283,7 @@ config.homepage.gallery.tiles = {
     font_position: "bottom-left",
     font_size: 2,
     font_weight: 700,
+    is_base_node: true,
     size: 1,
     x: 178,
     y: 28,
@@ -272,6 +294,8 @@ config.homepage.gallery.tiles = {
     name: "Vercengen",
     
     animation: "vercengen",
+    default_bookmark: true,
+    default_pin: true,
     font_position: "centre",
     font_size: 2,
     font_weight: 900,
@@ -279,7 +303,8 @@ config.homepage.gallery.tiles = {
     x: 178,
     y: 60,
     
-    colour: "blurple"
+    colour: "blurple",
+    dependencies: ["blacktraffic", "geospatiale", "forse_scriptly_ide", "universal_framework"]
   },
   eleven_fiftynine: {
     name: "11:59",
@@ -354,11 +379,13 @@ config.homepage.gallery.tiles = {
     font_position: "centre",
     font_size: 3,
     font_weight: 700,
+    is_base_node: true,
     size: 1,
     x: 320,
     y: 28,
     
-    colour: "orange"
+    colour: "orange",
+    dependencies: ["art_gallery", "preserves", "gearth_mc"]
   },
   art_gallery: {
     name: "Art Gallery",
@@ -377,19 +404,21 @@ config.homepage.gallery.tiles = {
     name: "Preservés",
     
     animation: "preserves",
-    font_position: "top-left",
+    default_pin: true,
+    font_position: "bottom-left",
     font_size: 2,
     font_weight: 500,
     size: 3,
     x: 352,
     y: 60,
     
-    colour: "sepia"
+    colour: "sepia",
+    dependencies: ["digital_holdings", "physical_holdings"]
   },
   gearth_mc: {
     name: "G-Earth/MC",
     
-    animation: "gearth_mc",
+    animation: "gearth-mc",
     font_position: "bottom-right",
     font_size: 2,
     font_weight: 400,
@@ -402,12 +431,12 @@ config.homepage.gallery.tiles = {
   physical_holdings: {
     name: "Physical<br>Holdings",
     
-    animation: "physical_holdings",
+    animation: "physical-holdings",
     font_position: "centre",
     font_size: 1,
     font_weight: 300,
     size: 5,
-    x: 384,
+    x: 376,
     y: 76,
     
     colour: "yellow"
@@ -415,12 +444,12 @@ config.homepage.gallery.tiles = {
   digital_holdings: {
     name: "Digital Holdings",
     
-    animation: "digital_holdings",
+    animation: "digital-holdings",
     font_position: "bottom-left",
     font_size: 1,
     font_weight: 500,
     size: 5,
-    x: 384,
+    x: 376,
     y: 60,
     
     colour: "light-grey"
@@ -432,11 +461,13 @@ config.homepage.gallery.tiles = {
     font_position: "bottom-right",
     font_size: 2,
     font_weight: 700,
+    is_base_node: true,
     size: 2,
     x: 384,
     y: 32,
     
-    colour: "salmon"
+    colour: "salmon",
+    dependencies: ["blogs", "personnel"]
   },
   personnel: {
     name: "Personnel",
@@ -471,6 +502,7 @@ config.homepage.gallery.tiles = {
     font_position: "bottom-left",
     font_size: 2,
     font_weight: 200,
+    is_base_node: true,
     size: 3,
     x: 446,
     y: 32,
@@ -481,13 +513,16 @@ config.homepage.gallery.tiles = {
     name: "Ré Vérenfedern",
     
     animation: "re_verenfedern",
-    font_position: "centre",
+    font_position: "bottom-left",
     font_size: 1,
     font_weight: 200,
+    is_base_node: true,
     size: 5,
     x: 355,
     y: 17,
     
+    background_image: `gfx/interface/tiles/re_verenfedern_square.png`,
+    background_opacity: 0.4,
     colour: "light-blue"
   }
 };

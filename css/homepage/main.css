@@ -1,6 +1,6 @@
 /* -- Set max height for body -- */
 html {
-  font-size: 1.25vh; /* -- Sets rem -- */
+  font-size: clamp(16px, 1.25vh, 1.25vh); /* -- Sets rem -- */
   scrollbar-width: none;
 }
 
@@ -24,8 +24,8 @@ html {
 }
 
 :root {
-  --parallax-offset-x: 0dvh;
-  --parallax-offset-y: -2.5dvh;
+  --parallax-offset-x: calc(23vw);
+  --parallax-offset-y: -12.5vh;
 
   --content-panel-offset-x: -5dvh;
   --content-panel-offset-y: -125dvh;

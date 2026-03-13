@@ -56,13 +56,13 @@ window.HomepageGallery = class extends window.WebComponent {
 									<br><br>
 									<hr class = "parallax-line">
 								</div>
-								<div class = "ctd-header"><span class = "parallax-subheader">Technical (CTD).</span></div>
-								<div class = "crd-header"><span class = "parallax-subheader">Research (CRD).</span></div>
-								<div class = "cad-header"><span class = "parallax-subheader">Artistic (CAD).</span></div>
-								<div class = "preserves-header">
+								<div class = "crd-header"><span class = "parallax-subheader">Research Division (CRD).</span></div>
+								<div class = "ctd-header"><span class = "parallax-subheader">Technical Division (CTD).</span></div>
+								<div class = "cad-header"><span class = "parallax-subheader">Artistic Division (CAD).</span></div>
+								<!--<div class = "preserves-header">
 									<span class = "parallax-subheader">Preservés</span><br>
 									<div class = "parallax-header small">des Confoederatio</div>
-								</div>
+								</div>-->
 							</div>
 						</div>
 					</div>
@@ -357,7 +357,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		if (options.background_image)
 			background_style = ` style = "background-image: url(${options.background_image}); opacity: ${options.background_opacity};"`;
 		var tile_element = `
-			<div id = "${tile_id}" class = "parallax-item ${size_dict[options.size]} ${options.colour}" style = "position: absolute; top: calc(${options.y}vh + var(--parallax-offset-y)); left: calc(23vw + ${options.x}vh + var(--parallax-offset-x));">
+			<div id = "${tile_id}" class = "parallax-item ${size_dict[options.size]} ${options.colour}" style = "position: absolute; top: calc(${options.y}vh); left: calc(23vw + ${options.x}vh);">
 				<div class = "parallax-item-colour-bg"></div>
 				<div class = "parallax-item-bg"${background_style}></div>
 				<span class = "${font_size_dict[options.font_size]} ${options.font_position}" style = "font-weight: ${options.font_weight}" >${options.name}</span>
