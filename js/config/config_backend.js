@@ -82,7 +82,7 @@ config.homepage = {
     
     //Config files
     "js/config/homepage/defines/common_defines.js",
-    "js/config/homepage/gallery_tiles/gallery_tiles.js",
+    "js/config/homepage/gallery_tiles/gallery_tiles26.js",
     "ministrat/core/startup.js",
   ],
   
