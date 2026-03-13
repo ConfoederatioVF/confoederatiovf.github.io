@@ -57,7 +57,7 @@ if (!window.ic) window.ic = {};
 				}
 				
 				item.style.transform = transform;
-				if (options.disable_fade)
+				if (!options.disable_fade)
 					item.style.opacity = progress;
 			});
 		};
@@ -110,22 +110,38 @@ if (!window.ic) window.ic = {};
 	};
 	
 	ic.getElements = function (arg0_selector) {
-		//Convert from parameters
-		let selector = arg0_selector;
-			if (!Array.isArray(selector)) selector = [selector];
-			
-		//Declare local instance variables
-		let all_elements = [];
-			
-		//Iterate over all elements in selector
-		for (let i = 0; i < selector.length; i++)
-			if (typeof selector[i] === "string") {
-				all_elements = all_elements.concat(document.querySelectorAll(selector[i]));
-			} else if (selector[i] instanceof HTMLElement) {
-				all_elements.push(selector[i]);
-			}
+		// Return early if input is null or undefined
+		if (!arg0_selector) return [];
 		
-		//Return statement
+		let selector = arg0_selector;
+		
+		// Convert single string or single element into an iterable array
+		if (
+			!Array.isArray(selector) &&
+			!(selector instanceof NodeList) &&
+			!(selector instanceof HTMLCollection)
+		) {
+			selector = [selector];
+		}
+		
+		let all_elements = [];
+		
+		// Iterate over all elements in the normalized selector array/list
+		for (let i = 0; i < selector.length; i++) {
+			const item = selector[i];
+			
+			if (typeof item === "string") {
+				// Use spread operator to turn the NodeList into individual array elements
+				all_elements.push(...document.querySelectorAll(item));
+			} else if (item instanceof HTMLElement || item instanceof Node) {
+				// Only push if it's an actual DOM node/element
+				all_elements.push(item);
+			} else if (item instanceof NodeList || item instanceof HTMLCollection) {
+				// Handle cases where a NodeList might be nested inside the input array
+				all_elements.push(...item);
+			}
+		}
+		
 		return all_elements;
 	};
 	
