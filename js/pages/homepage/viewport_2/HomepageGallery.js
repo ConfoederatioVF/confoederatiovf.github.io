@@ -366,7 +366,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		parallax_tile_container_el.innerHTML += tile_element;
 		if (options.content) {
 			var panel_element = `
-				<div id = "${tile_id}-content-panel" class = "parallax-item-content-panel ${options.animation}-panel" style = "top: calc(${options.y}vh - 40dvh + ${size_vh_dict[options.size]}vh/2); left: calc(23vw + ${options.x}vh + ${size_vh_dict[options.size]}vh + 8vh + var(--parallax-offset-x) + var(--content-panel-offset-x));">
+				<div id = "${tile_id}-content-panel" class = "parallax-item-content-panel ${options.animation}-panel" style = "top: calc(${options.y}vh - 40dvh + ${size_vh_dict[options.size]}vh/2); left: calc(23vw + ${options.x}vh + ${size_vh_dict[options.size]}vh + 8vh + var(--content-panel-offset-x));">
 					<div id = "${tile_id}-content-wrapper" class = "content-wrapper">
 						<div id = "${tile_id}-text-wrapper" class = "text-wrapper">
 							${options.content}
