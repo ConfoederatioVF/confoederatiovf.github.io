@@ -442,13 +442,11 @@ config.homepage.gallery.tiles = {
     y: 68,
     
     colour: "blue",
-    content: `<div class = "parallax-item-content-panel-title">Last Man Standing</div>
+    content: `<div class = "parallax-item-content-panel-title">Proxy Cables</div>
     <b>Development:</b> <span class = "parallax-item-in-planning">In Planning</span>,<br>
     <b>Status:</b> <span class = "parallax-item-content-panel-status-indicator tertiary">Tertiary Project</span>
     <div class = "parallax-item-content-panel-body-text">
-      The final redefinition of warfare in all its logistical intricacy, Last Man Standing attempts to offer maximum flexibility whilst stripping away micromanagement through the use of new battleplans, officer corps, and other mechanics whilst allowing for fine adjustments at the most granular levels of detail. Combat will move along a Levies > Set-Piece Battles > Rapid Manoeuvre > Frontline > Contemporary Warfare System, whilst unit customisation, equipment designers, and military production chains will be added alongside special abilities for units and modder-friendly APIs.
-      <br><br>
-      AIs will now control other nations as part of Last Man Standing, and the mod-creator will be flushed out to full WYSIWYG capability to reflect the final update and release of Triumph & Tragedy II alongside Singleplayer (SP) campaigns.
+      Storytelling has always been a critical element to Triumph & Tragedy II, and we aim to enrich that experience through the introduction of Proxy Cables. Decisions, modular governments, more events, and dynamic political parties and scenes will help bring your governance to life alongside overhauled diplomatic UIs, a new espionage mechanic, influence, and modern era mechanics, with a particular focus on the Cold War.
     </div>`,
   },
   last_man_standing: {
@@ -463,11 +461,13 @@ config.homepage.gallery.tiles = {
     y: 52,
     
     colour: "dark-grey",
-    content: `<div class = "parallax-item-content-panel-title">Proxy Cables</div>
+    content: `<div class = "parallax-item-content-panel-title">Last Man Standing</div>
     <b>Development:</b> <span class = "parallax-item-in-planning">In Planning</span>,<br>
     <b>Status:</b> <span class = "parallax-item-content-panel-status-indicator tertiary">Tertiary Project</span>
     <div class = "parallax-item-content-panel-body-text">
-      Storytelling has always been a critical element to Triumph & Tragedy II, and we aim to enrich that experience through the introduction of Proxy Cables. Decisions, modular governments, more events, and dynamic political parties and scenes will help bring your governance to life alongside overhauled diplomatic UIs, a new espionage mechanic, influence, and modern era mechanics, with a particular focus on the Cold War.
+      The final redefinition of warfare in all its logistical intricacy, Last Man Standing attempts to offer maximum flexibility whilst stripping away micromanagement through the use of new battleplans, officer corps, and other mechanics whilst allowing for fine adjustments at the most granular levels of detail. Combat will move along a Levies > Set-Piece Battles > Rapid Manoeuvre > Frontline > Contemporary Warfare System, whilst unit customisation, equipment designers, and military production chains will be added alongside special abilities for units and modder-friendly APIs.
+      <br><br>
+      AIs will now control other nations as part of Last Man Standing, and the mod-creator will be flushed out to full WYSIWYG capability to reflect the final update and release of Triumph & Tragedy II alongside Singleplayer (SP) campaigns.
     </div>`,
   },
   
