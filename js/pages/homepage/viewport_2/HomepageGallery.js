@@ -56,9 +56,9 @@ window.HomepageGallery = class extends window.WebComponent {
 									<br><br>
 									<hr class = "parallax-line">
 								</div>
-								<div class = "crd-header"><span class = "parallax-subheader">Research Division (CRD).</span></div>
-								<div class = "ctd-header"><span class = "parallax-subheader">Technical Division (CTD).</span></div>
-								<div class = "cad-header"><span class = "parallax-subheader">Artistic Division (CAD).</span></div>
+								<div class = "ctd-header"><span class = "parallax-subheader">Technical (CTD).</span></div>
+								<div class = "crd-header"><span class = "parallax-subheader">Research (CRD).</span></div>
+								<div class = "cad-header"><span class = "parallax-subheader">Artistic (CAD).</span></div>
 								<!--<div class = "preserves-header">
 									<span class = "parallax-subheader">Preservés</span><br>
 									<div class = "parallax-header small">des Confoederatio</div>
@@ -256,10 +256,10 @@ window.HomepageGallery = class extends window.WebComponent {
 				}, 1000);
 			}
 		}
-		if (gallery_obj.bookmark_items.length === 1)
+		if (gallery_obj.bookmark_items.length == 1)
 			gallery_obj.bookmark_selected = local_id;
 		gallery_obj.bookmark_selected =
-			gallery_obj.bookmark_selected === ""
+			gallery_obj.bookmark_selected == ""
 				? local_id
 				: gallery_obj.bookmark_selected;
 		gallery_obj.bookmark_selected = !gallery_obj.bookmark_selected.includes(
@@ -357,7 +357,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		if (options.background_image)
 			background_style = ` style = "background-image: url(${options.background_image}); opacity: ${options.background_opacity};"`;
 		var tile_element = `
-			<div id = "${tile_id}" class = "parallax-item ${size_dict[options.size]} ${options.colour}" style = "position: absolute; top: calc(${options.y}vh); left: calc(23vw + ${options.x}vh);">
+			<div id = "${tile_id}" class = "parallax-item ${size_dict[options.size]} ${options.colour}" style = "position: absolute; top: calc(${options.y}vh + var(--parallax-offset-y)); left: calc(23vw + ${options.x}vh + var(--parallax-offset-x));">
 				<div class = "parallax-item-colour-bg"></div>
 				<div class = "parallax-item-bg"${background_style}></div>
 				<span class = "${font_size_dict[options.font_size]} ${options.font_position}" style = "font-weight: ${options.font_weight}" >${options.name}</span>
@@ -366,7 +366,7 @@ window.HomepageGallery = class extends window.WebComponent {
 		parallax_tile_container_el.innerHTML += tile_element;
 		if (options.content) {
 			var panel_element = `
-				<div id = "${tile_id}-content-panel" class = "parallax-item-content-panel ${options.animation}-panel" style = "top: calc(${options.y}vh - 40dvh + ${size_vh_dict[options.size]}vh/2); left: calc(23vw + ${options.x}vh + ${size_vh_dict[options.size]}vh + 8vh + var(--content-panel-offset-x));">
+				<div id = "${tile_id}-content-panel" class = "parallax-item-content-panel ${options.animation}-panel" style = "top: calc(${options.y}vh - 40dvh + ${size_vh_dict[options.size]}vh/2); left: calc(23vw + ${options.x}vh + ${size_vh_dict[options.size]}vh + 8vh + var(--parallax-offset-x) + var(--content-panel-offset-x));">
 					<div id = "${tile_id}-content-wrapper" class = "content-wrapper">
 						<div id = "${tile_id}-text-wrapper" class = "text-wrapper">
 							${options.content}
@@ -548,7 +548,7 @@ window.HomepageGallery = class extends window.WebComponent {
 				? window.config.homepage.gallery.tiles
 				: {};
 		var keys = Object.keys(source);
-		for (let i = keys.length - 1; i >= 0; i--)
+		for (let i = 0; i < keys.length; i++)
 			try {
 				this.createPanel(keys[i], source[keys[i]]);
 			} catch (e) {
@@ -915,49 +915,35 @@ window.HomepageGallery = class extends window.WebComponent {
 	}
 	
 	updateParallaxScrollValues () {
-		const gallery_obj = this.gallery;
-		const track = document.getElementById("gallery-section");
+		var gallery_obj = this.gallery;
+		var track = document.getElementById("gallery-section");
 		if (!track) return;
-		
-		const rect = track.getBoundingClientRect();
-		const scrollable_dist = rect.height - window.innerHeight;
-		
-		// Use pageYOffset for smoother global tracking
-		const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-		const trackTop = rect.top + scrollY;
-		
-		const vertical_offset = (scrollY >= trackTop)
-			? Math.min(scrollY - trackTop, scrollable_dist)
-			: 0;
-		
-		// Cache these values on the instance to avoid reading from DOM later
-		this._last_translate_y = vertical_offset;
-		
-		const siblings = gallery_obj.parallax_body.children;
+		var rect = track.getBoundingClientRect();
+		var scrollable_dist = rect.height - window.innerHeight;
+		var vertical_offset =
+			rect.top <= 0 ? Math.min(Math.abs(rect.top), scrollable_dist) : 0;
+		var siblings = gallery_obj.parallax_body.children;
 		for (let i = 0; i < siblings.length; i++) {
-			const child = siblings[i];
+			let child = siblings[i];
+			
 			let translate_px = vertical_offset;
 			
 			if (child.id === "bookmark-container") {
 				translate_px = vertical_offset - window.innerHeight / 2;
+			} else {
+				
 			}
-			
-			// Use translate3d to trigger Hardware Acceleration
-			child.style.transform = `translate3d(0, ${translate_px}px, 0)`;
+			child.style.transform = `translateY(${translate_px}px)`;
 		}
-		
 		if (rect.top <= 0 && rect.bottom >= window.innerHeight) {
-			const progress = Math.abs(rect.top) / scrollable_dist;
+			var progress = Math.abs(rect.top) / scrollable_dist;
 			gallery_obj.parallax_scroll_x = progress * gallery_obj.gallery_width * -1;
 			
-			// Store for content panel sync
-			this._last_parallax_x_vh = gallery_obj.parallax_scroll_x;
+			// Apply both X and Y to the underlay
+			gallery_obj.parallax_container.style.transform = `translateX(${gallery_obj.parallax_scroll_x}vh)`;
 			
-			gallery_obj.parallax_container.style.transform = `translate3d(${gallery_obj.parallax_scroll_x}vh, 0, 0)`;
-			
-			if (gallery_obj.parallax_scroll_indicator) {
+			if (gallery_obj.parallax_scroll_indicator)
 				gallery_obj.parallax_scroll_indicator.style.width = `${progress * 100}vw`;
-			}
 		}
 	}
 	
@@ -1113,20 +1099,29 @@ window.HomepageGallery = class extends window.WebComponent {
 		}
 	}
 	
-	updateContentPanelContainer() {
-		const gallery_obj = this.gallery;
+	updateContentPanelContainer () {
+		var gallery_obj = this.gallery;
 		if (!gallery_obj.content_panel_update_paused) {
-			/**
-			 * OPTIMIZATION: Removed getComputedStyle and WebKitCSSMatrix.
-			 * We use the values cached during updateParallaxScrollValues.
-			 * We use translate3d for GPU promotion.
-			 */
-			const tx = this._last_parallax_x_vh || 0;
-			const ty = this._last_translate_y || 0;
+			// Find the main parallax layer to extract its current dynamic Y offset
+			let main_layer = this.element.querySelector(".layer.main");
+			let translate_x = 0;
+			let translate_y = 0;
 			
-			// Use translate3d to prevent the "shaking" effect on mobile
+			if (main_layer) {
+				// Extract the current translateY/translate3d value applied by the parallax engine
+				let style = window.getComputedStyle(main_layer);
+				let matrix = new WebKitCSSMatrix(style.transform);
+				translate_x = matrix.m41; //m41 represents the X translation in the matrix
+				translate_y = matrix.m42; // m42 represents the Y translation in the matrix
+			}
+			
+			//gallery_obj.content_panel_container.style.transform = "none";
+			
+			// Sync the content panel scroll wrapper with:
+			// 1. Horizontal Scroll (gallery_obj.parallax_scroll_x in vh)
+			// 2. Vertical Parallax displacement (translate_y in pixels)
 			gallery_obj.content_panel_scroll_container.style.transform =
-				`translate3d(calc(${tx}vh), ${ty}px, 0)`;
+				`translateX(calc(${gallery_obj.parallax_scroll_x}vh + ${translate_x}px)) translateY(${translate_y}px)`;
 		}
 	}
 	
