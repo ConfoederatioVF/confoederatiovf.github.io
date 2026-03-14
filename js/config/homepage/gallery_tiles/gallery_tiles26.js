@@ -39,6 +39,9 @@ config.homepage.gallery.tiles = {
     y: 32,
     
     colour: "light-grey",
+    /*
+    content: `<div class = "parallax-item-content-panel-title">Datasets</div>`
+     */
     dependencies: ["histmap", "livemap_collation"],
   },
   histmap: {

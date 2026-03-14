@@ -414,13 +414,6 @@ window.HomepageGallery = class extends window.WebComponent {
 		return descendants.filter((d) => d !== arg0_element_id);
 	}
 	
-	getMaximisedContentPanel () {
-		var maximised = this.element.querySelector(
-			".parallax-item-content-panel.shown.maximised",
-		);
-		return maximised ? maximised.id.replace("-content-panel", "") : undefined;
-	}
-	
 	getParent (arg0_element_id) {
 		var gallery_obj = this.gallery;
 		var keys = Object.keys(gallery_obj.parallax_settings);
@@ -647,24 +640,6 @@ window.HomepageGallery = class extends window.WebComponent {
 				}
 			},
 			{ passive: false },
-		);
-	}
-	
-	initGalleryMobileEventHandlers () {
-		var gallery_obj = this.gallery;
-		
-		gallery_obj.parallax_body.addEventListener(
-			"touchmove",
-			(e) => {
-				if (
-					this.element.querySelectorAll(".maximised.shown").length !==
-					0
-				) {
-					if (!e.target.closest(".parallax-item-content-panel"))
-						e.preventDefault();
-				}
-			},
-			{ passive: false }
 		);
 	}
 	
