@@ -561,11 +561,13 @@ window.HomepageGallery = class extends window.WebComponent {
 				}
 			};
 			
+			this.excluded_selectors = `.parallax-item-content-panel`;
+			
 			// 1. Desktop Wheel Support
 			window.addEventListener(
 				"wheel",
 				(e) => {
-					if (!this.isVisible) return;
+					if (!this.isVisible || e.target.closest(this.excluded_selectors)) return;
 					e.preventDefault();
 					updateTarget(e.deltaY);
 				},
@@ -576,7 +578,7 @@ window.HomepageGallery = class extends window.WebComponent {
 			window.addEventListener(
 				"touchstart",
 				(e) => {
-					if (!this.isVisible) return;
+					if (!this.isVisible || e.target.closest(this.excluded_selectors)) return;
 					// Record initial touch point
 					this.lastTouchY = e.touches[0].pageY;
 				},
@@ -586,7 +588,7 @@ window.HomepageGallery = class extends window.WebComponent {
 			window.addEventListener(
 				"touchmove",
 				(e) => {
-					if (!this.isVisible) return;
+					if (!this.isVisible || e.target.closest(this.excluded_selectors)) return;
 					
 					// Prevent native "threaded" scrolling to keep JS in control
 					e.preventDefault();
