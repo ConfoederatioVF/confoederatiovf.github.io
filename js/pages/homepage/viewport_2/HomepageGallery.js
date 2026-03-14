@@ -512,8 +512,8 @@ window.HomepageGallery = class extends window.WebComponent {
 			
 			// 1. "Majority" Viewport Detection
 			// We use multiple thresholds to ensure the event fires as the ratio changes
-			this.isVisible = false;
-			setInterval(() => {
+			this.isVisible = true;
+			/*setInterval(() => {
 				const rect = this.element.getBoundingClientRect();
 				const viewportHeight = window.innerHeight;
 				
@@ -531,7 +531,7 @@ window.HomepageGallery = class extends window.WebComponent {
 				}
 				
 				this.isVisible = isMajority;
-			}, 0);
+			}, 0);*/
 			
 			// 2. Auto-detecting scrollable subelements
 			this.isScrollable = (el) => {

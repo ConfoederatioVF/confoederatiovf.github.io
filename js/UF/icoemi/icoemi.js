@@ -189,7 +189,16 @@ if (!window.ic) window.ic = {};
 
 //Initialisation script
 {
-	ic.initialise = function () {
+	/**
+	 * Initialises Icoemi.
+	 * 
+	 * @param {Object} [arg0_options]
+	 *  @param {}
+	 */
+	ic.initialise = function (arg0_options) {
+		//Convert from parameters
+		let options = (arg0_options) ? arg0_options : {};
+		
 		ic.logic_loop = setInterval(() => {
 			ic.updateDOM();
 		}, 100);
