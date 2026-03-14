@@ -515,19 +515,57 @@ window.HomepageGallery = class extends window.WebComponent {
 			this.scrollTarget = window.scrollY;
 			this.scrollCurrent = window.scrollY;
 			this.lerpAmount = 0.1;
-			this.lastTouchY = 0; // Track touch position for mobile
+			this.lastTouchY = 0;
 			
-			this.observer = new IntersectionObserver(
-				(entries) => {
-					this.isVisible = entries[0].isIntersecting;
-					if (this.isVisible) {
-						this.scrollTarget = window.scrollY;
-						this.scrollCurrent = window.scrollY;
+			// 1. "Majority" Viewport Detection
+			// We use multiple thresholds to ensure the event fires as the ratio changes
+			this.isVisible = false;
+			setInterval(() => {
+				const rect = this.element.getBoundingClientRect();
+				const viewportHeight = window.innerHeight;
+				
+				// Calculate the vertical pixels of the element currently visible in the viewport
+				const visibleHeight =
+					Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0);
+				
+				// Determine if the visible portion occupies the majority (more than 50%) of the viewport
+				const isMajority = visibleHeight > viewportHeight*0.8
+				
+				if (isMajority && !this.isVisible) {
+					// Sync scroll values only on the transition to visible to prevent jumping
+					this.scrollTarget = window.scrollY;
+					this.scrollCurrent = window.scrollY;
+				}
+				
+				this.isVisible = isMajority;
+			}, 0);
+			
+			// 2. Auto-detecting scrollable subelements
+			this.isScrollable = (el) => {
+				if (!el || el === document.body || el === document.documentElement) {
+					return false;
+				}
+				const style = window.getComputedStyle(el);
+				const overflowY = style.getPropertyValue("overflow-y");
+				const isScrollableType = overflowY === "auto" || overflowY === "scroll";
+				const canScroll = el.scrollHeight > el.clientHeight;
+				
+				return isScrollableType && canScroll;
+			};
+			
+			this.shouldIgnoreEvent = (target) => {
+				if (!this.isVisible) return true;
+				
+				// Walk up the DOM tree from the click/touch target
+				let curr = target;
+				while (curr && curr !== this.element && curr !== document.body) {
+					if (this.isScrollable(curr)) {
+						return true; // Found a scrollable subelement, ignore parallax
 					}
-				},
-				{ threshold: 0 }
-			);
-			this.observer.observe(this.element);
+					curr = curr.parentElement;
+				}
+				return false;
+			};
 			
 			this.animate = () => {
 				const diff = this.scrollTarget - this.scrollCurrent;
@@ -540,7 +578,7 @@ window.HomepageGallery = class extends window.WebComponent {
 				
 				this.updateParallaxScrollValues();
 				
-				if (Math.abs(diff) > 0.1) {
+				if (Math.abs(diff) > 0.1 && this.isVisible) {
 					requestAnimationFrame(this.animate);
 				} else {
 					this.scrollCurrent = this.scrollTarget;
@@ -548,7 +586,6 @@ window.HomepageGallery = class extends window.WebComponent {
 				}
 			};
 			
-			// Helper to update target and trigger animation
 			const updateTarget = (delta) => {
 				this.scrollTarget += delta;
 				const maxScroll =
@@ -561,25 +598,22 @@ window.HomepageGallery = class extends window.WebComponent {
 				}
 			};
 			
-			this.excluded_selectors = `.parallax-item-content-panel`;
-			
-			// 1. Desktop Wheel Support
+			// Wheel Listener
 			window.addEventListener(
 				"wheel",
 				(e) => {
-					if (!this.isVisible || e.target.closest(this.excluded_selectors)) return;
+					if (this.shouldIgnoreEvent(e.target)) return;
 					e.preventDefault();
 					updateTarget(e.deltaY);
 				},
 				{ passive: false }
 			);
 			
-			// 2. Mobile Touch Support
+			// Touch Listeners
 			window.addEventListener(
 				"touchstart",
 				(e) => {
-					if (!this.isVisible || e.target.closest(this.excluded_selectors)) return;
-					// Record initial touch point
+					if (this.shouldIgnoreEvent(e.target)) return;
 					this.lastTouchY = e.touches[0].pageY;
 				},
 				{ passive: true }
@@ -588,22 +622,12 @@ window.HomepageGallery = class extends window.WebComponent {
 			window.addEventListener(
 				"touchmove",
 				(e) => {
-					if (!this.isVisible || e.target.closest(this.excluded_selectors)) return;
-					
-					// Prevent native "threaded" scrolling to keep JS in control
+					if (this.shouldIgnoreEvent(e.target)) return;
 					e.preventDefault();
 					
-					// 1. Calculate the actual finger movement
 					const currentY = e.touches[0].pageY;
 					const movement = this.lastTouchY - currentY;
-					
-					// 2. Scale the delta by a factor for higher sensitivity
-					const deltaY = movement*8;
-					
-					// 3. Update the scroll target
-					updateTarget(deltaY);
-					
-					// 4. Update last position for the next event
+					updateTarget(movement * 2); // Scaled for mobile sensitivity
 					this.lastTouchY = currentY;
 				},
 				{ passive: false }
