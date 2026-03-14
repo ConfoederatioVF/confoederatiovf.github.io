@@ -514,14 +514,13 @@ window.HomepageGallery = class extends window.WebComponent {
 			this.isAnimating = false;
 			this.scrollTarget = window.scrollY;
 			this.scrollCurrent = window.scrollY;
-			this.lerpAmount = 0.1; // Smoothness factor (0.05 = slower, 0.2 = snappier)
+			this.lerpAmount = 0.1;
+			this.lastTouchY = 0; // Track touch position for mobile
 			
-			// 1. Observer to track visibility
 			this.observer = new IntersectionObserver(
 				(entries) => {
 					this.isVisible = entries[0].isIntersecting;
 					if (this.isVisible) {
-						// Sync values to current position when entering
 						this.scrollTarget = window.scrollY;
 						this.scrollCurrent = window.scrollY;
 					}
@@ -530,55 +529,80 @@ window.HomepageGallery = class extends window.WebComponent {
 			);
 			this.observer.observe(this.element);
 			
-			// 2. The Animation Loop (The "Renderer")
 			this.animate = () => {
 				const diff = this.scrollTarget - this.scrollCurrent;
-				
-				// Apply Linear Interpolation
 				this.scrollCurrent += diff * this.lerpAmount;
 				
-				// Perform the move
 				window.scrollTo({
 					top: this.scrollCurrent,
 					behavior: "instant",
 				});
 				
-				// Sync the parallax update in the SAME frame
 				this.updateParallaxScrollValues();
 				
-				// If we haven't reached the target, keep the loop going
 				if (Math.abs(diff) > 0.1) {
 					requestAnimationFrame(this.animate);
 				} else {
-					// Snap to final value and stop loop to save CPU
 					this.scrollCurrent = this.scrollTarget;
 					this.isAnimating = false;
 				}
 			};
 			
-			// 3. The Wheel Interceptor
+			// Helper to update target and trigger animation
+			const updateTarget = (delta) => {
+				this.scrollTarget += delta;
+				const maxScroll =
+					document.documentElement.scrollHeight - window.innerHeight;
+				this.scrollTarget = Math.max(0, Math.min(this.scrollTarget, maxScroll));
+				
+				if (!this.isAnimating) {
+					this.isAnimating = true;
+					requestAnimationFrame(this.animate);
+				}
+			};
+			
+			// 1. Desktop Wheel Support
 			window.addEventListener(
 				"wheel",
 				(e) => {
-					// If the element isn't in view, let the browser handle scrolling natively
+					if (!this.isVisible) return;
+					e.preventDefault();
+					updateTarget(e.deltaY);
+				},
+				{ passive: false }
+			);
+			
+			// 2. Mobile Touch Support
+			window.addEventListener(
+				"touchstart",
+				(e) => {
+					if (!this.isVisible) return;
+					// Record initial touch point
+					this.lastTouchY = e.touches[0].pageY;
+				},
+				{ passive: true }
+			);
+			
+			window.addEventListener(
+				"touchmove",
+				(e) => {
 					if (!this.isVisible) return;
 					
-					// Stop Chrome's default scroll to prevent double-scrolling/stutter
+					// Prevent native "threaded" scrolling to keep JS in control
 					e.preventDefault();
 					
-					// Update the desired scroll target
-					this.scrollTarget += e.deltaY;
+					// 1. Calculate the actual finger movement
+					const currentY = e.touches[0].pageY;
+					const movement = this.lastTouchY - currentY;
 					
-					// Prevent scrolling outside page limits
-					const maxScroll =
-						document.documentElement.scrollHeight - window.innerHeight;
-					this.scrollTarget = Math.max(0, Math.min(this.scrollTarget, maxScroll));
+					// 2. Scale the delta by a factor of 2 for higher sensitivity
+					const deltaY = movement * 4;
 					
-					// START the loop if it's not already running
-					if (!this.isAnimating) {
-						this.isAnimating = true;
-						requestAnimationFrame(this.animate);
-					}
+					// 3. Update the scroll target
+					updateTarget(deltaY);
+					
+					// 4. Update last position for the next event
+					this.lastTouchY = currentY;
 				},
 				{ passive: false }
 			);
