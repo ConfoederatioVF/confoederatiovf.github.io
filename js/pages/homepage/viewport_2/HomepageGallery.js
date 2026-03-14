@@ -507,7 +507,83 @@ window.HomepageGallery = class extends window.WebComponent {
 			this.perspective_string = `rotateX(${this.perspective_deg_x}) rotateY(${this.perspective_deg_y})`;
 			gallery_obj.scene.style.transform = `perspective(20em) ${this.perspective_string}`;
 		});
-		window.addEventListener("scroll", () => this.updateParallaxScrollValues());
+		
+		//[TEMP] - Chrome fix
+		{
+			this.isVisible = false;
+			this.isAnimating = false;
+			this.scrollTarget = window.scrollY;
+			this.scrollCurrent = window.scrollY;
+			this.lerpAmount = 0.1; // Smoothness factor (0.05 = slower, 0.2 = snappier)
+			
+			// 1. Observer to track visibility
+			this.observer = new IntersectionObserver(
+				(entries) => {
+					this.isVisible = entries[0].isIntersecting;
+					if (this.isVisible) {
+						// Sync values to current position when entering
+						this.scrollTarget = window.scrollY;
+						this.scrollCurrent = window.scrollY;
+					}
+				},
+				{ threshold: 0 }
+			);
+			this.observer.observe(this.element);
+			
+			// 2. The Animation Loop (The "Renderer")
+			this.animate = () => {
+				const diff = this.scrollTarget - this.scrollCurrent;
+				
+				// Apply Linear Interpolation
+				this.scrollCurrent += diff * this.lerpAmount;
+				
+				// Perform the move
+				window.scrollTo({
+					top: this.scrollCurrent,
+					behavior: "instant",
+				});
+				
+				// Sync the parallax update in the SAME frame
+				this.updateParallaxScrollValues();
+				
+				// If we haven't reached the target, keep the loop going
+				if (Math.abs(diff) > 0.1) {
+					requestAnimationFrame(this.animate);
+				} else {
+					// Snap to final value and stop loop to save CPU
+					this.scrollCurrent = this.scrollTarget;
+					this.isAnimating = false;
+				}
+			};
+			
+			// 3. The Wheel Interceptor
+			window.addEventListener(
+				"wheel",
+				(e) => {
+					// If the element isn't in view, let the browser handle scrolling natively
+					if (!this.isVisible) return;
+					
+					// Stop Chrome's default scroll to prevent double-scrolling/stutter
+					e.preventDefault();
+					
+					// Update the desired scroll target
+					this.scrollTarget += e.deltaY;
+					
+					// Prevent scrolling outside page limits
+					const maxScroll =
+						document.documentElement.scrollHeight - window.innerHeight;
+					this.scrollTarget = Math.max(0, Math.min(this.scrollTarget, maxScroll));
+					
+					// START the loop if it's not already running
+					if (!this.isAnimating) {
+						this.isAnimating = true;
+						requestAnimationFrame(this.animate);
+					}
+				},
+				{ passive: false }
+			);
+		}
+		
 		gallery_obj.parallax_body.addEventListener(
 			"wheel",
 			(e) => {
@@ -914,39 +990,6 @@ window.HomepageGallery = class extends window.WebComponent {
 		}
 	}
 	
-	updateParallaxScrollValues () {
-		var gallery_obj = this.gallery;
-		var track = document.getElementById("gallery-section");
-		if (!track) return;
-		var rect = track.getBoundingClientRect();
-		var scrollable_dist = rect.height - window.innerHeight;
-		var vertical_offset =
-			rect.top <= 0 ? Math.min(Math.abs(rect.top), scrollable_dist) : 0;
-		var siblings = gallery_obj.parallax_body.children;
-		for (let i = 0; i < siblings.length; i++) {
-			let child = siblings[i];
-			
-			let translate_px = vertical_offset;
-			
-			if (child.id === "bookmark-container") {
-				translate_px = vertical_offset - window.innerHeight / 2;
-			} else {
-				
-			}
-			child.style.transform = `translateY(${translate_px}px)`;
-		}
-		if (rect.top <= 0 && rect.bottom >= window.innerHeight) {
-			var progress = Math.abs(rect.top) / scrollable_dist;
-			gallery_obj.parallax_scroll_x = progress * gallery_obj.gallery_width * -1;
-			
-			// Apply both X and Y to the underlay
-			gallery_obj.parallax_container.style.transform = `translateX(${gallery_obj.parallax_scroll_x}vh)`;
-			
-			if (gallery_obj.parallax_scroll_indicator)
-				gallery_obj.parallax_scroll_indicator.style.width = `${progress * 100}vw`;
-		}
-	}
-	
 	pinItem (arg0_element_id) {
 		var gallery_obj = this.gallery;
 		var local_element = this.element.querySelector(`#${arg0_element_id}`);
@@ -980,30 +1023,6 @@ window.HomepageGallery = class extends window.WebComponent {
 		if (gallery_obj.bookmark_items.length == 0) {
 			gallery_obj.no_bookmark_label.classList.remove("hidden");
 			gallery_obj.bookmark_container.classList.add("no-bookmarks");
-		}
-	}
-	
-	restorePanelStyle (arg0_panel) {
-		if (
-			arg0_panel &&
-			arg0_panel.dataset.originalStyle !== undefined
-		) {
-			arg0_panel.setAttribute(
-				"style",
-				arg0_panel.dataset.originalStyle,
-			);
-		}
-	}
-	
-	saveOriginalPanelStyles () {
-		var panels = this.element.querySelectorAll(
-			".parallax-item-content-panel",
-		);
-		for (let i = 0; i < panels.length; i++) {
-			if (!panels[i].dataset.originalStyle) {
-				panels[i].dataset.originalStyle =
-					panels[i].getAttribute("style") || "";
-			}
 		}
 	}
 	
@@ -1192,6 +1211,63 @@ window.HomepageGallery = class extends window.WebComponent {
 				}
 			}
 		});
+	}
+	
+	restorePanelStyle (arg0_panel) {
+		if (
+			arg0_panel &&
+			arg0_panel.dataset.originalStyle !== undefined
+		) {
+			arg0_panel.setAttribute(
+				"style",
+				arg0_panel.dataset.originalStyle,
+			);
+		}
+	}
+	
+	saveOriginalPanelStyles () {
+		var panels = this.element.querySelectorAll(
+			".parallax-item-content-panel",
+		);
+		for (let i = 0; i < panels.length; i++) {
+			if (!panels[i].dataset.originalStyle) {
+				panels[i].dataset.originalStyle =
+					panels[i].getAttribute("style") || "";
+			}
+		}
+	}
+	
+	updateParallaxScrollValues () {
+		var gallery_obj = this.gallery;
+		var track = document.getElementById("gallery-section");
+		if (!track) return;
+		var rect = track.getBoundingClientRect();
+		var scrollable_dist = rect.height - window.innerHeight;
+		var vertical_offset =
+			rect.top <= 0 ? Math.min(Math.abs(rect.top), scrollable_dist) : 0;
+		var siblings = gallery_obj.parallax_body.children;
+		for (let i = 0; i < siblings.length; i++) {
+			let child = siblings[i];
+			
+			let translate_px = vertical_offset;
+			
+			if (child.id === "bookmark-container") {
+				translate_px = vertical_offset - window.innerHeight / 2;
+			} else {
+				
+			}
+			child.style.transform = `translateY(${translate_px}px)`;
+		}
+		if (rect.top <= 0 && rect.bottom >= window.innerHeight) {
+			var progress = Math.abs(rect.top) / scrollable_dist;
+			gallery_obj.parallax_scroll_x = progress * gallery_obj.gallery_width * -1;
+			
+			// Apply both X and Y to the underlay
+			gallery_obj.parallax_container.style.transform = `translateX(${gallery_obj.parallax_scroll_x}vh)`;
+			
+			if (gallery_obj.parallax_scroll_indicator)
+				gallery_obj.parallax_scroll_indicator.style.width = `${progress * 100}vw`;
+		}
 	}
 };
 

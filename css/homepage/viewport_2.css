@@ -3,10 +3,12 @@
     height: calc(400vh*4); 
 }
 /* -- [TEMP] -- */
+div:has(.project-parallax-container) {
+  
+}
 .project-parallax-container {
   position: sticky;
-  top: 100dvh;
-  width: 100%;
+  top: 0;
   height: 100%;
   overflow: hidden;
   box-shadow: -2dvh 0 5dvh rgba(0, 0, 0, 0.7),
@@ -15,8 +17,7 @@
   
 }
 .project-parallax-container > * { 
-  will-change: top, transform; 
-  transition: none !important;
+  will-change: top, transform;
 }
 section#scene { 
     height: 100dvh; 
