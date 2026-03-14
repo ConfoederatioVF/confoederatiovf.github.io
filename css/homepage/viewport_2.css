@@ -2,10 +2,6 @@
 #gallery-section { 
     height: calc(400vh*4); 
 }
-/* -- [TEMP] -- */
-div:has(.project-parallax-container) {
-  
-}
 .project-parallax-container {
   position: sticky;
   top: 0;
