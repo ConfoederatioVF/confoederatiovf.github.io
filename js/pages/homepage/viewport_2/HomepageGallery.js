@@ -983,6 +983,30 @@ window.HomepageGallery = class extends window.WebComponent {
 		}
 	}
 	
+	restorePanelStyle (arg0_panel) {
+		if (
+			arg0_panel &&
+			arg0_panel.dataset.originalStyle !== undefined
+		) {
+			arg0_panel.setAttribute(
+				"style",
+				arg0_panel.dataset.originalStyle,
+			);
+		}
+	}
+	
+	saveOriginalPanelStyles () {
+		var panels = this.element.querySelectorAll(
+			".parallax-item-content-panel",
+		);
+		for (let i = 0; i < panels.length; i++) {
+			if (!panels[i].dataset.originalStyle) {
+				panels[i].dataset.originalStyle =
+					panels[i].getAttribute("style") || "";
+			}
+		}
+	}
+	
 	selectBookmarkItem (arg0_element_id, arg1_automatic_selection, arg2_no_scroll) {
 		var actual_id = arg0_element_id.replace("preview-", "");
 		var gallery_obj = this.gallery;
@@ -1169,31 +1193,6 @@ window.HomepageGallery = class extends window.WebComponent {
 			}
 		});
 	}
-	
-	restorePanelStyle (arg0_panel) {
-		if (
-			arg0_panel &&
-			arg0_panel.dataset.originalStyle !== undefined
-		) {
-			arg0_panel.setAttribute(
-				"style",
-				arg0_panel.dataset.originalStyle,
-			);
-		}
-	}
-	
-	saveOriginalPanelStyles () {
-		var panels = this.element.querySelectorAll(
-			".parallax-item-content-panel",
-		);
-		for (let i = 0; i < panels.length; i++) {
-			if (!panels[i].dataset.originalStyle) {
-				panels[i].dataset.originalStyle =
-					panels[i].getAttribute("style") || "";
-			}
-		}
-	}
-	
 };
 
 function initHomepageGallery() {

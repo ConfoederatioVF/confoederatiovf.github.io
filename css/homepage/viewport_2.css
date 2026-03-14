@@ -16,7 +16,7 @@
 }
 .project-parallax-container > * { 
   will-change: top, transform; 
-  transition: all 0s ease !important;
+  transition: none !important;
 }
 section#scene { 
     height: 100dvh; 
