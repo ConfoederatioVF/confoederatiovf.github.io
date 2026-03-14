@@ -503,7 +503,6 @@ window.HomepageGallery = class extends window.WebComponent {
 		
 		//[TEMP] - Chrome fix
 		{
-			this.isVisible = false;
 			this.isAnimating = false;
 			this.scrollTarget = window.scrollY;
 			this.scrollCurrent = window.scrollY;
@@ -513,25 +512,6 @@ window.HomepageGallery = class extends window.WebComponent {
 			// 1. "Majority" Viewport Detection
 			// We use multiple thresholds to ensure the event fires as the ratio changes
 			this.isVisible = true;
-			/*setInterval(() => {
-				const rect = this.element.getBoundingClientRect();
-				const viewportHeight = window.innerHeight;
-				
-				// Calculate the vertical pixels of the element currently visible in the viewport
-				const visibleHeight =
-					Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0);
-				
-				// Determine if the visible portion occupies the majority (more than 50%) of the viewport
-				const isMajority = visibleHeight > viewportHeight*0.8
-				
-				if (isMajority && !this.isVisible) {
-					// Sync scroll values only on the transition to visible to prevent jumping
-					this.scrollTarget = window.scrollY;
-					this.scrollCurrent = window.scrollY;
-				}
-				
-				this.isVisible = isMajority;
-			}, 0);*/
 			
 			// 2. Auto-detecting scrollable subelements
 			this.isScrollable = (el) => {

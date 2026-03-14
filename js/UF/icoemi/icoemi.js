@@ -145,6 +145,25 @@ if (!window.ic) window.ic = {};
 		return all_elements;
 	};
 	
+	ic.isElementScrollable = function (arg0_element) {
+		//Convert from parameters
+		let element = ic.getElement(arg0_element);
+		
+		//Internal guard clause if element is not valid
+		if (!element || element === document.body || element === document.documentElement)
+			return false;
+		
+		//Declare local instance variables
+		let style = window.getComputedStyle(element);
+		
+		let can_scroll = (element.scrollHeight > element.clientHeight);
+		let overflow_y = style.getPropertyValue("overflow-y");
+		let is_scrollable_type = (overflow_y === "auto" || overflow_y === "scroll");
+		
+		//Return statement
+		return (is_scrollable_type && can_scroll);
+	};
+	
 	ic.loadComponent = async function (arg0_element, arg1_url, arg2_options) {
 		//Convert from parameters
 		let element = ic.getElement(arg0_element);
@@ -193,11 +212,71 @@ if (!window.ic) window.ic = {};
 	 * Initialises Icoemi.
 	 * 
 	 * @param {Object} [arg0_options]
-	 *  @param {}
+	 *  @param {boolean} [arg0_options.smooth_scroll=false]
 	 */
 	ic.initialise = function (arg0_options) {
 		//Convert from parameters
 		let options = (arg0_options) ? arg0_options : {};
+		
+		if (options.smooth_scroll) {
+			ic._smooth_scroll = {
+				last_touch_y: 0,
+				lerp_amount: 0.1,
+				is_animating: false,
+				scroll_current: window.scrollY,
+				scroll_target: window.scrollY,
+				
+				update_functions: []
+			};
+			
+			let scroll_obj = ic._smooth_scroll;
+			
+			let scrollAnimate = () => {
+				//Declare local instance variables
+				let diff = scroll_obj.scroll_target - scroll_obj.scroll_current;
+				
+				scroll_obj.scroll_current += diff*scroll_obj.lerp_amount;
+				window.scrollTo({
+					top: scroll_obj.scrollCurrent,
+					behavior: "instant",
+				});
+				
+				scroll_obj.updateParallaxScrollValues(); //[WIP] - ITERATE OVER UPDATE FUNCTIONS INSTEAD
+				
+				if (Math.abs(diff) > 0.1) {
+					requestAnimationFrame(scroll_obj.animate);
+				} else {
+					scroll_obj.scroll_current = scroll_obj.scrollTarget;
+					scroll_obj.isAnimating = false;
+				}
+			};
+			
+			let scrollShouldIgnoreEvent = (target) => {
+				if (!scroll_obj.isVisible) return true;
+				
+				// Walk up the DOM tree from the click/touch target
+				let curr = target;
+				while (curr && curr !== scroll_obj.element && curr !== document.body) {
+					if (scroll_obj.isScrollable(curr)) {
+						return true; // Found a scrollable subelement, ignore parallax
+					}
+					curr = curr.parentElement;
+				}
+				return false;
+			};
+			
+			let scrollUpdateTarget = (delta) => {
+				scroll_obj.scrollTarget += delta;
+				const maxScroll =
+					document.documentElement.scrollHeight - window.innerHeight;
+				scroll_obj.scrollTarget = Math.max(0, Math.min(scroll_obj.scrollTarget, maxScroll));
+				
+				if (!scroll_obj.isAnimating) {
+					scroll_obj.isAnimating = true;
+					requestAnimationFrame(scroll_obj.animate);
+				}
+			};
+		}
 		
 		ic.logic_loop = setInterval(() => {
 			ic.updateDOM();
@@ -205,4 +284,4 @@ if (!window.ic) window.ic = {};
 	};
 }
 
-ic.initialise();
+ic.initialise({ /*smooth_scroll: true*/ });
