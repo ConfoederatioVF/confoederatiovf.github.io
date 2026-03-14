@@ -13,16 +13,6 @@ config.homepage.gallery.tiles = {
     y: 28,
     
     colour: "light-blue",
-    content: `<div class = "parallax-item-content-panel-title">CRD</div>
-    <hr class = "parallax-item-content-panel-divider">
-    <b>Confoederatio, Research Division</b>, also known as <u>CRD</u>, works on academic datasets and tooling for their maintenance and production. Most tasks are applied, typically to spatiotemporal data and social systems or simulations. It is directly analogous to the Research Divisions of other data science studios.
-    <br><br>
-    All work produced by CRD, like any other division of Confoederatio, are MIT licenced for use, including accessible datasets. 
-    <br><br>
-    <hr class = "parallax-item-content-panel-divider">
-    <br>
-    <img src = "gfx/interface/logos/crd_coat_of_arms_logo.png" width = "100%">
-    `,
     dependencies: ["datasets"],
   },
   
