@@ -595,8 +595,8 @@ window.HomepageGallery = class extends window.WebComponent {
 					const currentY = e.touches[0].pageY;
 					const movement = this.lastTouchY - currentY;
 					
-					// 2. Scale the delta by a factor of 2 for higher sensitivity
-					const deltaY = movement * 4;
+					// 2. Scale the delta by a factor for higher sensitivity
+					const deltaY = movement*8;
 					
 					// 3. Update the scroll target
 					updateTarget(deltaY);
