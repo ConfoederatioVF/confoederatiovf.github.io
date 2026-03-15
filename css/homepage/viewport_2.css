@@ -511,7 +511,11 @@ a {
 
 /* -- Artistic image styling -- */
 .preview-image-container {
+  cursor: none;
   overflow: hidden;
+}
+.preview-image-container.cursor-shown {
+  cursor: auto;
 }
 .preview-image {
   margin-top: 5%;
@@ -519,9 +523,6 @@ a {
   width: 100%;
 
   transition: all 2s ease;
-}
-.preview-image:not(.cursor-shown) {
-  cursor: none;
 }
 .image-magnifier-glass {
   position: absolute;

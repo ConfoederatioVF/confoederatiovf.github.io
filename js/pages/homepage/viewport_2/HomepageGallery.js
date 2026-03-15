@@ -709,32 +709,40 @@ window.HomepageGallery = class extends window.WebComponent {
 		let zoom = arg1_zoom;
 		
 		let element_id = local_el.id;
+		if (!element_id) {
+			console.warn(local_el, `requires an id attribute to be set!`);
+			return;
+		}
+		
 		this.zoom_states[element_id] = zoom;
-		let local_magnifier = document.createElement("DIV");
-		local_magnifier.setAttribute("class", "image-magnifier-glass");
-		local_magnifier.style.backgroundImage = `url('${local_el.src}')`;
-		local_magnifier.style.backgroundRepeat = "no-repeat";
-		local_el.parentElement.insertBefore(local_magnifier, local_el);
-		local_el.addEventListener("mousemove", (e) =>
-			this.moveMagnifier(e, local_el, local_magnifier),
-		);
-		local_el.addEventListener("touchmove", (e) =>
-			this.moveMagnifier(e, local_el, local_magnifier),
-		);
-		local_el.addEventListener("wheel", (e) => {
-			let current_zoom = this.zoom_states[element_id];
-			current_zoom += e.deltaY * -0.0025;
-			current_zoom = Math.min(Math.max(1.25, current_zoom), 10);
-			this.zoom_states[element_id] = current_zoom;
-			e.preventDefault();
-		});
-		setInterval(() => {
-			let is_hovered =
-				this.element.querySelector(`#${element_id}:hover`) !== null;
-			let active_preview =
-				this.active_previews[element_id.replace(/-/gm, "_")] !== false;
-			local_magnifier.style.opacity = is_hovered && active_preview ? 1 : 0;
-		}, 100);
+		try {
+			let local_magnifier = document.createElement("DIV");
+			local_magnifier.setAttribute("class", "image-magnifier-glass");
+			local_magnifier.style.backgroundImage = `url('${local_el.src}')`;
+			local_magnifier.style.backgroundRepeat = "no-repeat";
+			local_el.parentElement.insertBefore(local_magnifier, local_el);
+			local_el.addEventListener("mousemove", (e) =>
+				this.moveMagnifier(e, local_el, local_magnifier),
+			);
+			local_el.addEventListener("touchmove", (e) =>
+				this.moveMagnifier(e, local_el, local_magnifier),
+			);
+			local_el.addEventListener("wheel", (e) => {
+				let current_zoom = this.zoom_states[element_id];
+				current_zoom += e.deltaY * -0.0025;
+				current_zoom = Math.min(Math.max(1.25, current_zoom), 10);
+				this.zoom_states[element_id] = current_zoom;
+				e.preventDefault();
+			});
+			setInterval(() => {
+				let is_hovered =
+					this.element.querySelector(`#${element_id}:hover`) !== null;
+				let active_preview = !local_el.parentElement.classList.contains("cursor-shown");
+				local_magnifier.style.opacity = (is_hovered && active_preview) ? 1 : 0;
+			}, 100);
+		} catch (e) {
+			console.error(e);
+		}
 	}
 	
 	maximiseContentPanel (arg0_element_id) {
@@ -1042,17 +1050,22 @@ window.HomepageGallery = class extends window.WebComponent {
 	
 	togglePreview (arg0_element_id) {
 		let element_id = arg0_element_id;
-		let img_el = this.element.querySelector("#" + arg0_element_id.replace(/_/gm, "-"));
+		let img_els = this.element.querySelectorAll(`[id="${arg0_element_id}-content-wrapper"] .preview-image-container`);
 		let local_el = this.element.querySelector(`#${element_id}-preview-btn`);
 		let key = element_id.replace(/-/gm, "_");
 		
 		if (local_el.classList.contains("active")) {
 			local_el.classList.remove("active");
-			img_el.classList.add("cursor-shown");
+			
+			for (let i = 0; i < img_els.length; i++)
+				img_els[i].classList.add("cursor-shown");
+			
 			this.active_previews[key] = false;
 		} else {
 			local_el.classList.add("active");
-			img_el.classList.remove("cursor-shown");
+			
+			for (let i = 0; i < img_els.length; i++)
+				img_els[i].classList.remove("cursor-shown");
 			this.active_previews[key] = true;
 		}
 	}

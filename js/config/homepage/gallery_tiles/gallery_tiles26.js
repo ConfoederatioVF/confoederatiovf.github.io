@@ -88,6 +88,14 @@ config.homepage.gallery.tiles = {
     animation: "livemap-collation",
     background_image: "gfx/interface/tiles/livemap_collation.png",
     background_opacity: 0.3,
+    content: `<div id = "georeferencer-content-wrapper" class = "parallax-item-content-panel-title">Livemap/Collation</div>
+    <hr class = "parallax-item-content-panel-divider">
+    <div class = "parallax-item-content-panel-body-text">
+      <div id = "georeferencer-preview" class = "preview-image-container">
+        <img src = "gfx/interface/tiles/31.georeferencer.jpg" class = "preview-image" id = "georeferencer">
+      </div>
+    </div>
+    `,
     default_bookmark: true,
     default_pin: true,
     font_position: "bottom-left",
