@@ -7,6 +7,8 @@
   --content-panel-offset-y: -125dvh;
   --parallax-offset-x: calc(23vw);
   --parallax-offset-y: -12.5vh;
+  
+  font-size: 16px;
 }
 
 /* -- Declare global constants -- */
