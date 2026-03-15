@@ -20,7 +20,6 @@ function initEventHandlers () {
 		var vh_scroll = (window.scrollY/window.innerHeight)*100;
 		
 		//Event handler functions
-		fixMobileVh();
 		viewport_one.homepageBannerTitleAdjustPosition();
 		viewport_one.triumphAndTragedyOnScroll();
 		

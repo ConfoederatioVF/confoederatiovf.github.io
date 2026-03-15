@@ -214,68 +214,104 @@ if (!window.ic) window.ic = {};
 	 * @param {Object} [arg0_options]
 	 *  @param {boolean} [arg0_options.smooth_scroll=false]
 	 */
+	// Inside the ic.initialise function
 	ic.initialise = function (arg0_options) {
-		//Convert from parameters
-		let options = (arg0_options) ? arg0_options : {};
+		let options = arg0_options ? arg0_options : {};
 		
 		if (options.smooth_scroll) {
-			ic._smooth_scroll = {
+			ic._event_smooth_scroll = {
 				last_touch_y: 0,
 				lerp_amount: 0.1,
 				is_animating: false,
 				scroll_current: window.scrollY,
 				scroll_target: window.scrollY,
+				update_functions: [],
 				
-				update_functions: []
+				// Method to allow components to add their own scroll logic
+				addUpdateListener: function (fn) {
+					if (typeof fn === "function") this.update_functions.push(fn);
+				},
 			};
 			
-			let scroll_obj = ic._smooth_scroll;
+			let scroll_obj = ic._event_smooth_scroll;
 			
-			let scrollAnimate = () => {
-				//Declare local instance variables
+			let animate = () => {
 				let diff = scroll_obj.scroll_target - scroll_obj.scroll_current;
+				scroll_obj.scroll_current += diff * scroll_obj.lerp_amount;
 				
-				scroll_obj.scroll_current += diff*scroll_obj.lerp_amount;
 				window.scrollTo({
-					top: scroll_obj.scrollCurrent,
+					top: scroll_obj.scroll_current,
 					behavior: "instant",
 				});
 				
-				scroll_obj.updateParallaxScrollValues(); //[WIP] - ITERATE OVER UPDATE FUNCTIONS INSTEAD
+				// Execute all registered component updates (like Parallax)
+				for (let i = 0; i < scroll_obj.update_functions.length; i++) {
+					scroll_obj.update_functions[i](scroll_obj.scroll_current);
+				}
 				
 				if (Math.abs(diff) > 0.1) {
-					requestAnimationFrame(scroll_obj.animate);
+					requestAnimationFrame(animate);
 				} else {
-					scroll_obj.scroll_current = scroll_obj.scrollTarget;
-					scroll_obj.isAnimating = false;
+					scroll_obj.scroll_current = scroll_obj.scroll_target;
+					scroll_obj.is_animating = false;
 				}
 			};
 			
-			let scrollShouldIgnoreEvent = (target) => {
-				if (!scroll_obj.isVisible) return true;
-				
-				// Walk up the DOM tree from the click/touch target
+			let shouldIgnoreEvent = (target) => {
 				let curr = target;
-				while (curr && curr !== scroll_obj.element && curr !== document.body) {
-					if (scroll_obj.isScrollable(curr)) {
-						return true; // Found a scrollable subelement, ignore parallax
-					}
+				while (curr && curr !== document.body) {
+					if (ic.isElementScrollable(curr)) return true;
 					curr = curr.parentElement;
 				}
 				return false;
 			};
 			
-			let scrollUpdateTarget = (delta) => {
-				scroll_obj.scrollTarget += delta;
+			let updateTarget = (delta) => {
+				scroll_obj.scroll_target += delta;
 				const maxScroll =
 					document.documentElement.scrollHeight - window.innerHeight;
-				scroll_obj.scrollTarget = Math.max(0, Math.min(scroll_obj.scrollTarget, maxScroll));
+				scroll_obj.scroll_target = Math.max(
+					0,
+					Math.min(scroll_obj.scroll_target, maxScroll),
+				);
 				
-				if (!scroll_obj.isAnimating) {
-					scroll_obj.isAnimating = true;
-					requestAnimationFrame(scroll_obj.animate);
+				if (!scroll_obj.is_animating) {
+					scroll_obj.is_animating = true;
+					requestAnimationFrame(animate);
 				}
 			};
+			
+			window.addEventListener(
+				"wheel",
+				(e) => {
+					if (shouldIgnoreEvent(e.target)) return;
+					e.preventDefault();
+					updateTarget(e.deltaY);
+				},
+				{ passive: false },
+			);
+			
+			window.addEventListener(
+				"touchstart",
+				(e) => {
+					if (shouldIgnoreEvent(e.target)) return;
+					scroll_obj.last_touch_y = e.touches[0].pageY;
+				},
+				{ passive: true },
+			);
+			
+			window.addEventListener(
+				"touchmove",
+				(e) => {
+					if (shouldIgnoreEvent(e.target)) return;
+					e.preventDefault();
+					const currentY = e.touches[0].pageY;
+					const movement = scroll_obj.last_touch_y - currentY;
+					updateTarget(movement * 2);
+					scroll_obj.last_touch_y = currentY;
+				},
+				{ passive: false },
+			);
 		}
 		
 		ic.logic_loop = setInterval(() => {
@@ -284,4 +320,4 @@ if (!window.ic) window.ic = {};
 	};
 }
 
-ic.initialise({ /*smooth_scroll: true*/ });
+ic.initialise({ smooth_scroll: true });
