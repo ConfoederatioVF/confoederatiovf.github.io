@@ -219,7 +219,7 @@ if (!window.ic) window.ic = {};
 		let options = arg0_options ? arg0_options : {};
 		
 		if (options.smooth_scroll) {
-			ic._event_smooth_scroll = {
+			ic._smooth_scroll = {
 				last_touch_y: 0,
 				lerp_amount: 0.1,
 				is_animating: false,
@@ -233,9 +233,9 @@ if (!window.ic) window.ic = {};
 				},
 			};
 			
-			let scroll_obj = ic._event_smooth_scroll;
+			let scroll_obj = ic._smooth_scroll;
 			
-			let animate = () => {
+			const animate = () => {
 				let diff = scroll_obj.scroll_target - scroll_obj.scroll_current;
 				scroll_obj.scroll_current += diff * scroll_obj.lerp_amount;
 				
@@ -257,7 +257,7 @@ if (!window.ic) window.ic = {};
 				}
 			};
 			
-			let shouldIgnoreEvent = (target) => {
+			const shouldIgnoreEvent = (target) => {
 				let curr = target;
 				while (curr && curr !== document.body) {
 					if (ic.isElementScrollable(curr)) return true;
@@ -266,7 +266,7 @@ if (!window.ic) window.ic = {};
 				return false;
 			};
 			
-			let updateTarget = (delta) => {
+			const updateTarget = (delta) => {
 				scroll_obj.scroll_target += delta;
 				const maxScroll =
 					document.documentElement.scrollHeight - window.innerHeight;
@@ -320,4 +320,6 @@ if (!window.ic) window.ic = {};
 	};
 }
 
-ic.initialise({ smooth_scroll: true });
+ic.initialise({ 
+	//smooth_scroll: true 
+});

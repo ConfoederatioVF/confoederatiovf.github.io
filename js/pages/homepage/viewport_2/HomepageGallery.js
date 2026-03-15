@@ -484,47 +484,138 @@ window.HomepageGallery = class extends window.WebComponent {
 	}
 	
 	initGalleryDesktopEventHandlers () {
-		let gallery_obj = this.gallery;
-		
-		// Keep the mouse perspective logic as it is specific to the gallery container
+		var gallery_obj = this.gallery;
 		gallery_obj.parallax_body.addEventListener("mousemove", (e) => {
-			let half_width = gallery_obj.parallax_body.clientWidth / 2,
+			var half_width = gallery_obj.parallax_body.clientWidth / 2,
 				half_height = gallery_obj.parallax_body.clientHeight / 2,
-				mouse_x =
-					half_width + gallery_obj.parallax_body.offsetLeft - e.pageX,
-				mouse_y =
-					half_height + gallery_obj.parallax_body.offsetTop - e.pageY;
+				mouse_x = half_width + gallery_obj.parallax_body.offsetLeft - e.pageX,
+				mouse_y = half_height + gallery_obj.parallax_body.offsetTop - e.pageY;
 			if (gallery_obj.content_panel_update_paused) {
 				mouse_x /= 32;
 				mouse_y /= 32;
 			}
-			let max_deg = 1.25;
-			this.perspective_deg_x =
-				(mouse_y / half_height) * max_deg * -1 + max_deg / 2 + "deg";
-			this.perspective_deg_y =
-				(mouse_x / half_width) * max_deg * -1 + 2 + "deg";
+			var max_deg = 1.25;
+			this.perspective_deg_x = (mouse_y / half_height) * max_deg * -1 + max_deg / 2 + "deg";
+			this.perspective_deg_y = (mouse_x / half_width) * max_deg * -1 + 2 + "deg";
 			this.perspective_string = `rotateX(${this.perspective_deg_x}) rotateY(${this.perspective_deg_y})`;
 			gallery_obj.scene.style.transform = `perspective(20em) ${this.perspective_string}`;
 		});
 		
-		// Register this component's update logic to the global IC scroll handler
-		if (window.ic && ic._smooth_scroll) {
-			ic._smooth_scroll.addUpdateListener(() => {
+		//[TEMP] - Chrome fix
+		{
+			this.isAnimating = false;
+			this.scrollTarget = window.scrollY;
+			this.scrollCurrent = window.scrollY;
+			this.lerpAmount = 0.1;
+			this.lastTouchY = 0;
+			
+			// 1. "Majority" Viewport Detection
+			// We use multiple thresholds to ensure the event fires as the ratio changes
+			this.isVisible = true;
+			
+			// 2. Auto-detecting scrollable subelements
+			this.isScrollable = (el) => {
+				if (!el || el === document.body || el === document.documentElement) {
+					return false;
+				}
+				const style = window.getComputedStyle(el);
+				const overflowY = style.getPropertyValue("overflow-y");
+				const isScrollableType = overflowY === "auto" || overflowY === "scroll";
+				const canScroll = el.scrollHeight > el.clientHeight;
+				
+				return isScrollableType && canScroll;
+			};
+			
+			this.shouldIgnoreEvent = (target) => {
+				if (!this.isVisible) return true;
+				
+				// Walk up the DOM tree from the click/touch target
+				let curr = target;
+				while (curr && curr !== this.element && curr !== document.body) {
+					if (this.isScrollable(curr)) {
+						return true; // Found a scrollable subelement, ignore parallax
+					}
+					curr = curr.parentElement;
+				}
+				return false;
+			};
+			
+			this.animate = () => {
+				const diff = this.scrollTarget - this.scrollCurrent;
+				this.scrollCurrent += diff * this.lerpAmount;
+				
+				window.scrollTo({
+					top: this.scrollCurrent,
+					behavior: "instant",
+				});
+				
 				this.updateParallaxScrollValues();
-				this.updateContentPanelContainer();
-			});
+				
+				if (Math.abs(diff) > 0.1 && this.isVisible) {
+					requestAnimationFrame(this.animate);
+				} else {
+					this.scrollCurrent = this.scrollTarget;
+					this.isAnimating = false;
+				}
+			};
+			
+			const updateTarget = (delta) => {
+				this.scrollTarget += delta;
+				const maxScroll =
+					document.documentElement.scrollHeight - window.innerHeight;
+				this.scrollTarget = Math.max(0, Math.min(this.scrollTarget, maxScroll));
+				
+				if (!this.isAnimating) {
+					this.isAnimating = true;
+					requestAnimationFrame(this.animate);
+				}
+			};
+			
+			// Wheel Listener
+			window.addEventListener(
+				"wheel",
+				(e) => {
+					if (this.shouldIgnoreEvent(e.target)) return;
+					e.preventDefault();
+					updateTarget(e.deltaY);
+				},
+				{ passive: false }
+			);
+			
+			// Touch Listeners
+			window.addEventListener(
+				"touchstart",
+				(e) => {
+					if (this.shouldIgnoreEvent(e.target)) return;
+					this.lastTouchY = e.touches[0].pageY;
+				},
+				{ passive: true }
+			);
+			
+			window.addEventListener(
+				"touchmove",
+				(e) => {
+					if (this.shouldIgnoreEvent(e.target)) return;
+					e.preventDefault();
+					
+					const currentY = e.touches[0].pageY;
+					const movement = this.lastTouchY - currentY;
+					updateTarget(movement * 2); // Scaled for mobile sensitivity
+					this.lastTouchY = currentY;
+				},
+				{ passive: false }
+			);
 		}
 		
-		// Internal panel scrolling (stop propagation so global scroll doesn't fire)
 		gallery_obj.parallax_body.addEventListener(
 			"wheel",
 			(e) => {
-				let panel = e.target.closest(".content-wrapper");
+				var panel = e.target.closest(".content-wrapper");
 				if (panel) {
-					let is_at_top = panel.scrollTop <= 0 && e.deltaY < 0;
-					let is_at_bottom =
-						panel.scrollTop + panel.offsetHeight >=
-						panel.scrollHeight && e.deltaY > 0;
+					var is_at_top = panel.scrollTop <= 0 && e.deltaY < 0;
+					var is_at_bottom =
+						panel.scrollTop + panel.offsetHeight >= panel.scrollHeight &&
+						e.deltaY > 0;
 					if (!is_at_top && !is_at_bottom) e.stopPropagation();
 				}
 			},
