@@ -214,7 +214,6 @@ if (!window.ic) window.ic = {};
 	 * @param {Object} [arg0_options]
 	 *  @param {boolean} [arg0_options.smooth_scroll=false]
 	 */
-	// Inside the ic.initialise function
 	ic.initialise = function (arg0_options) {
 		let options = arg0_options ? arg0_options : {};
 		
@@ -321,5 +320,5 @@ if (!window.ic) window.ic = {};
 }
 
 ic.initialise({ 
-	//smooth_scroll: true 
+	smooth_scroll: true 
 });

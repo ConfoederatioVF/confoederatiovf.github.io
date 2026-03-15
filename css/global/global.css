@@ -2,6 +2,12 @@
   --website-primary-font: "Barlow", sans-serif;
   --website-secondary-font: "Space Grotesk", sans-serif;
   --website-tertiary-font: "Karla", sans-serif;
+  
+  --parallax-offset-x: calc(23vw);
+  --parallax-offset-y: -12.5vh;
+
+  --content-panel-offset-x: -5dvh;
+  --content-panel-offset-y: -125dvh;
 }
 
 /* -- Declare global constants -- */
