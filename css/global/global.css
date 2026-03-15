@@ -8,7 +8,7 @@
   --parallax-offset-x: calc(23vw);
   --parallax-offset-y: -12.5vh;
   
-  font-size: 16px;
+  font-size: 1.25vh;
 }
 
 /* -- Declare global constants -- */
