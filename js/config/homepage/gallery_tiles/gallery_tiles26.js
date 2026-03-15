@@ -15,13 +15,15 @@ config.homepage.gallery.tiles = {
     colour: "light-blue",
     content: `<div class = "parallax-item-content-panel-title">CRD</div>
     <hr class = "parallax-item-content-panel-divider">
-    <b>Confoederatio, Research Division</b>, also known as <u>CRD</u>, works on academic datasets and tooling for their maintenance and production. Most tasks are applied, typically to spatiotemporal data and social systems or simulations. It is directly analogous to the Research Divisions of other data science studios.
-    <br><br>
-    All work produced by CRD, like any other division of Confoederatio, are MIT licenced for use, including accessible datasets. 
-    <br><br>
-    <hr class = "parallax-item-content-panel-divider">
-    <br>
-    <img src = "gfx/interface/logos/crd_coat_of_arms_logo.png" width = "100%">
+    <div class = "parallax-item-content-panel-body-text">
+      <b>Confoederatio, Research Division</b>, also known as <u>CRD</u>, works on academic datasets and tooling for their maintenance and production. Most tasks are applied, typically to spatiotemporal data and social systems or simulations. It is directly analogous to the Research Divisions of other data science studios.
+      <br><br>
+      All work produced by CRD, like any other division of Confoederatio, are MIT licenced for use, including accessible datasets. 
+      <br><br>
+      <hr class = "parallax-item-content-panel-divider">
+      <br>
+      <img src = "gfx/interface/logos/crd_coat_of_arms_logo.png" width = "100%">
+    </div>
     `,
     dependencies: ["datasets"],
   },
@@ -39,9 +41,29 @@ config.homepage.gallery.tiles = {
     y: 32,
     
     colour: "light-grey",
-    /*
-    content: `<div class = "parallax-item-content-panel-title">Datasets</div>`
-     */
+    content: `<div class = "parallax-item-content-panel-title">Datasets</div>
+    <hr class = "parallax-item-content-panel-divider">
+    <div class = "parallax-item-content-panel-body-text">
+      Open-access datasets from Confoederatio typically focus on long-term spatiotemporal data such as estimated GDP PPP, population, urban growth, etc. with coverage from 10000BC up until the present day at standard, structured resolution for both academic researchers and data scientists.
+      <br><br>
+      Datasets are typically classified as either <b>Histmap</b> in that they contain long-run historical data, or <b>Livemap</b>, which is updated in real time and focuses mainly on OSINT.
+      <br><br>
+      <b>Histmap:</b>
+      <ul>
+        <li>Eoscala (Historical Economics), 10000BC-2023AD</li>
+        <li>
+        Velkscala (Historical Population), 10000BC-2023AD
+        <ul>
+          <li>Stadestér (Urban Growth & Statistics), 3000BC-2025AD</li>
+        </ul>
+        </li>
+      </ul>
+      <b>Livemap:</b>
+      <ul>
+        <li>Collation (OSINT), 2026AD-</li>
+      </ul>
+    </div>
+    `,
     dependencies: ["histmap", "livemap_collation"],
   },
   histmap: {
