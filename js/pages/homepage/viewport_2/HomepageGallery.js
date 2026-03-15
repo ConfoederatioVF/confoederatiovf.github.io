@@ -483,12 +483,12 @@ window.HomepageGallery = class extends window.WebComponent {
 		this.saveOriginalPanelStyles();
 	}
 	
-	initGalleryDesktopEventHandlers() {
-		var gallery_obj = this.gallery;
+	initGalleryDesktopEventHandlers () {
+		let gallery_obj = this.gallery;
 		
 		// Keep the mouse perspective logic as it is specific to the gallery container
 		gallery_obj.parallax_body.addEventListener("mousemove", (e) => {
-			var half_width = gallery_obj.parallax_body.clientWidth / 2,
+			let half_width = gallery_obj.parallax_body.clientWidth / 2,
 				half_height = gallery_obj.parallax_body.clientHeight / 2,
 				mouse_x =
 					half_width + gallery_obj.parallax_body.offsetLeft - e.pageX,
@@ -498,7 +498,7 @@ window.HomepageGallery = class extends window.WebComponent {
 				mouse_x /= 32;
 				mouse_y /= 32;
 			}
-			var max_deg = 1.25;
+			let max_deg = 1.25;
 			this.perspective_deg_x =
 				(mouse_y / half_height) * max_deg * -1 + max_deg / 2 + "deg";
 			this.perspective_deg_y =
@@ -519,10 +519,10 @@ window.HomepageGallery = class extends window.WebComponent {
 		gallery_obj.parallax_body.addEventListener(
 			"wheel",
 			(e) => {
-				var panel = e.target.closest(".content-wrapper");
+				let panel = e.target.closest(".content-wrapper");
 				if (panel) {
-					var is_at_top = panel.scrollTop <= 0 && e.deltaY < 0;
-					var is_at_bottom =
+					let is_at_top = panel.scrollTop <= 0 && e.deltaY < 0;
+					let is_at_bottom =
 						panel.scrollTop + panel.offsetHeight >=
 						panel.scrollHeight && e.deltaY > 0;
 					if (!is_at_top && !is_at_bottom) e.stopPropagation();
