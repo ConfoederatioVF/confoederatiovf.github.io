@@ -83,7 +83,7 @@ config.homepage.gallery.tiles = {
   },
   
   livemap_collation: {
-    name: "Livemap/Collation",
+    name: "Livemap/<br>Collation",
     
     animation: "livemap-collation",
     background_image: "gfx/interface/tiles/livemap_collation.png",
