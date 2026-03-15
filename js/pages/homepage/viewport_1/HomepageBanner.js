@@ -483,7 +483,6 @@ window.HomepageBanner = class extends window.WebComponent {
 		};
 		
 		this.settings_minimise_btn.onclick = () => {
-			this.minimise_btn_tooltip[0].destroy();
 			if (this.settings_minimised) {
 				this.maximiseSettings();
 			} else {

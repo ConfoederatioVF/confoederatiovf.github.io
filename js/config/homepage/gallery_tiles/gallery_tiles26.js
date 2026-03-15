@@ -294,7 +294,7 @@ config.homepage.gallery.tiles = {
     background_image: `gfx/interface/tiles/analytical_engine_tile.png`,
     background_opacity: 0.15,
     colour: "dark-grey",
-    content: `<div class = "parallax-item-content-panel-title">AnalyticalEngine</div>
+    content: `<div class = "parallax-item-content-panel-title">Analytical Engine</div>
     <hr class = "parallax-item-content-panel-divider">
     <b>Development:</b> <span class = "parallax-item-beta-ongoing">Beta (Ongoing)</span>,<br>
     <span class = "parallax-item-development-date">27 October 2024 -</span><br>
