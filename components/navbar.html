@@ -86,7 +86,8 @@
                     padding-right: var(--item-margin);
                 }
             }
-            > line + li {
+            > line { margin-left: auto; }
+            > line ~ li {
                 padding-left: calc(var(--item-padding) + var(--item-margin));
                 
                 > ul {
@@ -94,6 +95,10 @@
                     left: 0;
                     right: auto;
                 }
+            }
+            > line ~ li ul li ul {
+                left: auto;
+                right: 100%;
             }
         }
 
@@ -104,19 +109,20 @@
             grid-template-columns: max-content;
             background-color: var(--bg-dropdown);
             backdrop-filter: blur(10px);
-            color: var(--text-dropdown);
+            color: rgba(0, 0, 0, 0);
             list-style: none;
             margin: 0;
             padding: 0;
             opacity: 0;
             max-height: 0;
             overflow: hidden;
-            transition: all 1s ease, opacity 0.2s ease;
             text-transform: none;
             font-weight: 500;
             width: max-content;
             z-index: 100;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            
+            transition: all 0.8s ease, opacity 0.4s ease;
         }
 
         /* LEVEL 1: Directly under the navbar */
@@ -132,7 +138,9 @@
 
         /* Show on Hover */
         ul li:hover > ul {
+            color: var(--text-dropdown);
             opacity: 1;
+            overflow: visible;
             max-height: 1000px;
         }
 
