@@ -92,12 +92,6 @@ window.initGlobal = function () {
   
   window.initialisation_loop = setInterval(() => {
     try {
-      //Reset main.gallery.parallax
-      setTimeout(function(){
-        main.gallery.parallax = new Parallax(document.getElementById("scene"));
-        console.log(main.gallery.parallax.scalarX, main.gallery.parallax.scalarY);
-      }, 1000);
-      
       //Initialise main
       let common_selectors = config.homepage.defines.common.selectors;
       
@@ -111,6 +105,12 @@ window.initGlobal = function () {
       //Iterate over all viewport two selectors
       for (let i = 0; i < all_viewport_two_selectors.length; i++)
         main.gallery[all_viewport_two_selectors[i]] = common_selectors.viewport_two[all_viewport_two_selectors[i]];
+      
+      //Reset main.gallery.parallax
+      setTimeout(function(){
+        main.gallery.parallax = new Parallax(document.getElementById("scene"));
+        console.log(main.gallery.parallax.scalarX, main.gallery.parallax.scalarY);
+      }, 1000);
       
       //Hack fix for glitched elements
       setTimeout(function () {
