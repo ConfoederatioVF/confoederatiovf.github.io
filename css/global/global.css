@@ -7,8 +7,19 @@
   --content-panel-offset-y: -125dvh;
   --parallax-offset-x: calc(23vw);
   --parallax-offset-y: -12.5vh;
-  
-  font-size: 1.25vh;
+}
+/* -- Rem scaling -- */
+html {
+  font-size: 16px;
+}
+@media (max-width: 1200px) {
+  html { font-size: 14px; }
+}
+@media (max-width: 1000px) {
+  html { font-size: 12px; }
+}
+@media (max-width: 700px) {
+  html { font-size: 10px; }
 }
 
 /* -- Declare global constants -- */
