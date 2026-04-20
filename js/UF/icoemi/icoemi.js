@@ -18,7 +18,14 @@ if (!window.ic) window.ic = {};
 		let elements = ic.getElements(arg1_elements);
 		let options = (arg2_options) ? arg2_options : {};
 		
+		//Hoist settings to avoid re-calculating during scroll
+		let direction = (options.direction) ? options.direction : "top";
+		let distance = (options.distance) ? parseFloat(options.distance) : 100;
+		let disable_fade = options.disable_fade;
+		
 		//Declare local instance variables
+		let ticking = false;
+		
 		let updatePositions = () => {
 			let rect = scope_el.getBoundingClientRect();
 			let viewport_height = window.innerHeight;
@@ -30,15 +37,12 @@ if (!window.ic) window.ic = {};
 			
 			//Progress is a value from 0 to 1
 			let progress = (start - current)/(start - end);
-				progress = Math.max(0, Math.min(1, progress));
+			progress = Math.max(0, Math.min(1, progress));
+			
+			//Calculate the remaining offset once per frame
+			let offset = distance*(1 - progress);
 			
 			elements.forEach((item) => {
-				//Get settings from data attributes
-				let direction = (options.direction) ? options.direction : "top";
-				let distance = (options.distance) ? parseFloat(options.distance) : 100;
-				
-				//Calculate the remaining offset. When progress is 1, offset is 0.
-				let offset = distance*(1 - progress);
 				let transform = "";
 				
 				switch (direction) {
@@ -57,20 +61,34 @@ if (!window.ic) window.ic = {};
 				}
 				
 				item.style.transform = transform;
-				if (!options.disable_fade)
+				if (!disable_fade)
 					item.style.opacity = progress;
 			});
+			
+			ticking = false;
 		};
 		
-		let observer = new IntersectionObserver(([entry]) => {
-			if (entry.isIntersecting) {
-				window.addEventListener("scroll", updatePositions);
-				updatePositions();
-			} else {
-				window.removeEventListener("scroll", updatePositions);
+		let scrollHandler = () => {
+			if (!ticking) {
+				window.requestAnimationFrame(updatePositions);
+				ticking = true;
 			}
-		},
-		{ threshold: 0 });
+		};
+		
+		//Promote elements to a new compositor layer for GPU acceleration
+		elements.forEach((item) => {
+			item.style.willChange = "transform, opacity";
+		});
+		
+		let observer = new IntersectionObserver(([entry]) => {
+				if (entry.isIntersecting) {
+					window.addEventListener("scroll", scrollHandler, { passive: true });
+					updatePositions();
+				} else {
+					window.removeEventListener("scroll", scrollHandler);
+				}
+			},
+			{ threshold: 0 });
 		
 		observer.observe(scope_el);
 	};
