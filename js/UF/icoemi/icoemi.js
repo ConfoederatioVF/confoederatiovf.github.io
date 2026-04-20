@@ -25,7 +25,6 @@ if (!window.ic) window.ic = {};
 		
 		//Declare local instance variables
 		let ticking = false;
-		
 		let updatePositions = () => {
 			let rect = scope_el.getBoundingClientRect();
 			let viewport_height = window.innerHeight;
