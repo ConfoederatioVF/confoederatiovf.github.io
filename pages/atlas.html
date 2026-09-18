@@ -63,7 +63,10 @@
     
     <div id = "bottombar">
       <div data-component = "toast" class = "warn" id = "warning-one">
-        <icon style = "margin-right:var(--padding);">warning</icon> This page only displays Atlas 0.6b (Simplified Borders). Consider checking out the new&nbsp;<a href = "https://dataview.confoederatio.org/">Dataview</a>&nbsp;for further details instead.
+        <icon style = "margin-right:var(--padding);">warning</icon>
+        <div style = "padding-right:calc(var(--padding)*0.5);">
+          This page only displays <u>Atlas 0.6b (Simplified Borders)</u>. Consider checking out the new&nbsp;<a href = "https://dataview.confoederatio.org/">Dataview</a>&nbsp;for further details instead.
+        </div>
         <button style = "margin-left: auto;" onclick = "document.querySelector('#warning-one').remove();">Understood</button>
       </div>
     </div>
