@@ -114,19 +114,21 @@
           Uptime information is available on our <a href = "https://discord.gg/9KKgZgpGHM" target = "_blank">Discord</a> or <a href = "https://matrix.to/#/#confoederatio:matrix.confoederatio.org" target = "_blank">Matrix Element</a>.
         </div>
       </details>
+
+      <!-- Reusable footer -->
+      <ic-component src = "components/footer.html" style = "margin-top: 2rem; width: 100%;"></ic-component>
     </div>
     
     <script type = "text/javascript" src = "js/UF/icoemi/icoemi.js"></script>
-    <script type = "text/javascript" src = "js/pages/unitel/vercengen_components.js"></script>
     <script>
       let body_container_el = document.getElementById("body-container");
       
-			function start () {
-				ic.initialise();
-				
-				window.unitel_menu = new ve.PageMenu({
+      function start () {
+        ic.startup();
+        
+        window.unitel_menu = new ic.PageMenu({
           apps: {
-						name: "Apps",
+            name: "Apps",
             html: `
             <div class = "apps">
               <div class = "card" 

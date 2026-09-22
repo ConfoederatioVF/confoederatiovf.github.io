@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang = "en">
+  <head>
+    <meta charset = "UTF-8">
+    <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
+    <base href = "../">
+    <title>Information Page Template - Confoederatio</title>
+
+    <!-- Favicon -->
+    <link rel = "icon" type = "image/png" sizes = "32x32" href = "gfx/interface/logos/confoederatio_icon_32x32.png">
+
+    <!-- Global Stylesheets -->
+    <link rel = "stylesheet" href = "css/global/global.css">
+    <link rel = "stylesheet" href = "css/global/import_fonts.css">
+    <link rel = "stylesheet" href = "css/global/scrollbar_ui.css">
+
+    <!-- Icoemi CMS Stylesheet -->
+    <link rel = "stylesheet" href = "js/UF/icoemi/icoemi.css">
+  </head>
+  <body class = "ic-page-container">
+    <!-- Navigation Bar Component -->
+    <ic-component src = "components/navbar.html"></ic-component>
+
+    <!-- Hero Header -->
+    <header class = "ic-hero">
+      <div class = "ic-hero-inner">
+        <div class = "ic-hero-topline">
+          <span class = "ic-badge">Category</span>
+          <span class = "ic-badge accent">v1.0</span>
+        </div>
+        <h1 class = "ic-hero-title">Project Title</h1>
+        <p class = "ic-hero-subtitle">
+          A concise summary of this software project, dataset, or research division. Replace this subtitle with your project description.
+        </p>
+        <div class = "ic-hero-actions">
+          <a href = "https://github.com/Confoederatio" class = "ic-btn ic-btn-primary" target = "_blank">Primary Action &rarr;</a>
+          <a href = "#documentation" class = "ic-btn ic-btn-secondary">Documentation</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Container with Two-Column Split Layout -->
+    <main class = "ic-container">
+      <div class = "ic-layout-split">
+        <!-- Main Column (Tabs & Detailed Sections) -->
+        <div class = "ic-layout-main">
+          <!-- Interactive Tabbed Interface -->
+          <ic-tabs starting-page = "overview">
+            <ic-tab id = "overview" name = "Overview">
+              <div class = "ic-content">
+                <h2>About This Project</h2>
+                <p>
+                  This page demonstrates how to quickly assemble new information pages using the <b>Icoemi CMS</b> library. You can use standard declarative HTML elements such as <code>&lt;ic-tabs&gt;</code>, <code>&lt;ic-card-grid&gt;</code>, and <code>&lt;ic-details&gt;</code>.
+                </p>
+                <p>
+                  All components adapt responsively to both desktop and mobile viewports, adhering to Confoederatio's design aesthetics and standard typography.
+                </p>
+
+                <h3>Core Features</h3>
+                <ul>
+                  <li>Fully responsive layout with mobile touch navigation.</li>
+                  <li>Modular components loaded via Icoemi component engine.</li>
+                  <li>Interactive sliding tab navigation.</li>
+                  <li>Dark-mode glassmorphic cards and metadata sidebars.</li>
+                </ul>
+              </div>
+            </ic-tab>
+
+            <ic-tab id = "specifications" name = "Specifications">
+              <div class = "ic-content">
+                <h2>Technical Specifications</h2>
+                <p>
+                  Document your technical specifications, architecture diagrams, and system requirements here.
+                </p>
+                <pre><code>// Example configuration or code sample
+let sample_config = {
+  project_id: "example-01",
+  division: "CTD",
+  licence: "MIT"
+};</code></pre>
+              </div>
+            </ic-tab>
+
+            <ic-tab id = "downloads" name = "Downloads">
+              <div class = "ic-content">
+                <h2>Releases &amp; Binaries</h2>
+                <p>
+                  Download the latest stable builds and artifacts below:
+                </p>
+                
+                <div class = "ic-card-grid">
+                  <div class = "ic-card">
+                    <div class = "ic-card-header">
+                      <img src = "gfx/interface/logos/confoederatio_icon.png" class = "ic-card-icon" alt = "Release Icon">
+                      <div>
+                        <h4 class = "ic-card-title">Windows x64 Build</h4>
+                        <span class = "ic-badge">Portable</span>
+                      </div>
+                    </div>
+                    <p class = "ic-card-desc">Standalone executable package for Windows 10/11.</p>
+                    <div class = "ic-card-footer">
+                      <span>ZIP Archive</span>
+                      <span class = "ic-card-link-text">Download &rarr;</span>
+                    </div>
+                  </div>
+
+                  <div class = "ic-card">
+                    <div class = "ic-card-header">
+                      <img src = "gfx/interface/logos/confoederatio_icon.png" class = "ic-card-icon" alt = "Release Icon">
+                      <div>
+                        <h4 class = "ic-card-title">Source Repository</h4>
+                        <span class = "ic-badge">GitHub</span>
+                      </div>
+                    </div>
+                    <p class = "ic-card-desc">Explore the complete source code under the MIT Licence.</p>
+                    <div class = "ic-card-footer">
+                      <span>Git</span>
+                      <span class = "ic-card-link-text">Repository &rarr;</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ic-tab>
+          </ic-tabs>
+
+          <!-- Collapsible Accordion Details -->
+          <ic-details summary = "Licence &amp; Attribution">
+            <p>
+              This work is licensed under the open-source <b>MIT Licence</b>. Forking, commercial use, and private modification are permitted with attribution.
+            </p>
+          </ic-details>
+
+          <ic-details summary = "Sources &amp; References">
+            <p>
+              References and citation notes can be listed in this section for archival and verification purposes.
+            </p>
+          </ic-details>
+        </div>
+
+        <!-- Sidebar Column (Project Metadata) -->
+        <aside class = "ic-layout-sidebar">
+          <div class = "ic-meta-panel">
+            <h3 class = "ic-meta-panel-title">Project Info</h3>
+            <div class = "ic-meta-list">
+              <div class = "ic-meta-row">
+                <span class = "ic-meta-label">Division</span>
+                <span class = "ic-meta-value">CTD (Technical Division)</span>
+              </div>
+              <div class = "ic-meta-row">
+                <span class = "ic-meta-label">Status</span>
+                <span class = "ic-meta-value">Active Development</span>
+              </div>
+              <div class = "ic-meta-row">
+                <span class = "ic-meta-label">Licence</span>
+                <span class = "ic-meta-value">MIT Licence</span>
+              </div>
+              <div class = "ic-meta-row">
+                <span class = "ic-meta-label">Maintainer</span>
+                <span class = "ic-meta-value"><a href = "mailto:vf@confoederatio.org">vf@confoederatio.org</a></span>
+              </div>
+              <div class = "ic-meta-row">
+                <span class = "ic-meta-label">Repository</span>
+                <span class = "ic-meta-value"><a href = "https://github.com/Confoederatio" target = "_blank">github.com/Confoederatio</a></span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <!-- Reusable Footer Component -->
+    <ic-component src = "components/footer.html"></ic-component>
+
+    <!-- Icoemi Startup & CMS Library -->
+    <script type = "text/javascript" src = "js/UF/icoemi/icoemi.js"></script>
+  </body>
+</html>

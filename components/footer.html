@@ -1,0 +1,281 @@
+<style>
+  /* -- Footer styling matching navbar aesthetic on flat opaque background -- */
+  .ic-footer {
+    background-color: rgb(0, 0, 0, 0.9);
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    box-sizing: border-box;
+    color: #ffffff;
+    font-family: "Karla", sans-serif;
+    padding: 0;
+    position: relative;
+    width: 100%;
+    z-index: 10;
+  }
+
+  .ic-footer-inner {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    width: 100%;
+  }
+
+  /* -- Main columns container with full-width coherent layout and 1px lines -- */
+  .ic-footer-main {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1.1fr 1fr;
+    width: 100%;
+  }
+
+  .ic-footer-brand {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    height: 100%;
+    padding: 2.25rem 2rem;
+  }
+
+  .ic-footer-brand-header {
+    align-items: center;
+    display: inline-flex;
+    gap: 0.75rem;
+    text-decoration: none;
+  }
+
+  .ic-footer-brand-title {
+    color: #ffffff;
+    font-family: "Barlow", sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .ic-footer-brand-tagline {
+    color: rgba(255, 255, 255, 0.7);
+    font-family: "Karla", sans-serif;
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  .ic-footer-col {
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    height: 100%;
+    padding: 2.25rem 2rem;
+  }
+
+  .ic-footer-header {
+    color: #ffffff;
+    font-family: "Barlow", sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: all 0.5s ease;
+  }
+
+  .ic-footer-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .ic-footer-list li a {
+    color: rgba(255, 255, 255, 0.75);
+    display: inline-block;
+    font-family: "Karla", sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    position: relative;
+    text-decoration: none;
+    transition: color 0.2s ease, letter-spacing 0.2s ease;
+    width: fit-content;
+  }
+
+  .ic-footer-list li a::after {
+    background-color: #ffffff;
+    bottom: -2px;
+    content: "";
+    height: 1px;
+    left: 0;
+    position: absolute;
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform 0.2s ease-out;
+    width: 100%;
+  }
+
+  .ic-footer-list li a:hover {
+    color: #ffffff;
+    letter-spacing: 0.5px;
+  }
+
+  .ic-footer-list li a:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }
+
+  /* -- Footer bottom text separated by 1px horizontal line -- */
+  .ic-footer-bottom {
+    align-items: center;
+    box-sizing: border-box;
+    color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    flex-direction: row;
+    font-family: "Karla", sans-serif;
+    font-size: 1rem;
+    font-weight: 300;
+    justify-content: flex-start;
+    padding: 1.25rem 2rem 1.5rem 2rem;
+    width: 100%;
+  }
+
+  .ic-footer-copy {
+    color: rgba(255, 255, 255, 0.6);
+    font-family: "Karla", sans-serif;
+    font-size: 1rem;
+  }
+
+  /* -- Responsive layout for tablet and mobile -- */
+  @media (max-width: 900px) {
+    .ic-footer-main {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .ic-footer-brand {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      border-left: none;
+      grid-column: 1 / -1;
+      padding: 1.75rem 1.5rem;
+    }
+
+    .ic-footer-col {
+      padding: 1.75rem 1.5rem;
+    }
+
+    .ic-footer-col:nth-child(2) {
+      border-left: none;
+    }
+
+    .ic-footer-col:nth-child(4) {
+      border-left: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .ic-footer-col:nth-child(5) {
+      border-top: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .ic-footer-bottom {
+      padding: 1.25rem 1.5rem 1.5rem 1.5rem;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .ic-footer-main {
+      grid-template-columns: 1fr;
+    }
+
+    .ic-footer-brand {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 1.5rem 1.25rem;
+    }
+
+    .ic-footer-col {
+      border-left: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 1.5rem 1.25rem;
+    }
+
+    .ic-footer-bottom {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 1.25rem 1.25rem 1.5rem 1.25rem;
+    }
+  }
+
+  .ic-footer-col:hover { cursor: crosshair; }
+  .ic-footer-col:hover .ic-footer-header {
+    color: rgb(200, 40, 40);
+  }
+</style>
+
+<!-- Footer Element -->
+<footer class = "ic-footer">
+  <div class = "ic-footer-inner">
+    <!-- Main Columns Container -->
+    <div class = "ic-footer-main">
+      <div class = "ic-footer-brand">
+        <a href = "https://confoederatio.org" class = "ic-footer-brand-header">
+          <span class = "ic-footer-brand-title">Confoederatio</span>
+        </a>
+        <div class = "ic-footer-brand-tagline">
+          Minimally Competent. Maximally Capable.
+        </div>
+      </div>
+
+      <div class = "ic-footer-col">
+        <div class = "ic-footer-header">Divisions</div>
+        <ul class = "ic-footer-list">
+          <li><a href = "https://confoederatiodocs.info/" target = "_blank">CAD (Artistic)</a></li>
+          <li><a href = "https://confoederatiodocs.info/CRD+(Confoederatio%2C+Research+Division)/Documentation/Histmap/Complex+Data+Schema" target = "_blank">CRD (Research)</a></li>
+          <li><a href = "https://confoederatiodocs.info/CTD+(Confoederatio%2C+Technical+Division)/Documentation/Games/Analytical+Engine/Analytical+Engine" target = "_blank">CTD (Technical)</a></li>
+          <li><a href = "https://github.com/Confoederatio/TriumphAndTragedy" target = "_blank">CTD Games</a></li>
+          <li><a href = "https://github.com/ConfoederatioVF" target = "_blank">Preservés</a></li>
+        </ul>
+      </div>
+
+      <div class = "ic-footer-col">
+        <div class = "ic-footer-header">Datasets</div>
+        <ul class = "ic-footer-list">
+          <li><a href = "https://dataview.confoederatio.org/" target = "_blank">Dataview</a></li>
+          <li><a href = "pages/atlas.html">Atlas</a></li>
+          <li><a href = "https://github.com/ConfoederatioVF/EoscalaVelkscala" target = "_blank">Eoscala/Velkscala</a></li>
+          <li><a href = "https://github.com/ConfoederatioVF/Collation" target = "_blank">Livemap/Collation</a></li>
+          <li><a href = "https://github.com/ConfoederatioVF/Stadester" target = "_blank">Stadestér</a></li>
+        </ul>
+      </div>
+
+      <div class = "ic-footer-col">
+        <div class = "ic-footer-header">Software &amp; Tools</div>
+        <ul class = "ic-footer-list">
+          <li><a href = "pages/naissance.html">Naissance HGIS</a></li>
+          <li><a href = "https://github.com/ConfoederatioVF/AnalyticalEngine" target = "_blank">Analytical Engine</a></li>
+          <li><a href = "pages/unitel.html">Unitel</a></li>
+          <li><a href = "https://github.com/ConfoederatioVF/Vercengen" target = "_blank">Vercengen</a></li>
+          <li><a href = "https://docs.confoederatio.org/" target = "_blank">Wiki Documentation</a></li>
+        </ul>
+      </div>
+
+      <div class = "ic-footer-col">
+        <div class = "ic-footer-header">Socials</div>
+        <ul class = "ic-footer-list">
+          <li><a href = "https://discord.gg/4DcuaBKpuS" target = "_blank">Discord</a></li>
+          <li><a href = "https://element.confoederatio.org/" target = "_blank">Matrix Element</a></li>
+          <li><a href = "https://github.com/ConfoederatioVF" target = "_blank">GitHub</a></li>
+          <li><a href = "https://gitlab.com/confoederatio" target = "_blank">GitLab</a></li>
+          <li><a href = "mailto:vf@confoederatio.org">Email</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom text container -->
+    <div class = "ic-footer-bottom">
+      <div class = "ic-footer-copy">
+        Software and datasets under MIT Licence. CAD assets are in the Public Domain.
+      </div>
+    </div>
+  </div>
+</footer>

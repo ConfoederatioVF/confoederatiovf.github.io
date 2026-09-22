@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang = "en">
+  <head>
+    <meta charset = "UTF-8">
+    <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
+    <base href = "../">
+    <title>Naissance HGIS - 4D Spatiotemporal GIS | Confoederatio</title>
+
+    <!-- Favicon -->
+    <link rel = "icon" type = "image/png" sizes = "32x32" href = "gfx/interface/logos/naissance_square_logo.png">
+
+    <!-- Global Stylesheets -->
+    <link rel = "stylesheet" href = "css/global/global.css">
+    <link rel = "stylesheet" href = "css/global/import_fonts.css">
+    <link rel = "stylesheet" href = "css/global/scrollbar_ui.css">
+
+    <!-- Icoemi CMS Stylesheet -->
+    <link rel = "stylesheet" href = "js/UF/icoemi/icoemi.css">
+  </head>
+  <body class = "ic-page-container">
+    <!-- Reusable Navbar Component -->
+    <ic-component src = "components/navbar.html"></ic-component>
+
+    <!-- Hero Header -->
+    <header class = "ic-hero">
+      <div class = "ic-hero-inner">
+        <div class = "ic-hero-topline">
+          <span class = "ic-badge">CRD Software</span>
+          <span class = "ic-badge accent">v1.8b</span>
+        </div>
+        <div style = "display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;">
+          <img src = "gfx/interface/logos/naissance_square_logo.png" alt = "Naissance HGIS Logo" style = "height: 64px; width: 64px; border-radius: 8px;">
+          <div>
+            <h1 class = "ic-hero-title">Naissance HGIS</h1>
+            <p class = "ic-hero-subtitle">
+              4D Geographic Information System for historical spatiotemporal data and open-source world modelling from 10000BC to Now.
+            </p>
+          </div>
+        </div>
+        <div class = "ic-hero-actions">
+          <a href = "https://github.com/ConfoederatioVF/Naissance" class = "ic-btn ic-btn-primary" target = "_blank">
+            GitHub Repository &rarr;
+          </a>
+          <a href = "https://docs.confoederatio.org/Naissance" class = "ic-btn ic-btn-secondary" target = "_blank">
+            Documentation Wiki
+          </a>
+          <a href = "https://dataview.confoederatio.org/" class = "ic-btn ic-btn-secondary" target = "_blank">
+            Live Dataview
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Container with Two-Column Split Layout -->
+    <main class = "ic-container">
+      <div class = "ic-layout-split">
+        <!-- Main Column -->
+        <div class = "ic-layout-main">
+          <!-- Interactive Tab Navigation -->
+          <ic-tabs starting-page = "overview">
+            <ic-tab id = "overview" name = "Overview">
+              <div class = "ic-content">
+                <h2>The 4D Historical Earth Model</h2>
+                <p>
+                  <b>Naissance</b> is a high-performance Historical Geographic Information System (HGIS) purpose-built to model the continuous temporal and spatial evolution of human geography. Unlike traditional static GIS platforms, Naissance treats time as a first-class continuous coordinate axis alongside longitude, latitude, and elevation.
+                </p>
+                <p>
+                  From pre-pottery Neolithic settlements in 10000BC to live administrative and military movements today, Naissance enables researchers, cartographers, and data scientists to trace polity frontiers, sovereign borders, demographic settlements, and economic trade routes across twelve millennia.
+                </p>
+
+                <h3>Key Capabilities</h3>
+                <ul>
+                  <li><b>Continuous Spatiotemporal Representation:</b> Temporal interpolation between discrete historical milestones, preventing jagged or missing temporal slices.</li>
+                  <li><b>De Facto Sovereignty Mapping:</b> Differentiates between formal de jure claims, contested zones, client states, and true territorial control.</li>
+                  <li><b>Topological Boundary Snapping:</b> Shared border segments snap intelligently along natural geographic features (rivers, ridges, coasts) across millennia.</li>
+                  <li><b>Multi-Attribute Histmap Schema:</b> Native support for population distributions, city hierarchies, GDP gridding, and ethnolinguistic classifications.</li>
+                </ul>
+              </div>
+            </ic-tab>
+
+            <ic-tab id = "architecture" name = "Architecture">
+              <div class = "ic-content">
+                <h2>System Architecture</h2>
+                <p>
+                  Naissance is engineered on top of Confoederatio's unified foundational libraries, utilizing hardware-accelerated vector rendering and efficient spatiotemporal indexing for multi-gigabyte historical polygon datasets.
+                </p>
+
+                <div class = "ic-card-grid">
+                  <div class = "ic-card">
+                    <div class = "ic-card-header">
+                      <img src = "gfx/interface/logos/vercengen_square_logo.png" class = "ic-card-icon" alt = "Vercengen">
+                      <div>
+                        <h4 class = "ic-card-title">Vercengen Core</h4>
+                        <span class = "ic-badge">Engine</span>
+                      </div>
+                    </div>
+                    <p class = "ic-card-desc">Low-level vector math, spatial indexing, and geometry optimization.</p>
+                  </div>
+
+                  <div class = "ic-card">
+                    <div class = "ic-card-header">
+                      <img src = "gfx/interface/logos/collation_square_logo.png" class = "ic-card-icon" alt = "Collation">
+                      <div>
+                        <h4 class = "ic-card-title">Collation Pipeline</h4>
+                        <span class = "ic-badge">Data Flow</span>
+                      </div>
+                    </div>
+                    <p class = "ic-card-desc">Harmonization pipeline ingesting geospatial sources into the `.naissance` format.</p>
+                  </div>
+                </div>
+
+                <h3>Data Schema</h3>
+                <pre><code>{
+  "id": "rome_390bc",
+  "name": "Roman Republic",
+  "temporal": {
+    "start_year": -509,
+    "end_year": -27
+  },
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [...]
+  },
+  "attributes": {
+    "capital": "Rome",
+    "sovereignty": "de_facto",
+    "regime_type": "republic"
+  }
+}</code></pre>
+              </div>
+            </ic-tab>
+
+            <ic-tab id = "downloads" name = "Downloads &amp; Builds">
+              <div class = "ic-content">
+                <h2>Releases &amp; Binaries</h2>
+                <p>
+                  Official binaries are provided for PC platforms under the open-source MIT Licence.
+                </p>
+
+                <div class = "ic-card-grid">
+                  <a href = "https://github.com/ConfoederatioVF/Naissance/releases" class = "ic-card" target = "_blank">
+                    <div class = "ic-card-header">
+                      <img src = "gfx/interface/logos/naissance_square_logo.png" class = "ic-card-icon" alt = "Naissance Build">
+                      <div>
+                        <h4 class = "ic-card-title">Windows x64 Release</h4>
+                        <span class = "ic-badge">v1.8b</span>
+                      </div>
+                    </div>
+                    <p class = "ic-card-desc">Portable Windows package with full graphical map editor and timeline controls.</p>
+                    <div class = "ic-card-footer">
+                      <span>ZIP Archive</span>
+                      <span class = "ic-card-link-text">Download &rarr;</span>
+                    </div>
+                  </a>
+
+                  <a href = "https://github.com/ConfoederatioVF/Naissance" class = "ic-card" target = "_blank">
+                    <div class = "ic-card-header">
+                      <img src = "gfx/interface/logos/projects_square_logo.png" class = "ic-card-icon" alt = "GitHub Repository">
+                      <div>
+                        <h4 class = "ic-card-title">Source Repository</h4>
+                        <span class = "ic-badge">GitHub</span>
+                      </div>
+                    </div>
+                    <p class = "ic-card-desc">Contribute or build directly from the GitHub repository.</p>
+                    <div class = "ic-card-footer">
+                      <span>Git</span>
+                      <span class = "ic-card-link-text">Repository &rarr;</span>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </ic-tab>
+          </ic-tabs>
+
+          <!-- Collapsible Accordion Sections -->
+          <ic-details summary = "Sources &amp; Cartographic Methodology">
+            <p>
+              Primary cartographic sources for de facto polities from 3300BC to 2014AD incorporate published historical atlases, archaeological survey reports, and high-resolution digital elevations. All boundaries are cross-referenced against historical treaties and territorial records documented in the CRD Archives.
+            </p>
+          </ic-details>
+
+          <ic-details summary = "Open Source MIT Licence">
+            <p>
+              Naissance HGIS and its data format specifications are licensed under the <b>MIT Licence</b>. You are free to inspect, modify, fork, and use the software for academic, commercial, and private research.
+            </p>
+          </ic-details>
+        </div>
+
+        <!-- Sidebar Column (Project Metadata) -->
+        <aside class = "ic-layout-sidebar">
+          <div class = "ic-meta-panel">
+            <h3 class = "ic-meta-panel-title">Project Metadata</h3>
+            <div class = "ic-meta-list">
+              <div class = "ic-meta-row">
+                <span class = "ic-meta-label">Division</span>
+                <span class = "ic-meta-value">CRD (Research) / CTD (Technical)</span>
+              </div>
+              <div class = "ic-meta-row">
+                <span class = "ic-meta-label">Current Version</span>
+                <span class = "ic-meta-value">1.8b Stable</span>
+              </div>
+              <div class = "ic-meta-row">
+                <span class = "ic-meta-label">Temporal Domain</span>
+                <span class = "ic-meta-value">10000BC &ndash; Present</span>
+              </div>
+              <div class = "ic-meta-row">
+                <span class = "ic-meta-label">File Formats</span>
+                <span class = "ic-meta-value"><code>.naissance</code>, <code>.geojson</code></span>
+              </div>
+              <div class = "ic-meta-row">
+                <span class = "ic-meta-label">Licence</span>
+                <span class = "ic-meta-value">MIT Licence</span>
+              </div>
+              <div class = "ic-meta-row">
+                <span class = "ic-meta-label">Documentation</span>
+                <span class = "ic-meta-value"><a href = "https://docs.confoederatio.org/Naissance" target = "_blank">docs.confoederatio.org</a></span>
+              </div>
+              <div class = "ic-meta-row">
+                <span class = "ic-meta-label">Community / Chat</span>
+                <span class = "ic-meta-value"><a href = "https://discord.gg/4DcuaBKpuS" target = "_blank">Discord Server</a></span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <!-- Reusable Footer Component -->
+    <ic-component src = "components/footer.html"></ic-component>
+
+    <!-- Icoemi Startup & CMS Library -->
+    <script type = "text/javascript" src = "js/UF/icoemi/icoemi.js"></script>
+  </body>
+</html>

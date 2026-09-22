@@ -86,10 +86,25 @@ window.initGlobal = function () {
   //Declare local instance variables
   let config_obj = config.homepage;
   
-  document.querySelectorAll("body")[0].remove(); //Fix duplicate body
+  if (document.querySelectorAll("body").length > 1)
+    document.querySelectorAll("body")[0].remove();
   for (let i = 0; i < config_obj.js_files.length; i++)
     loadScript(config_obj.js_files[i]);
   
+  //Initialise Icoemi for homepage
+  if (window.ic && typeof ic.startup === "function") {
+    ic.startup({
+      mobile_scroll_sensitivity: 4,
+      onscroll: () => {
+        try {
+          if (window.viewport_one && typeof viewport_one.triumphAndTragedyOnScroll === "function")
+            viewport_one.triumphAndTragedyOnScroll();
+        } catch (e) { console.log(e); }
+      },
+      smooth_scroll: true
+    });
+  }
+
   window.initialisation_loop = setInterval(() => {
     try {
       //Initialise main
@@ -114,11 +129,6 @@ window.initGlobal = function () {
       
       //Hack fix for glitched elements
       setTimeout(function () {
-        //Viewport 1
-        //Start top-banner animation for homepage
-        //homepageBannerAnimation();
-        
-        
         //Viewport 2
         //Gallery
         homepageAboutOnScroll();
@@ -127,11 +137,6 @@ window.initGlobal = function () {
       setTimeout(function () {
         //General fix
         fixMobileVh();
-        
-        //Viewport 2
-        //Initialise magnifiers for all .preview-image elements
-        
-        //Viewport 3 scroll handling
       }, 650);
       
       clearInterval(window.initialisation_loop);
