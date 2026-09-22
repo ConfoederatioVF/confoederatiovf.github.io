@@ -51,8 +51,10 @@ ic-component {
 ic-component:has(> .ic-footer),
 ic-component:has(> footer),
 ic-component[src*="footer"] {
+  box-sizing: border-box;
   display: block;
   margin-top: auto;
+  padding-top: 3.5rem;
   width: 100%;
 }
 
