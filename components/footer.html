@@ -1,11 +1,21 @@
 <style>
   /* -- Footer styling matching navbar aesthetic on flat opaque background -- */
+  :host,
+  ic-component:has(> .ic-footer) {
+    box-sizing: border-box;
+    display: block;
+    margin-top: auto;
+    padding-top: 3.5rem;
+    width: 100%;
+  }
+
   .ic-footer {
     background-color: rgb(0, 0, 0, 0.9);
     border-top: 1px solid rgba(255, 255, 255, 0.5);
     box-sizing: border-box;
     color: #ffffff;
     font-family: "Karla", sans-serif;
+    margin-top: auto;
     padding: 0;
     position: relative;
     width: 100%;

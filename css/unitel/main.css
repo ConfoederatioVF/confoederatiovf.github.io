@@ -64,11 +64,14 @@ details {
 
 #body-container {
     align-items: center;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    flex: 1;
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow-x: hidden;
     overflow-y: auto;
-    padding-bottom: var(--padding);
+    padding-bottom: 0;
     position: absolute;
     left: 0;
     top: 0;

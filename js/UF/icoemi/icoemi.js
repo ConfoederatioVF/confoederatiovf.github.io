@@ -492,6 +492,15 @@ if (!window.ic.cms) window.ic.cms = {};
         if (!options.no_js)
           ic.executeComponentScripts(element);
 
+        //Auto-anchor footer component to bottom
+        if (target_url.includes("footer.html")) {
+          element.style.boxSizing = "border-box";
+          element.style.display = "block";
+          element.style.marginTop = "auto";
+          element.style.paddingTop = "3.5rem";
+          element.style.width = "100%";
+        }
+
         //Recursively update any child components
         if (element.querySelector("ic-component[src]") || element.querySelector("ic-tabs") || element.querySelector("ic-page"))
           await ic.updateDOM();
